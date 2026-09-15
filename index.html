@@ -53,6 +53,18 @@ table.lines .n{width:88px;text-align:right}table.lines .imp{text-align:right;fon
 .firmas{display:grid;grid-template-columns:1fr 1fr;gap:20mm;margin-top:16mm}.firmas div{border-top:1px solid var(--ink);padding-top:5px;font-size:11px}
 .condp{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.4}
 @media (max-width:700px){.sheet{padding:10mm 8mm}.dos2,.firmas{grid-template-columns:1fr}.ptag{font-size:34px}.cli{grid-template-columns:60px 1fr;} .tar{grid-template-columns:1fr 50px 90px}}
+/* ---- adaptacion a cualquier pantalla ---- */
+html{-webkit-text-size-adjust:100%}
+body{overflow-x:hidden}
+img,canvas,video{max-width:100%}
+.page,.card{max-width:100%}
+.sheet{max-width:100%}
+.tablaScroll,.lines-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+@media (max-width:900px){#topnav{flex-wrap:wrap;overflow:visible}#topnav .ntab{flex:0 0 auto}.acts{margin-left:0;width:100%;flex-wrap:wrap;justify-content:flex-start}.acts button{flex:1 1 auto;min-width:120px}}
+@media (max-width:640px){.grid{grid-template-columns:1fr}.row{flex-wrap:wrap}.row>button{flex:1 1 auto;min-width:46%}input,select,textarea{font-size:16px;max-width:100%}.card{padding:12px}.lines{display:block;overflow-x:auto;white-space:nowrap}.lines input,.lines select{min-width:80px}h2{font-size:20px!important}#verFijo{bottom:6px;right:6px}}
+@media (max-width:420px){.acts button{min-width:100%;}.row>button{min-width:100%}}
+@media (min-width:1200px){.card{max-width:1100px;margin-left:auto;margin-right:auto}}
+
 @media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}#verFijo{display:none!important}html,body{background:var(--crema)!important;margin:0!important;padding:0!important;width:100%!important;height:auto!important}.sheet{background:var(--crema)!important;width:100%!important;max-width:none!important;margin:0!important;box-sizing:border-box!important;min-height:100vh!important}#sh_dosier{height:297mm!important;max-height:297mm!important;overflow:hidden!important;page-break-after:always!important;padding-bottom:20mm!important}#sh_dosier .portada{height:120mm!important}#sh_dosier .dos2{margin-top:6mm!important}#sh_dosier .dos2 .fotos img{height:46mm!important}#topnav,.noprint,.page:not(#page-print){display:none!important}#page-print{display:block!important;padding:0;max-width:none}.sheet{box-shadow:none;margin:0;width:auto;page-break-after:always;min-height:0;height:auto;padding:14mm 15mm}.sheet:last-child{page-break-after:auto}.portada{margin:-14mm -15mm 0}.pcont{left:15mm;right:15mm}.foot{left:15mm;right:15mm}#sh_presu .foot,#sh_contrato .foot{position:static;margin-top:10mm}@page{size:auto;margin:0}}
 </style></head><body>
 <div id="login" style="display:none;position:fixed;inset:0;background:var(--slate);z-index:50;align-items:center;justify-content:center;padding:20px"><div class="card" style="max-width:360px;width:100%"><h2 style="font-size:26px;margin-bottom:4px" id="loginTitle">Vornicu Reformas</h2><p style="color:var(--muted);margin:0 0 10px">Entra con tu correo y tu clave.</p><label class="f">Correo</label><input id="lg_email" type="email" autocomplete="username"><label class="f" style="margin-top:8px">Clave</label><input id="lg_pass" type="password" autocomplete="current-password"><div class="row" style="margin-top:12px"><button onclick="entrar()">Entrar</button><span id="lg_msg" style="color:var(--brick)"></span></div></div></div>
@@ -63,7 +75,7 @@ table.lines .n{width:88px;text-align:right}table.lines .imp{text-align:right;fon
 <!-- ================= PRESUPUESTO ================= -->
 <section class="page on" id="page-presupuesto">
 <div class="card"><div class="grid">
-<div><label class="f">Nº presupuesto</label><input id="f_num"></div><div><label class="f">Fecha</label><input id="f_fecha" type="date"></div><div><label class="f">Cliente</label><div style="display:flex;gap:6px"><input id="f_nom" placeholder="Nombre y apellidos" style="flex:1" onchange="rellenarDeAgenda()" list="agDatalist"><datalist id="agDatalist"></datalist><button class="sec" type="button" onclick="abrirAgenda()" title="Elegir de mis clientes">Agenda</button></div></div><div><label class="f">Teléfono</label><input id="f_tel"></div>
+<div><label class="f">Nº presupuesto</label><input id="f_num"></div><div><label class="f">Fecha</label><input id="f_fecha" type="date"></div><div><label class="f">Cliente</label><div style="display:flex;gap:6px"><input id="f_nom" placeholder="Nombre y apellidos" style="flex:1;min-width:0" onchange="rellenarDeAgenda()" list="agDatalist"><datalist id="agDatalist"></datalist><button class="sec" type="button" onclick="abrirAgenda()" title="Elegir de mis clientes">Agenda</button></div></div><div><label class="f">Teléfono</label><input id="f_tel"></div>
 <div><label class="f">Correo</label><input id="f_email"></div><div><label class="f">Dirección de la obra</label><input id="f_dir" placeholder="Calle, piso, municipio"></div><div><label class="f">Piso sin ascensor</label><select id="f_asc"><option value="0">No / tiene ascensor</option><option value="1">Sí, sin ascensor (suplemento)</option></select></div><div><label class="f">IVA</label><select id="f_iva"><option value="21">21 %</option><option value="10">10 % (vivienda &gt; 2 años, obra de reforma)</option><option value="0">Sin IVA</option></select></div>
 </div></div>
 
@@ -146,7 +158,7 @@ table.lines .n{width:88px;text-align:right}table.lines .imp{text-align:right;fon
 </section>
 
 <script>
-var APP_VERSION='v21';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v22';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
