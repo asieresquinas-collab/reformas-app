@@ -84,7 +84,7 @@ table.lines .n{width:88px;text-align:right}table.lines .imp{text-align:right;fon
 <div class="row" style="margin-top:12px;align-items:flex-start"><div style="flex:1;min-width:240px"><label class="f">Comentarios que van en el presupuesto</label><textarea id="f_obs" rows="4"></textarea>
 <label style="display:flex;gap:8px;align-items:center;margin-top:8px"><input type="checkbox" id="f_suelo" style="width:auto"> Se mantiene el suelo actual bajo el flotante (poner el aviso de responsabilidad)</label></div>
 <div class="tot"><div><span>Base imponible</span><b id="t_base">0,00 €</b></div><div><span>IVA <span id="t_ivap">21</span> %</span><b id="t_iva">0,00 €</b></div><div class="big"><span>Total</span><b id="t_tot">0,00 €</b></div></div></div>
-<div id="revBox" style="margin-top:12px"></div><div class="row" style="margin-top:12px"><button onclick="revisar(true)">Revisar el presupuesto</button><button class="ok" onclick="guardar()">Guardar</button><button class="sec" onclick="nuevo()">Nuevo presupuesto</button><button class="sec" onclick="duplicar()">Duplicar como variante</button><span id="msg" style="color:var(--ok);font-weight:600"></span></div></div>
+<div id="revBox" style="margin-top:12px"></div><div class="row" style="margin-top:12px"><button onclick="revisar(true)">Revisar el presupuesto</button><button class="ok" onclick="guardar()">Guardar</button><button class="sec" onclick="nuevo()">Nuevo presupuesto</button><button class="sec" onclick="duplicar()">Duplicar como variante</button><button class="sec" onclick="vaciarLineas()">Borrar todas las partidas</button><button class="sec" style="border-color:#b3261e;color:#b3261e" onclick="borrarEste()">Borrar este presupuesto</button><span id="msg" style="color:var(--ok);font-weight:600"></span></div></div>
 </section>
 
 <!-- ================= CLIENTES ================= -->
@@ -146,7 +146,7 @@ table.lines .n{width:88px;text-align:right}table.lines .imp{text-align:right;fon
 </section>
 
 <script>
-var APP_VERSION='v19';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v20';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -220,7 +220,7 @@ function norm(s){return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f
 document.querySelectorAll('.ntab').forEach(function(b){b.onclick=function(){ST(b.dataset.t)}});
 function ST(t){document.querySelectorAll('.ntab').forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});document.querySelectorAll('.page').forEach(function(p){p.classList.toggle('on',p.id==='page-'+t)});if(t==='clientes')renderClientes();if(t==='tarifa')renderTarifa();if(t==='ajustes')renderAj()}
 /* ---------- presupuesto ---------- */
-function nuevo(){cur={num:String(DB.contador+1),fecha:new Date().toISOString().slice(0,10),nom:'',tel:'',email:'',dir:'',asc:'0',iva:'21',obs:'',suelo:false,lineas:[],estado:'borrador',c:{p1:40,p2:30,p3:30,plazo:'',inicio:'',gar:24}};pintar();document.getElementById('msg').textContent=''}
+function nuevo(){ARQ={med:[],plano:null,cab:null};var _ap=document.getElementById('arqPanel');if(_ap){_ap.innerHTML='';_ap.style.display='none'}var _ai=document.getElementById('arqInfo');if(_ai)_ai.textContent='';cur={num:String(DB.contador+1),fecha:new Date().toISOString().slice(0,10),nom:'',tel:'',email:'',dir:'',asc:'0',iva:'21',obs:'',suelo:false,lineas:[],estado:'borrador',c:{p1:40,p2:30,p3:30,plazo:'',inicio:'',gar:24}};pintar();document.getElementById('msg').textContent=''}
 function pintar(){['num','fecha','nom','tel','email','dir','asc','iva','obs'].forEach(function(k){document.getElementById('f_'+k).value=cur[k]||''});document.getElementById('f_suelo').checked=!!cur.suelo;['p1','p2','p3','plazo','inicio','gar'].forEach(function(k){document.getElementById('c_'+k).value=cur.c[k]});renderLineas()}
 function leer(){['num','fecha','nom','tel','email','dir','asc','iva','obs'].forEach(function(k){cur[k]=document.getElementById('f_'+k).value});cur.suelo=document.getElementById('f_suelo').checked;['p1','p2','p3','plazo','inicio','gar'].forEach(function(k){cur.c[k]=document.getElementById('c_'+k).value});var rows=[].slice.call(document.querySelectorAll('#tb tr'));cur.lineas=rows.map(function(r,i){var old=cur.lineas[i]||{};return{d:r.querySelector('.ld').value,q:num(r.querySelector('.lq').value),u:r.querySelector('.lu').value,p:num(r.querySelector('.lp').value),code:r.dataset.code||old.code}})}
 function renderLineas(){var tb=document.getElementById('tb');tb.innerHTML='';cur.lineas.forEach(function(l,i){var tr=document.createElement('tr');if(l.code)tr.dataset.code=l.code;if(!l.p)tr.className='cero';tr.innerHTML='<td><textarea class="ld">'+l.d+'</textarea></td><td><input class="lq n" value="'+l.q+'"></td><td><input class="lu n" value="'+l.u+'"></td><td><input class="lp n" value="'+l.p+'"></td><td class="imp">'+eur(l.q*l.p)+'</td><td><button class="mini sec" title="Quitar" onclick="delLinea('+i+')">✕</button></td>';tb.appendChild(tr)});tb.querySelectorAll('input,textarea').forEach(function(e){e.oninput=calc});calc()}
@@ -341,6 +341,18 @@ prompt('Copia este enlace para el cliente:',url)});
 function verFirma(n){var p=DB.presus[n];if(!p||!p.firmaTok){alert('A este presupuesto no le has mandado enlace de firma todav\u00eda');return}
 FB.db.collection('firmas').doc(p.firmaTok).get().then(function(d){var f=d.data();if(!f||!f.firma){alert('Todav\u00eda sin firmar. Enlace: '+firmaURL(p.firmaTok));return}
 var w=window.open('','_blank');w.document.write('<title>Firma '+n+'</title><body style=\"font-family:system-ui;padding:16px;background:#FAF6EC\"><h2>Presupuesto '+n+' firmado</h2><p>'+(f.nombreFirma||'')+' '+(f.dni||'')+'<br>'+(f.fechaFirma||'')+'</p><img src=\"'+f.firma+'\" style=\"max-width:100%;border:1px solid #ccc;background:#fff\"><p style=\"font-size:12px;color:#555\">'+(f.aviso||'')+'</p></body>')})}
+function vaciarLineas(){leer();if(!cur.lineas.length&&!(ARQ.med&&ARQ.med.length)&&!(ARQ.plano)){alert('No hay partidas que borrar');return}
+if(!confirm('\u00bfBorrar todas las partidas de este presupuesto y lo le\u00eddo de los documentos del arquitecto? Los datos del cliente se quedan.'))return;
+cur.lineas=[];cur.arq=[];ARQ={med:[],plano:null,cab:null};
+var ai=document.getElementById('arqInfo');if(ai)ai.textContent='';var ap=document.getElementById('arqPanel');if(ap){ap.innerHTML='';ap.style.display='none'}
+['pdfArq'].forEach(function(id){var e=document.getElementById(id);if(e)e.value=''});
+var rb=document.getElementById('revBox');if(rb)rb.innerHTML='';pintar();document.getElementById('msg').textContent='Partidas borradas'}
+function borrarEste(){leer();var n=cur.num;
+if(!confirm('\u00bfBorrar entero el presupuesto '+n+(cur.nom?' de '+cur.nom:'')+'? Se quita tambi\u00e9n de la nube y no se puede deshacer.'))return;
+if(DB.presus[n]){delete DB.presus[n];save();borrarNube(n)}
+ARQ={med:[],plano:null,cab:null};var ap=document.getElementById('arqPanel');if(ap){ap.innerHTML='';ap.style.display='none'}
+var ai=document.getElementById('arqInfo');if(ai)ai.textContent='';var rb=document.getElementById('revBox');if(rb)rb.innerHTML='';
+var pa=document.getElementById('pdfArq');if(pa)pa.value='';nuevo();document.getElementById('msg').textContent='Presupuesto '+n+' borrado'}
 function guardar(){leer();if(!cur.nom){alert('Pon el nombre del cliente');return}var rv=revisar(false);cur.rev=rv.E.length;if(!DB.presus[cur.num]&&num(cur.num)>DB.contador)DB.contador=num(cur.num);cur.ts=Date.now();DB.presus[cur.num]=JSON.parse(JSON.stringify(cur));guardarCliente(cur);pintarDatalist();save();subirPresu(cur.num);document.getElementById('msg').textContent='Guardado (nº '+cur.num+')';setTimeout(function(){document.getElementById('msg').textContent=''},2500)}
 function abrir(n){cur=JSON.parse(JSON.stringify(DB.presus[n]));pintar();ST('presupuesto')}
 function duplicar(){leer();var base=cur.num.replace(/-[A-Z]$/,'');var suf='B';while(DB.presus[base+'-'+suf])suf=String.fromCharCode(suf.charCodeAt(0)+1);cur.num=base+'-'+suf;cur.estado='borrador';cur.fecha=new Date().toISOString().slice(0,10);pintar();document.getElementById('msg').textContent='Variante '+cur.num+' (guárdala)'}
