@@ -158,7 +158,7 @@ img,canvas,video{max-width:100%}
 </section>
 
 <script>
-var APP_VERSION='v24';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v25';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -372,8 +372,22 @@ function abrir(n){cur=JSON.parse(JSON.stringify(DB.presus[n]));pintar();ST('pres
 function duplicar(){leer();var base=cur.num.replace(/-[A-Z]$/,'');var suf='B';while(DB.presus[base+'-'+suf])suf=String.fromCharCode(suf.charCodeAt(0)+1);cur.num=base+'-'+suf;cur.estado='borrador';cur.fecha=new Date().toISOString().slice(0,10);pintar();document.getElementById('msg').textContent='Variante '+cur.num+' (guárdala)'}
 function estado(n,v){DB.presus[n].estado=v;DB.presus[n].ts=Date.now();save();subirPresu(n);renderClientes()}
 function borrar(n){if(confirm('¿Borrar el presupuesto '+n+' de '+DB.presus[n].nom+'?')){delete DB.presus[n];save();borrarNube(n);renderClientes()}}
-var EST={borrador:['Borrador',''],enviado:['Enviado','env'],aceptado:['Aceptado','ace'],obra:['En obra','obra'],cobrado:['Cobrado','cob']};
-function renderClientes(){var f=norm(document.getElementById('fcli').value||'');var box=document.getElementById('listaCli');var arr=Object.values(DB.presus).filter(function(p){return !f||norm(p.nom+' '+p.dir).indexOf(f)>-1}).sort(function(a,b){return (b.ts||0)-(a.ts||0)});if(!arr.length){box.innerHTML='<p style="color:var(--muted)">Todavía no hay presupuestos guardados.</p>';return}box.innerHTML=arr.map(function(p){var tot=p.lineas.reduce(function(s,l){return s+l.q*l.p},0)*(1+num(p.iva)/100);return '<div class="cli"><b>'+p.num+'</b><div><div style="font-weight:700">'+p.nom+(p.rev?' <span class="chip" style="background:#b3261e">'+p.rev+' por arreglar</span>':'')+'</div><div style="color:var(--muted);font-size:12px">'+(p.dir||'')+' · '+p.fecha+' · '+eur(tot)+'</div></div><select class="mini" style="width:auto" onchange="estado(\''+p.num+'\',this.value)">'+Object.keys(EST).map(function(k){return '<option value="'+k+'"'+(p.estado===k?' selected':'')+'>'+EST[k][0]+'</option>'}).join('')+'</select><div class="row"><button class="mini" onclick="abrir(\''+p.num+'\')">Abrir</button><button class="mini sec" onclick="borrar(\''+p.num+'\')">Borrar</button></div></div>'}).join('')}
+var EST={borrador:['Borrador',''],enviado:['Enviado','env'],aceptado:['Aceptado','ace'],obra:['En obra','obra'],cobrado:['Cobrado','cob']}
+function estaFirmado(p){return !!(p&&p.firmado&&p.firmado.fecha)};
+function fichaCli(p){var tot=p.lineas.reduce(function(s,l){return s+l.q*l.p},0)*(1+num(p.iva)/100);return '<div class="cli"><b>'+p.num+'</b><div><div style="font-weight:700">'+p.nom+(p.rev?' <span class="chip" style="background:#b3261e">'+p.rev+' por arreglar</span>':'')+'</div><div style="color:var(--muted);font-size:12px">'+(p.dir||'')+' · '+p.fecha+' · '+eur(tot)+(estaFirmado(p)?'<br><span style="color:var(--ok)">Firmado por '+p.firmado.nombre+' el '+p.firmado.fecha+'</span>':(p.firmaTok?'<br><span style="color:var(--muted)">Enlace de firma mandado, sin firmar</span>':''))+'</div></div><select class="mini" style="width:auto" onchange="estado(\''+p.num+'\',this.value)">'+Object.keys(EST).map(function(k){return '<option value="'+k+'"'+(p.estado===k?' selected':'')+'>'+EST[k][0]+'</option>'}).join('')+'</select><div class="row"><button class="mini" onclick="abrir(\''+p.num+'\')">Abrir</button><button class="mini sec" onclick="borrar(\''+p.num+'\')">Borrar</button></div></div>'}
+function renderClientes(){var f=norm(document.getElementById('fcli').value||'');var box=document.getElementById('listaCli');
+var arr=Object.values(DB.presus).filter(function(p){return !f||norm(p.nom+' '+p.dir).indexOf(f)>-1}).sort(function(a,b){return (b.ts||0)-(a.ts||0)});
+if(!arr.length){box.innerHTML='<p style="color:var(--muted)">Todav\u00eda no hay presupuestos guardados.</p>';return}
+var marcha=arr.filter(estaFirmado),capta=arr.filter(function(p){return !estaFirmado(p)});
+var bloque=function(tit,sub,lista,color){if(!lista.length)return '<div class="tarifa-cat" style="background:'+color+'">'+tit+' (0)</div><p style="color:var(--muted);margin:6px 0 14px">'+sub+'</p>';
+return '<div class="tarifa-cat" style="background:'+color+'">'+tit+' ('+lista.length+')</div>'+lista.map(fichaCli).join('')};
+box.innerHTML=bloque('EN MARCHA \u00b7 firmados','Aqu\u00ed caen solos en cuanto el cliente firma el enlace.',marcha,'#1a7a3f')
++bloque('EN CAPTACI\u00d3N \u00b7 pendientes de firma','Presupuestos mandados o en borrador que a\u00fan no ha firmado nadie.',capta,'#253340');
+comprobarFirmas()}
+function comprobarFirmas(){if(!FB.uid||!FB.db)return;var pend=Object.values(DB.presus).filter(function(p){return p.firmaTok&&!estaFirmado(p)});if(!pend.length)return;
+Promise.all(pend.map(function(p){return FB.db.collection('firmas').doc(p.firmaTok).get().then(function(d){var f=d.data();
+if(f&&f.firma){p.firmado={nombre:f.nombreFirma||'',dni:f.dni||'',fecha:f.fechaFirma||''};p.estado='aceptado';DB.presus[p.num]=p;return true}return false}).catch(function(){return false})}))
+.then(function(r){if(r.some(Boolean)){save();renderClientes()}})}
 /* ---------- tarifa ---------- */
 function renderTarifa(){var box=document.getElementById('tarifaBox');var T=tarifa();var cats=CAT_ORDER.slice();T.forEach(function(t){if(cats.indexOf(t.c)<0)cats.push(t.c)});box.innerHTML=cats.map(function(c){return '<div class="tarifa-cat">'+c+'</div>'+T.filter(function(t){return t.c===c}).map(function(t){return '<div class="tar"><div>'+t.d+'</div><div style="text-align:center;color:var(--muted)">'+t.u+'</div><input value="'+t.p+'" onchange="setPrecio(\''+t.id+'\',this.value)"></div>'}).join('')}).join('')}
 function setPrecio(id,v){var ex=(DB.extra||[]).find(function(x){return x.id===id});if(ex)ex.p=num(v);else DB.tarifa[id]=num(v);save()}
@@ -384,6 +398,9 @@ function exportar(){var a=document.createElement('a');a.href='data:application/j
 function importar(inp){var f=inp.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var o=JSON.parse(r.result);if(o.db){DB=o.db;save()}if(o.aj){AJ=o.aj;localStorage.setItem('vr_aj',JSON.stringify(AJ))}alert('Copia restaurada');location.reload()}catch(e){alert('Ese archivo no vale')}};r.readAsText(f)}
 /* ---------- documentos ---------- */
 function who(){return AJ.marca+'<small>'+AJ.nombre+' · '+AJ.nif+'<br>'+AJ.dir+'<br>'+AJ.tel+' · '+AJ.email+'</small>'}
+function pintarEnlaceFirma(){var fl=document.getElementById('p_firmalink');if(!fl)return;
+if(cur.firmaTok){var u=firmaURL(cur.firmaTok);document.getElementById('p_firmaurl').textContent=u;fl.style.display='';window.__FIRMA_URL=u}
+else{fl.style.display='none';window.__FIRMA_URL=null}}
 function pintarDocs(){leer();var T=tarifa();var base=cur.lineas.reduce(function(s,l){return s+l.q*l.p},0),ivap=num(cur.iva),iva=base*ivap/100,tot=base+iva;var ft=AJ.marca+' · '+AJ.tel;
 document.getElementById('d_tag').textContent=AJ.tag;document.getElementById('d_sub').textContent='Reformas de pisos, baños y cocinas en Bilbao y Bizkaia · '+AJ.tel;document.getElementById('d_somos').textContent=AJ.somos;document.getElementById('d_f1').textContent=ft;document.getElementById('d_f2').textContent=AJ.email;
 document.getElementById('p_who').innerHTML=who();document.getElementById('p_meta').innerHTML='Nº '+cur.num+'<br>Fecha '+fechaES(cur.fecha)+'<br>Válido 30 días';document.getElementById('p_cli').innerHTML=cur.nom+'<br>'+(cur.tel||'')+(cur.email?'<br>'+cur.email:'');document.getElementById('p_obra').innerHTML=(cur.dir||'')+(cur.asc==='1'?'<br>Sin ascensor':'');
@@ -403,7 +420,7 @@ document.getElementById('c_body').innerHTML=['<p class="clausula">En Bilbao, a '
 '<p class="clausula"><b>Séptima. Garantía.</b> El contratista garantiza la mano de obra durante '+(c.gar||24)+' meses desde la entrega. No cubre el desgaste normal, el mal uso ni los materiales aportados por el cliente, que responden de su propia garantía de fabricante.',
 (cur.suelo?'<p class="clausula"><b>Octava. Suelo existente.</b> El cliente decide mantener el suelo actual bajo el suelo flotante nuevo. El contratista no responde de desniveles, ruidos, juntas abiertas ni de ningún problema derivado de esa decisión, ahora o en el futuro.':''),
 '<p class="clausula"><b>Protección de datos.</b> Los datos del cliente los trata '+AJ.nombre+' solo para preparar y ejecutar esta obra y su facturación. Puede ejercer sus derechos escribiendo a '+AJ.email+'.'].join('');
-document.getElementById('c_firma1').textContent=AJ.nombre;document.getElementById('c_firma2').textContent=cur.nom;document.getElementById('c_f1').textContent=ft;document.getElementById('c_f2').textContent='Contrato · presupuesto '+cur.num}
+document.getElementById('c_firma1').textContent=AJ.nombre;document.getElementById('c_firma2').textContent=cur.nom;document.getElementById('c_f1').textContent=ft;document.getElementById('c_f2').textContent='Contrato · presupuesto '+cur.num;pintarEnlaceFirma()}
 function fechaES(s){if(!s)return '';var d=new Date(s+'T00:00:00');return d.toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'})}
 var H2C_URL='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',JSPDF_URL='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
 function cargarJS(u,test){return new Promise(function(ok,ko){if(test())return ok();var e=document.createElement('script');e.src=u;e.onload=ok;e.onerror=ko;document.head.appendChild(e)})}
