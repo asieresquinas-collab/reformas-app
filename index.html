@@ -5,7 +5,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes"><link rel="apple-touch-icon" href="icons/icon-192.png"><link rel="icon" href="icons/icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@700;800&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#1c1f22;--slate:#253340;--slate2:#34475a;--brick:#D7481D;--brick2:#FBE9E2;--paper:#f2f1ee;--line:#d9d6d0;--ok:#1a7a3f;--muted:#6b7178}
+:root{--crema:#FAF6EC;--ink:#1c1f22;--slate:#253340;--slate2:#34475a;--brick:#D7481D;--brick2:#FBE9E2;--paper:#f2f1ee;--line:#d9d6d0;--ok:#1a7a3f;--muted:#6b7178}
 *{box-sizing:border-box}html,body{margin:0;background:var(--paper);color:var(--ink);font-family:Barlow,system-ui,sans-serif;font-size:14px}
 h1,h2,h3,.cond{font-family:'Barlow Condensed',Barlow,sans-serif;font-weight:800;letter-spacing:.2px;margin:0}
 button,input,select,textarea{font:inherit;color:inherit}
@@ -32,7 +32,7 @@ table.lines .n{width:88px;text-align:right}table.lines .imp{text-align:right;fon
 .tarifa-cat{font-family:'Barlow Condensed';font-size:20px;font-weight:800;margin:14px 0 4px;color:var(--slate)}
 .tar{display:grid;grid-template-columns:1fr 60px 110px;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}
 /* ---- documentos (dosier / hoja presupuesto / contrato) ---- */
-.sheet{background:#fff;width:210mm;max-width:100%;margin:0 auto 14px;padding:16mm 16mm 14mm;box-shadow:0 2px 10px rgba(0,0,0,.08);position:relative}
+.sheet{background:var(--crema);width:210mm;max-width:100%;margin:0 auto 14px;padding:16mm 16mm 14mm;box-shadow:0 2px 10px rgba(0,0,0,.08);position:relative}
 .dochead{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid var(--slate);padding-bottom:8px;margin-bottom:12px}
 .dochead .who{font-family:'Barlow Condensed';font-size:22px;font-weight:800;line-height:1.05}.dochead .who small{display:block;font-family:Barlow;font-size:11px;font-weight:400;color:var(--muted);line-height:1.4;margin-top:4px}
 .dochead .doc{text-align:right}.dochead .doc h2{font-size:34px;color:var(--brick);line-height:1}.dochead .doc div{font-size:12px;color:var(--muted)}
@@ -52,7 +52,7 @@ table.lines .n{width:88px;text-align:right}table.lines .imp{text-align:right;fon
 .firmas{display:grid;grid-template-columns:1fr 1fr;gap:20mm;margin-top:16mm}.firmas div{border-top:1px solid var(--ink);padding-top:5px;font-size:11px}
 .condp{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.4}
 @media (max-width:700px){.sheet{padding:10mm 8mm}.dos2,.firmas{grid-template-columns:1fr}.ptag{font-size:34px}.cli{grid-template-columns:60px 1fr;} .tar{grid-template-columns:1fr 50px 90px}}
-@media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}body{background:#fff}#sh_dosier{height:297mm!important;max-height:297mm!important;overflow:hidden!important;page-break-after:always!important;padding-bottom:20mm!important}#sh_dosier .portada{height:120mm!important}#sh_dosier .dos2{margin-top:6mm!important}#sh_dosier .dos2 .fotos img{height:46mm!important}#topnav,.noprint,.page:not(#page-print){display:none!important}#page-print{display:block!important;padding:0;max-width:none}.sheet{box-shadow:none;margin:0;width:auto;page-break-after:always;min-height:0;height:auto;padding:14mm 15mm}.sheet:last-child{page-break-after:auto}.portada{margin:-14mm -15mm 0}.pcont{left:15mm;right:15mm}.foot{left:15mm;right:15mm}#sh_presu .foot,#sh_contrato .foot{position:static;margin-top:10mm}@page{size:A4;margin:0}}
+@media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}html,body{background:var(--crema)!important;margin:0!important;padding:0!important}.sheet{background:var(--crema)!important}#sh_dosier{height:297mm!important;max-height:297mm!important;overflow:hidden!important;page-break-after:always!important;padding-bottom:20mm!important}#sh_dosier .portada{height:120mm!important}#sh_dosier .dos2{margin-top:6mm!important}#sh_dosier .dos2 .fotos img{height:46mm!important}#topnav,.noprint,.page:not(#page-print){display:none!important}#page-print{display:block!important;padding:0;max-width:none}.sheet{box-shadow:none;margin:0;width:auto;page-break-after:always;min-height:0;height:auto;padding:14mm 15mm}.sheet:last-child{page-break-after:auto}.portada{margin:-14mm -15mm 0}.pcont{left:15mm;right:15mm}.foot{left:15mm;right:15mm}#sh_presu .foot,#sh_contrato .foot{position:static;margin-top:10mm}@page{size:A4;margin:0}}
 </style></head><body>
 <div id="login" style="display:none;position:fixed;inset:0;background:var(--slate);z-index:50;align-items:center;justify-content:center;padding:20px"><div class="card" style="max-width:360px;width:100%"><h2 style="font-size:26px;margin-bottom:4px" id="loginTitle">Vornicu Reformas</h2><p style="color:var(--muted);margin:0 0 10px">Entra con tu correo y tu clave.</p><label class="f">Correo</label><input id="lg_email" type="email" autocomplete="username"><label class="f" style="margin-top:8px">Clave</label><input id="lg_pass" type="password" autocomplete="current-password"><div class="row" style="margin-top:12px"><button onclick="entrar()">Entrar</button><span id="lg_msg" style="color:var(--brick)"></span></div></div></div>
 <nav id="topnav"><div class="brand" id="brandTxt">VORNICU REFORMAS</div>
@@ -145,7 +145,7 @@ table.lines .n{width:88px;text-align:right}table.lines .imp{text-align:right;fon
 </section>
 
 <script>
-var APP_VERSION='v10';document.getElementById('ver').textContent=APP_VERSION;
+var APP_VERSION='v11';document.getElementById('ver').textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
