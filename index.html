@@ -158,7 +158,7 @@ img,canvas,video{max-width:100%}
 </section>
 
 <script>
-var APP_VERSION='v23';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v24';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -343,7 +343,7 @@ var datos={uid:FB.uid,num:cur.num,cliente:cur.nom,obra:cur.dir||'',marca:AJ.marc
 dot('#e0a800');FB.db.collection('firmas').doc(t).set(datos).then(function(){dot('var(--ok)');cur.firmaTok=t;DB.presus[cur.num]=JSON.parse(JSON.stringify(cur));save();
 var url=firmaURL(t);var txt='Hola '+cur.nom+', te paso el presupuesto n\u00ba '+cur.num+' de '+AJ.marca+'. Te adjunto el PDF con el presupuesto y el contrato, y aqu\u00ed lo puedes firmar desde el m\u00f3vil: '+url+'\n\nOJO: la firma es una aceptaci\u00f3n bajo reserva; la obra no queda contratada hasta que te confirme la fecha por escrito.';
 var nomPdf='Presupuesto '+cur.num+(cur.nom?' - '+cur.nom:'')+'.pdf';
-document.getElementById('sh_dosier').style.display='';document.getElementById('sh_presu').style.display='';document.getElementById('sh_contrato').style.display='';document.getElementById('sh_precios').style.display='none';var fl=document.getElementById('p_firmalink');document.getElementById('p_firmaurl').textContent=url;fl.style.display='';
+document.getElementById('sh_dosier').style.display='';document.getElementById('sh_presu').style.display='';document.getElementById('sh_contrato').style.display='';document.getElementById('sh_precios').style.display='none';var fl=document.getElementById('p_firmalink');document.getElementById('p_firmaurl').textContent=url;fl.style.display='';window.__FIRMA_URL=url;
 return pdfSinMargenes('__blob__').then(function(blob){
 var f=new File([blob],nomPdf,{type:'application/pdf'});
 if(navigator.canShare&&navigator.canShare({files:[f]}))return navigator.share({title:'Presupuesto '+cur.num,text:txt,files:[f]}).catch(function(){});
@@ -351,7 +351,7 @@ var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=no
 if(navigator.share)return navigator.share({title:'Presupuesto '+cur.num,text:txt}).catch(function(){});
 if(navigator.clipboard)return navigator.clipboard.writeText(txt).then(function(){alert('PDF descargado y enlace copiado. En WhatsApp adjunta el PDF y pega el texto.')});
 prompt('Copia este enlace para el cliente:',url)});
-}).then(function(){var fl=document.getElementById('p_firmalink');if(fl)fl.style.display='none';ULT_FIRMA={url:url,txt:txt};var m=document.getElementById('msg');m.innerHTML='PDF mandado. El enlace de firma va impreso dentro del PDF. ';var b=document.createElement('button');b.className='ok';b.type='button';b.style.marginLeft='6px';b.textContent='Mandar tambi\u00e9n el enlace suelto';b.onclick=compartirEnlace;m.appendChild(b)}).catch(function(e){dot('#b3261e');alert('No he podido crear el enlace: '+e.message)})}
+}).then(function(){var fl=document.getElementById('p_firmalink');if(fl)fl.style.display='none';window.__FIRMA_URL=null;ULT_FIRMA={url:url,txt:txt};var m=document.getElementById('msg');m.innerHTML='PDF mandado. El enlace de firma va impreso dentro del PDF. ';var b=document.createElement('button');b.className='ok';b.type='button';b.style.marginLeft='6px';b.textContent='Mandar tambi\u00e9n el enlace suelto';b.onclick=compartirEnlace;m.appendChild(b)}).catch(function(e){dot('#b3261e');alert('No he podido crear el enlace: '+e.message)})}
 function verFirma(n){var p=DB.presus[n];if(!p||!p.firmaTok){alert('A este presupuesto no le has mandado enlace de firma todav\u00eda');return}
 FB.db.collection('firmas').doc(p.firmaTok).get().then(function(d){var f=d.data();if(!f||!f.firma){alert('Todav\u00eda sin firmar. Enlace: '+firmaURL(p.firmaTok));return}
 var w=window.open('','_blank');w.document.write('<title>Firma '+n+'</title><body style=\"font-family:system-ui;padding:16px;background:#FAF6EC\"><h2>Presupuesto '+n+' firmado</h2><p>'+(f.nombreFirma||'')+' '+(f.dni||'')+'<br>'+(f.fechaFirma||'')+'</p><img src=\"'+f.firma+'\" style=\"max-width:100%;border:1px solid #ccc;background:#fff\"><p style=\"font-size:12px;color:#555\">'+(f.aviso||'')+'</p></body>')})}
@@ -416,7 +416,11 @@ return cargarJS(H2C_URL,function(){return !!window.html2canvas}).then(function()
 var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4',orientation:'p'});var i=0;
 function paso(){if(i>=hojas.length){restaurar();if(nombre==='__blob__')return Promise.resolve(doc.output('blob'));doc.save(nombre||'documento.pdf');return Promise.resolve()}
 return html2canvas(hojas[i],{scale:2,backgroundColor:'#FAF6EC',useCORS:true,windowWidth:794,logging:false}).then(function(cv){
-if(i)doc.addPage();var img=cv.toDataURL('image/jpeg',0.92);doc.addImage(img,'JPEG',0,0,210,297,undefined,'FAST');i++;return paso()})}
+if(i)doc.addPage();var img=cv.toDataURL('image/jpeg',0.92);doc.addImage(img,'JPEG',0,0,210,297,undefined,'FAST');
+try{var hoja=hojas[i],el=hoja.querySelector('#p_firmalink');
+if(el&&el.offsetHeight>0&&window.__FIRMA_URL){var rh=hoja.getBoundingClientRect(),re=el.getBoundingClientRect(),k=297/rh.height,kx=210/rh.width;
+doc.link((re.left-rh.left)*kx,(re.top-rh.top)*k,re.width*kx,re.height*k,{url:window.__FIRMA_URL})}}catch(e){}
+i++;return paso()})}
 return paso().catch(function(e){restaurar();throw e})}).catch(function(e){restaurar();throw e})}
 function imprimir(m){var pr=m==='precios';if(!pr){var r=revisar(true);if(r.E.length){document.getElementById('revBox').scrollIntoView({behavior:'smooth',block:'center'});if(!confirm('Hay '+r.E.length+' cosas que arreglar (mira el aviso en rojo). Si mandas el PDF así, faltará dinero en el presupuesto.\n¿Sacar el PDF igualmente?'))return}}if(pr)pintarPrecios();else pintarDocs();document.getElementById('sh_precios').style.display=pr?'':'none';document.getElementById('sh_presu').style.display=pr?'none':'';document.getElementById('sh_dosier').style.display=m==='todo'?'':'none';document.getElementById('sh_contrato').style.display=m==='todo'?'':'none';setTimeout(function(){var nom='Presupuesto '+((cur&&cur.num)||'')+(cur&&cur.nom?' - '+cur.nom:'')+'.pdf';pdfSinMargenes(nom).catch(function(){window.print()})},200)}
 function verContrato(){imprimir('todo')}
