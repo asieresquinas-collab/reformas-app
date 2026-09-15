@@ -119,7 +119,7 @@ img,canvas,video{max-width:100%}
 <!-- ================= AJUSTES ================= -->
 <section class="page" id="page-ajustes"><div class="card"><h2 style="font-size:22px;margin-bottom:8px">Tus datos (salen en presupuesto y contrato)</h2><div class="grid" id="ajBox">
 <div><label class="f">Nombre comercial</label><input data-k="marca"></div><div><label class="f">Nombre y apellidos</label><input data-k="nombre"></div><div><label class="f">NIF / NIE</label><input data-k="nif"></div><div><label class="f">Teléfono</label><input data-k="tel"></div><div><label class="f">Correo</label><input data-k="email"></div><div><label class="f">Dirección</label><input data-k="dir"></div><div><label class="f">IBAN (para el contrato)</label><input data-k="iban"></div><div><label class="f">Frase de portada</label><input data-k="tag"></div><div style="grid-column:1/-1"><label class="f">Texto «Quiénes somos» del dosier</label><textarea data-k="somos" rows="4"></textarea></div></div>
-<div class="row" style="margin-top:10px"><button class="ok" onclick="guardarAj()">Guardar datos</button><button class="sec" onclick="exportar()">Copia de seguridad</button><button class="sec" onclick="document.getElementById('imp').click()">Restaurar copia</button><button class="sec" onclick="salir()">Cerrar sesión</button><input type="file" id="imp" style="display:none" onchange="importar(this)"></div></div></section>
+<div style="margin-top:12px"><label class="f">Tu firma (sale en el contrato, en la casilla del contratista)</label><canvas id="fmCv" style="width:100%;max-width:340px;height:120px;background:#fff;border:1px dashed var(--line);border-radius:6px;touch-action:none;display:block"></canvas><div class="row" style="margin-top:6px"><button class="sec" type="button" onclick="fmLimpiar()">Borrar</button><button class="ok" type="button" onclick="fmGuardar()">Guardar mi firma</button><span id="fmMsg" style="color:var(--ok);font-weight:600"></span></div></div><div class="row" style="margin-top:10px"><button class="ok" onclick="guardarAj()">Guardar datos</button><button class="sec" onclick="exportar()">Copia de seguridad</button><button class="sec" onclick="document.getElementById('imp').click()">Restaurar copia</button><button class="sec" onclick="salir()">Cerrar sesión</button><input type="file" id="imp" style="display:none" onchange="importar(this)"></div></div></section>
 
 <!-- ================= AYUDA ================= -->
 <section class="page" id="page-ayuda"><div class="card"><h2 style="font-size:22px;margin-bottom:8px">Cómo se usa</h2>
@@ -128,7 +128,7 @@ img,canvas,video{max-width:100%}
 <p><b>2b.</b> Si es obra de arquitecto, sube su PDF de mediciones o el plano de superficies en «Documentos del arquitecto»: la app saca el nombre del cliente y la dirección de la obra (si están en el documento) y además lee cantidades y metros, los casa con tu tarifa y te lo enseña antes de añadirlo.</p>
 <p><b>2bis.</b> Cuando el PDF del arquitecto trae sus precios, la app compara los suyos con los tuyos en las partidas que sí tienes puestas y saca la proporción a la que trabajas. Con el botón «Sacar los precios que faltan con mi margen» rellena las que están a cero con esa proporción (la de su propio capítulo si hay datos). Salen marcadas en rojo como <b>estimadas</b>: son un punto de partida para que las repases, no un precio cerrado.</p><p><b>2ter.</b> Todo precio que corrijas a mano en el panel del arquitecto se queda guardado para esa partida: la próxima vez que aparezca en otro PDF sale ya con tu precio (marcado en verde, «tu precio de otras veces»). Y si la partida es de tu tarifa, también se actualiza ahí. Siempre lo puedes volver a cambiar y manda el último que pongas.</p><p><b>2c.</b> «Revisar el presupuesto» comprueba que no se escapa nada: partidas a cero o sin cantidad, repetidas, partidas del arquitecto que faltan o con otra cantidad, montacargas si no hay ascensor, contenedor si hay derribos, y avisos de coherencia (suelo nuevo sin nivelar, baño sin sanitarios…). Al sacar el PDF se revisa solo.</p>
 <p><b>3.</b> Guardar. Luego «PDF completo»: sale la portada con tus obras, el presupuesto y el contrato en un solo documento para mandar por WhatsApp o correo.</p>
-<p><b>3b.</b> «Mandar a firmar»: crea un enlace para el cliente. Lo abre en el móvil, ve el presupuesto y el contrato, firma con el dedo y te llega la firma. En el enlace se avisa bien claro de que la aceptación es <b>bajo reserva</b>: la obra no queda contratada hasta que tú confirmes la fecha por escrito, así que la firma sola no ata a nadie.</p><p><b>4b.</b> En Clientes, al poner una obra «En obra» te pregunta el día que empieza y el día que calculas acabarla, y a partir de ahí lleva la cuenta: días que lleva, días que quedan y aviso en rojo si se pasa. Al ponerla «Acabada» o «Pagado y cerrado» guarda el día real y te dice si te pasaste o no de lo calculado. Esto es solo para ti: no sale en el PDF ni lo ve el cliente.</p><p><b>4.</b> En Clientes cambias el estado (enviado, aceptado, en obra, cobrado) y duplicas un presupuesto si el cliente pide una variante.</p>
+<p><b>3b.</b> «Mandar a firmar»: crea un enlace para el cliente. Lo abre en el móvil, ve el presupuesto y el contrato, firma con el dedo y te llega la firma. En el enlace se avisa bien claro de que la aceptación es <b>bajo reserva</b>: la obra no queda contratada hasta que tú confirmes la fecha por escrito, así que la firma sola no ata a nadie.</p><p><b>4b.</b> En Clientes, al poner una obra «En obra» te pregunta el día que empieza y el día que calculas acabarla, y a partir de ahí lleva la cuenta: días que lleva, días que quedan y aviso en rojo si se pasa. Al ponerla «Acabada» o «Pagado y cerrado» guarda el día real y te dice si te pasaste o no de lo calculado. Esto es solo para ti: no sale en el PDF ni lo ve el cliente.</p><p><b>3c.</b> En Ajustes firmas una vez con el dedo y tu firma sale ya impresa en la casilla del contratista de todos los contratos. La del cliente sigue vacía: esa la pone él al firmar el enlace o a mano en papel.</p><p><b>4.</b> En Clientes cambias el estado (enviado, aceptado, en obra, cobrado) y duplicas un presupuesto si el cliente pide una variante.</p>
 <p style="color:var(--muted)">Los presupuestos se guardan en la nube (el punto verde de arriba dice que está todo subido) y también en este aparato, así que funciona sin cobertura y se sube solo al volver. Puedes usarla desde el móvil y el ordenador a la vez.</p><p style="color:var(--muted)">Versión <span id="ver"></span></p></div></section>
 
 <!-- ================= DOCUMENTOS PARA IMPRIMIR ================= -->
@@ -149,7 +149,7 @@ img,canvas,video{max-width:100%}
 
 <div class="sheet" id="sh_contrato"><div class="dochead"><div class="who" id="c_who"></div><div class="doc"><h2>Contrato de obra</h2><div id="c_meta"></div></div></div>
 <div id="c_body"></div>
-<div class="firmas"><div>El contratista<br><br><br><span id="c_firma1"></span></div><div>El cliente<br><br><br><span id="c_firma2"></span></div></div>
+<div class="firmas"><div>El contratista<br><img id="c_firmaimg" style="display:none;max-height:22mm;margin:2mm 0"><br><span id="c_firma1"></span></div><div>El cliente<br><br><br><span id="c_firma2"></span></div></div>
 <div class="foot" style="position:static;margin-top:12mm"><span id="c_f1"></span><span id="c_f2"></span></div></div>
 <div class="sheet" id="sh_precios" style="display:none"><div class="dochead"><div class="who" id="pr_who"></div><div class="doc"><h2>Precios</h2><div id="pr_meta"></div></div></div>
 <table class="ptab"><thead><tr><th>Cód.</th><th>Partida</th><th class="r">Ud</th><th class="r">Precio</th></tr></thead><tbody id="pr_rows"></tbody></table>
@@ -158,7 +158,7 @@ img,canvas,video{max-width:100%}
 </section>
 
 <script>
-var APP_VERSION='v30';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v31';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -231,7 +231,7 @@ function num(v){return parseFloat(String(v).replace(',','.'))||0}
 function norm(s){return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
 /* ---------- navegación ---------- */
 document.querySelectorAll('.ntab').forEach(function(b){b.onclick=function(){ST(b.dataset.t)}});
-function ST(t){document.querySelectorAll('.ntab').forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});document.querySelectorAll('.page').forEach(function(p){p.classList.toggle('on',p.id==='page-'+t)});if(t==='clientes')renderClientes();if(t==='tarifa')renderTarifa();if(t==='ajustes')renderAj()}
+function ST(t){if(t==='ajustes')setTimeout(fmInit,60);document.querySelectorAll('.ntab').forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});document.querySelectorAll('.page').forEach(function(p){p.classList.toggle('on',p.id==='page-'+t)});if(t==='clientes')renderClientes();if(t==='tarifa')renderTarifa();if(t==='ajustes')renderAj()}
 /* ---------- presupuesto ---------- */
 function nuevo(){ARQ={med:[],plano:null,cab:null};var _ap=document.getElementById('arqPanel');if(_ap){_ap.innerHTML='';_ap.style.display='none'}var _ai=document.getElementById('arqInfo');if(_ai)_ai.textContent='';cur={num:String(DB.contador+1),fecha:new Date().toISOString().slice(0,10),nom:'',tel:'',email:'',dir:'',asc:'0',iva:'21',obs:'',suelo:false,lineas:[],estado:'borrador',c:{p1:40,p2:30,p3:30,plazo:'',inicio:'',gar:24}};pintar();document.getElementById('msg').textContent=''}
 function pintar(){['num','fecha','nom','tel','email','dir','asc','iva','obs'].forEach(function(k){document.getElementById('f_'+k).value=cur[k]||''});document.getElementById('f_suelo').checked=!!cur.suelo;['p1','p2','p3','plazo','inicio','gar'].forEach(function(k){document.getElementById('c_'+k).value=cur.c[k]});renderLineas()}
@@ -366,11 +366,15 @@ function waURL(txt,tel){var n=telWa(tel);return 'https://wa.me/'+(n?n:'')+'?text
 function copiarEnlace(){if(!ULT_FIRMA)return;var t=ULT_FIRMA.url;if(navigator.clipboard)navigator.clipboard.writeText(t).then(function(){alert('Enlace copiado')},function(){prompt('Copia el enlace:',t)});else prompt('Copia el enlace:',t)}
 function compartirEnlace(){if(!ULT_FIRMA)return;if(navigator.share)navigator.share({title:'Firmar presupuesto',text:ULT_FIRMA.txt}).catch(function(){});else if(navigator.clipboard)navigator.clipboard.writeText(ULT_FIRMA.txt).then(function(){alert('Enlace copiado, p\u00e9galo en WhatsApp')});else prompt('Copia el enlace:',ULT_FIRMA.url)}
 function mandarFirma(){leer();if(!cur.nom){alert('Pon el nombre del cliente');return}if(!FB.uid){alert('Entra en tu cuenta para poder mandar el enlace');return}
+var vent=window.open('about:blank','_blank');
 pintarDocs();var presu=document.getElementById('sh_presu').innerHTML,contra=document.getElementById('sh_contrato').innerHTML;
 var t=(cur.num||'0')+'-'+Math.random().toString(36).slice(2,10);
 var datos={uid:FB.uid,num:cur.num,cliente:cur.nom,obra:cur.dir||'',marca:AJ.marca,tel:AJ.tel,email:AJ.email,html:presu+contra,aviso:AVISO_RESERVA,ts:Date.now(),firma:null};
 dot('#e0a800');FB.db.collection('firmas').doc(t).set(datos).then(function(){dot('var(--ok)');cur.firmaTok=t;DB.presus[cur.num]=JSON.parse(JSON.stringify(cur));save();
 var url=firmaURL(t);var txt='Hola '+cur.nom+', te paso el presupuesto n\u00ba '+cur.num+' de '+AJ.marca+'. Te adjunto el PDF con el presupuesto y el contrato, y aqu\u00ed lo puedes firmar desde el m\u00f3vil: '+url+'\n\nOJO: la firma es una aceptaci\u00f3n bajo reserva; la obra no queda contratada hasta que te confirme la fecha por escrito.';
+try{if(vent&&!vent.closed)vent.location.href=waURL(txt,cur.tel);}catch(e){}
+ULT_FIRMA={url:url,txt:txt,tel:cur.tel};
+var m0=document.getElementById('msg');m0.innerHTML='Enlace de firma creado y abierto en WhatsApp. Preparando el PDF\u2026';
 var nomPdf='Presupuesto '+cur.num+(cur.nom?' - '+cur.nom:'')+'.pdf';
 document.getElementById('sh_dosier').style.display='';document.getElementById('sh_presu').style.display='';document.getElementById('sh_contrato').style.display='';document.getElementById('sh_precios').style.display='none';var fl=document.getElementById('p_firmalink');document.getElementById('p_firmaurl').textContent=url;fl.style.display='';window.__FIRMA_URL=url;
 return pdfSinMargenes('__blob__').then(function(blob){
@@ -380,10 +384,10 @@ var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=no
 if(navigator.share)return navigator.share({title:'Presupuesto '+cur.num,text:txt}).catch(function(){});
 if(navigator.clipboard)return navigator.clipboard.writeText(txt).then(function(){alert('PDF descargado y enlace copiado. En WhatsApp adjunta el PDF y pega el texto.')});
 prompt('Copia este enlace para el cliente:',url)});
-}).then(function(){var fl=document.getElementById('p_firmalink');if(fl)fl.style.display='none';window.__FIRMA_URL=null;ULT_FIRMA={url:url,txt:txt,tel:cur.tel};var m=document.getElementById('msg');
+}).then(function(){var fl=document.getElementById('p_firmalink');if(fl)fl.style.display='none';window.__FIRMA_URL=null;var m=document.getElementById('msg');
 m.innerHTML='PDF listo. El enlace de firma va dentro del PDF y adem\u00e1s lo puedes mandar aparte: '+
 '<a class="ok" style="display:inline-block;padding:8px 12px;border-radius:8px;text-decoration:none;margin:4px 6px 0 0" target="_blank" rel="noopener" href="'+waURL(txt,cur.tel)+'">Mandar el enlace por WhatsApp</a>'+
-'<button class="sec" type="button" onclick="copiarEnlace()">Copiar el enlace</button>'}).catch(function(e){dot('#b3261e');alert('No he podido crear el enlace: '+e.message)})}
+'<button class="sec" type="button" onclick="copiarEnlace()">Copiar el enlace</button>'}).catch(function(e){try{if(vent&&!vent.closed)vent.close()}catch(_){}dot('#b3261e');alert('No he podido crear el enlace: '+e.message)})}
 function verFirma(n){var p=DB.presus[n];if(!p||!p.firmaTok){alert('A este presupuesto no le has mandado enlace de firma todav\u00eda');return}
 FB.db.collection('firmas').doc(p.firmaTok).get().then(function(d){var f=d.data();if(!f||!f.firma){alert('Todav\u00eda sin firmar. Enlace: '+firmaURL(p.firmaTok));return}
 var w=window.open('','_blank');w.document.write('<title>Firma '+n+'</title><body style=\"font-family:system-ui;padding:16px;background:#FAF6EC\"><h2>Presupuesto '+n+' firmado</h2><p>'+(f.nombreFirma||'')+' '+(f.dni||'')+'<br>'+(f.fechaFirma||'')+'</p><img src=\"'+f.firma+'\" style=\"max-width:100%;border:1px solid #ccc;background:#fff\"><p style=\"font-size:12px;color:#555\">'+(f.aviso||'')+'</p></body>')})}
@@ -443,6 +447,18 @@ function renderTarifa(){var box=document.getElementById('tarifaBox');var T=tarif
 function setPrecio(id,v){var ex=(DB.extra||[]).find(function(x){return x.id===id});if(ex)ex.p=num(v);else DB.tarifa[id]=num(v);save()}
 /* ---------- ajustes ---------- */
 function renderAj(){document.querySelectorAll('#ajBox [data-k]').forEach(function(e){e.value=AJ[e.dataset.k]||''})}
+var FM={cv:null,ctx:null,hay:false};
+function fmInit(){var cv=document.getElementById('fmCv');if(!cv||FM.cv===cv)return;FM.cv=cv;var r=cv.getBoundingClientRect(),d=window.devicePixelRatio||1;
+cv.width=r.width*d;cv.height=r.height*d;var c=cv.getContext('2d');c.scale(d,d);c.lineWidth=2.2;c.lineCap='round';c.lineJoin='round';c.strokeStyle='#1c1f22';FM.ctx=c;
+if(AJ.firma){var im=new Image();im.onload=function(){c.drawImage(im,0,0,r.width,r.height)};im.src=AJ.firma;FM.hay=true}
+var pos=function(e){var b=cv.getBoundingClientRect(),p=e.touches?e.touches[0]:e;return{x:p.clientX-b.left,y:p.clientY-b.top}};var pin=false;
+var ini=function(e){e.preventDefault();pin=true;FM.hay=true;var p=pos(e);c.beginPath();c.moveTo(p.x,p.y)};
+var mov=function(e){if(!pin)return;e.preventDefault();var p=pos(e);c.lineTo(p.x,p.y);c.stroke()};var fin=function(){pin=false};
+cv.addEventListener('mousedown',ini);cv.addEventListener('mousemove',mov);window.addEventListener('mouseup',fin);
+cv.addEventListener('touchstart',ini,{passive:false});cv.addEventListener('touchmove',mov,{passive:false});cv.addEventListener('touchend',fin)}
+function fmLimpiar(){fmInit();FM.ctx.clearRect(0,0,FM.cv.width,FM.cv.height);FM.hay=false;AJ.firma='';lsSet('vr_aj',JSON.stringify(AJ));subirConfig();document.getElementById('fmMsg').textContent='Firma borrada'}
+function fmGuardar(){fmInit();if(!FM.hay){alert('Firma primero con el dedo en el recuadro');return}
+AJ.firma=FM.cv.toDataURL('image/png');lsSet('vr_aj',JSON.stringify(AJ));subirConfig();document.getElementById('fmMsg').textContent='Firma guardada: saldr\u00e1 en todos los contratos'}
 function guardarAj(){document.querySelectorAll('#ajBox [data-k]').forEach(function(e){AJ[e.dataset.k]=e.value});lsSet('vr_aj',JSON.stringify(AJ));document.getElementById('brandTxt').textContent=AJ.marca.toUpperCase();subirConfig();alert('Datos guardados')}
 function exportar(){var a=document.createElement('a');a.href='data:application/json,'+encodeURIComponent(JSON.stringify({db:DB,aj:AJ}));a.download='copia-presupuestos-'+new Date().toISOString().slice(0,10)+'.json';a.click()}
 function importar(inp){var f=inp.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var o=JSON.parse(r.result);if(o.db){DB=o.db;save()}if(o.aj){AJ=o.aj;lsSet('vr_aj',JSON.stringify(AJ))}alert('Copia restaurada');location.reload()}catch(e){alert('Ese archivo no vale')}};r.readAsText(f)}
@@ -470,7 +486,7 @@ document.getElementById('c_body').innerHTML=['<p class="clausula">En Bilbao, a '
 '<p class="clausula"><b>Séptima. Garantía.</b> El contratista garantiza la mano de obra durante '+(c.gar||24)+' meses desde la entrega. No cubre el desgaste normal, el mal uso ni los materiales aportados por el cliente, que responden de su propia garantía de fabricante.',
 (cur.suelo?'<p class="clausula"><b>Octava. Suelo existente.</b> El cliente decide mantener el suelo actual bajo el suelo flotante nuevo. El contratista no responde de desniveles, ruidos, juntas abiertas ni de ningún problema derivado de esa decisión, ahora o en el futuro.':''),
 '<p class="clausula"><b>Protección de datos.</b> Los datos del cliente los trata '+AJ.nombre+' solo para preparar y ejecutar esta obra y su facturación. Puede ejercer sus derechos escribiendo a '+AJ.email+'.'].join('');
-document.getElementById('c_firma1').textContent=AJ.nombre;document.getElementById('c_firma2').textContent=cur.nom;document.getElementById('c_f1').textContent=ft;document.getElementById('c_f2').textContent='Contrato · presupuesto '+cur.num;pintarEnlaceFirma()}
+document.getElementById('c_firma1').textContent=AJ.nombre;var fi=document.getElementById('c_firmaimg');if(AJ.firma){fi.src=AJ.firma;fi.style.display=''}else{fi.style.display='none'}document.getElementById('c_firma2').textContent=cur.nom;document.getElementById('c_f1').textContent=ft;document.getElementById('c_f2').textContent='Contrato · presupuesto '+cur.num;pintarEnlaceFirma()}
 function fechaES(s){if(!s)return '';var d=new Date(s+'T00:00:00');return d.toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'})}
 var H2C_URL='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',JSPDF_URL='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
 function cargarJS(u,test){return new Promise(function(ok,ko){if(test())return ok();var e=document.createElement('script');e.src=u;e.onload=ok;e.onerror=ko;document.head.appendChild(e)})}
