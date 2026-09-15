@@ -145,7 +145,7 @@ table.lines .n{width:88px;text-align:right}table.lines .imp{text-align:right;fon
 </section>
 
 <script>
-var APP_VERSION='v12';document.getElementById('ver').textContent=APP_VERSION;
+var APP_VERSION='v13';document.getElementById('ver').textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -347,7 +347,17 @@ document.getElementById('c_body').innerHTML=['<p class="clausula">En Bilbao, a '
 '<p class="clausula"><b>Protección de datos.</b> Los datos del cliente los trata '+AJ.nombre+' solo para preparar y ejecutar esta obra y su facturación. Puede ejercer sus derechos escribiendo a '+AJ.email+'.'].join('');
 document.getElementById('c_firma1').textContent=AJ.nombre;document.getElementById('c_firma2').textContent=cur.nom;document.getElementById('c_f1').textContent=ft;document.getElementById('c_f2').textContent='Contrato · presupuesto '+cur.num}
 function fechaES(s){if(!s)return '';var d=new Date(s+'T00:00:00');return d.toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'})}
-function imprimir(m){var pr=m==='precios';if(!pr){var r=revisar(true);if(r.E.length){document.getElementById('revBox').scrollIntoView({behavior:'smooth',block:'center'});if(!confirm('Hay '+r.E.length+' cosas que arreglar (mira el aviso en rojo). Si mandas el PDF así, faltará dinero en el presupuesto.\n¿Sacar el PDF igualmente?'))return}}if(pr)pintarPrecios();else pintarDocs();document.getElementById('sh_precios').style.display=pr?'':'none';document.getElementById('sh_presu').style.display=pr?'none':'';document.getElementById('sh_dosier').style.display=m==='todo'?'':'none';document.getElementById('sh_contrato').style.display=m==='todo'?'':'none';setTimeout(function(){window.print()},150)}
+var H2C_URL='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',JSPDF_URL='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+function cargarJS(u,test){return new Promise(function(ok,ko){if(test())return ok();var e=document.createElement('script');e.src=u;e.onload=ok;e.onerror=ko;document.head.appendChild(e)})}
+function pdfSinMargenes(nombre){var hojas=[].slice.call(document.querySelectorAll('#page-print .sheet')).filter(function(h){return h.style.display!=='none'});
+if(!hojas.length)return Promise.reject(new Error('nada que imprimir'));
+return cargarJS(H2C_URL,function(){return !!window.html2canvas}).then(function(){return cargarJS(JSPDF_URL,function(){return !!(window.jspdf&&window.jspdf.jsPDF)})}).then(function(){
+var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4',orientation:'p'});var i=0;
+function paso(){if(i>=hojas.length){doc.save(nombre||'documento.pdf');return Promise.resolve()}
+return html2canvas(hojas[i],{scale:2,backgroundColor:'#FAF6EC',useCORS:true,windowWidth:794}).then(function(cv){
+if(i)doc.addPage();var img=cv.toDataURL('image/jpeg',0.92);doc.addImage(img,'JPEG',0,0,210,297,undefined,'FAST');i++;return paso()})}
+return paso()})}
+function imprimir(m){var pr=m==='precios';if(!pr){var r=revisar(true);if(r.E.length){document.getElementById('revBox').scrollIntoView({behavior:'smooth',block:'center'});if(!confirm('Hay '+r.E.length+' cosas que arreglar (mira el aviso en rojo). Si mandas el PDF así, faltará dinero en el presupuesto.\n¿Sacar el PDF igualmente?'))return}}if(pr)pintarPrecios();else pintarDocs();document.getElementById('sh_precios').style.display=pr?'':'none';document.getElementById('sh_presu').style.display=pr?'none':'';document.getElementById('sh_dosier').style.display=m==='todo'?'':'none';document.getElementById('sh_contrato').style.display=m==='todo'?'':'none';setTimeout(function(){var nom='Presupuesto '+((cur&&cur.num)||'')+(cur&&cur.nom?' - '+cur.nom:'')+'.pdf';pdfSinMargenes(nom).catch(function(){window.print()})},200)}
 function verContrato(){imprimir('todo')}
 /* ---------- init ---------- */
 document.getElementById('brandTxt').textContent=AJ.marca.toUpperCase();nuevo();iniciarNube();
