@@ -146,7 +146,7 @@ table.lines .n{width:88px;text-align:right}table.lines .imp{text-align:right;fon
 </section>
 
 <script>
-var APP_VERSION='v17';document.getElementById('ver').textContent=APP_VERSION;
+var APP_VERSION='v18';document.getElementById('ver').textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -327,12 +327,17 @@ pintarDocs();var presu=document.getElementById('sh_presu').innerHTML,contra=docu
 var t=(cur.num||'0')+'-'+Math.random().toString(36).slice(2,10);
 var datos={uid:FB.uid,num:cur.num,cliente:cur.nom,obra:cur.dir||'',marca:AJ.marca,tel:AJ.tel,email:AJ.email,html:presu+contra,aviso:AVISO_RESERVA,ts:Date.now(),firma:null};
 dot('#e0a800');FB.db.collection('firmas').doc(t).set(datos).then(function(){dot('var(--ok)');cur.firmaTok=t;DB.presus[cur.num]=JSON.parse(JSON.stringify(cur));save();
-var url=firmaURL(t);var txt='Hola '+cur.nom+', te paso el presupuesto n\u00ba '+cur.num+' de '+AJ.marca+'. Puedes verlo y firmarlo desde el m\u00f3vil aqu\u00ed: '+url+'\n\nOJO: la firma es una aceptaci\u00f3n bajo reserva; la obra no queda contratada hasta que te confirme la fecha por escrito.';
-if(navigator.share)navigator.share({title:'Presupuesto '+cur.num,text:txt}).catch(function(){});
-else if(navigator.clipboard)navigator.clipboard.writeText(txt).then(function(){alert('Enlace copiado. P\u00e9galo en WhatsApp o en un correo.')});
-else prompt('Copia este enlace para el cliente:',url);
-document.getElementById('msg').textContent='Enlace de firma creado. Cuando el cliente firme, lo ver\u00e1s en Clientes.';
-}).catch(function(e){dot('#b3261e');alert('No he podido crear el enlace: '+e.message)})}
+var url=firmaURL(t);var txt='Hola '+cur.nom+', te paso el presupuesto n\u00ba '+cur.num+' de '+AJ.marca+'. Te adjunto el PDF con el presupuesto y el contrato, y aqu\u00ed lo puedes firmar desde el m\u00f3vil: '+url+'\n\nOJO: la firma es una aceptaci\u00f3n bajo reserva; la obra no queda contratada hasta que te confirme la fecha por escrito.';
+var nomPdf='Presupuesto '+cur.num+(cur.nom?' - '+cur.nom:'')+'.pdf';
+document.getElementById('sh_dosier').style.display='';document.getElementById('sh_presu').style.display='';document.getElementById('sh_contrato').style.display='';document.getElementById('sh_precios').style.display='none';
+return pdfSinMargenes('__blob__').then(function(blob){
+var f=new File([blob],nomPdf,{type:'application/pdf'});
+if(navigator.canShare&&navigator.canShare({files:[f]}))return navigator.share({title:'Presupuesto '+cur.num,text:txt,files:[f]}).catch(function(){});
+var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=nomPdf;a.click();
+if(navigator.share)return navigator.share({title:'Presupuesto '+cur.num,text:txt}).catch(function(){});
+if(navigator.clipboard)return navigator.clipboard.writeText(txt).then(function(){alert('PDF descargado y enlace copiado. En WhatsApp adjunta el PDF y pega el texto.')});
+prompt('Copia este enlace para el cliente:',url)});
+}).then(function(){document.getElementById('msg').textContent='Mandado: PDF y enlace de firma. Cuando el cliente firme, lo ver\u00e1s con «Ver firma».'}).catch(function(e){dot('#b3261e');alert('No he podido crear el enlace: '+e.message)})}
 function verFirma(n){var p=DB.presus[n];if(!p||!p.firmaTok){alert('A este presupuesto no le has mandado enlace de firma todav\u00eda');return}
 FB.db.collection('firmas').doc(p.firmaTok).get().then(function(d){var f=d.data();if(!f||!f.firma){alert('Todav\u00eda sin firmar. Enlace: '+firmaURL(p.firmaTok));return}
 var w=window.open('','_blank');w.document.write('<title>Firma '+n+'</title><body style=\"font-family:system-ui;padding:16px;background:#FAF6EC\"><h2>Presupuesto '+n+' firmado</h2><p>'+(f.nombreFirma||'')+' '+(f.dni||'')+'<br>'+(f.fechaFirma||'')+'</p><img src=\"'+f.firma+'\" style=\"max-width:100%;border:1px solid #ccc;background:#fff\"><p style=\"font-size:12px;color:#555\">'+(f.aviso||'')+'</p></body>')})}
@@ -380,7 +385,7 @@ function pdfSinMargenes(nombre){var hojas=[].slice.call(document.querySelectorAl
 if(!hojas.length)return Promise.reject(new Error('nada que imprimir'));
 return cargarJS(H2C_URL,function(){return !!window.html2canvas}).then(function(){return cargarJS(JSPDF_URL,function(){return !!(window.jspdf&&window.jspdf.jsPDF)})}).then(function(){
 var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4',orientation:'p'});var i=0;
-function paso(){if(i>=hojas.length){doc.save(nombre||'documento.pdf');return Promise.resolve()}
+function paso(){if(i>=hojas.length){if(nombre==='__blob__')return Promise.resolve(doc.output('blob'));doc.save(nombre||'documento.pdf');return Promise.resolve()}
 return html2canvas(hojas[i],{scale:2,backgroundColor:'#FAF6EC',useCORS:true,windowWidth:794}).then(function(cv){
 if(i)doc.addPage();var img=cv.toDataURL('image/jpeg',0.92);doc.addImage(img,'JPEG',0,0,210,297,undefined,'FAST');i++;return paso()})}
 return paso()})}

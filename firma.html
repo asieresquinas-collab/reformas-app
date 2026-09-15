@@ -29,7 +29,7 @@ button{padding:12px 16px;border-radius:8px;border:0;font-size:15px;font-weight:7
 <div class="wrap">
   <div id="cargando" class="cargando">Cargando el presupuesto…</div>
   <div id="cont" style="display:none">
-    <div class="doc" id="doc"></div>
+    <div class="row" style="margin-bottom:10px"><button class="sec" type="button" onclick="descargarPdf()">Descargar el PDF</button></div><div class="doc" id="doc"></div>
     <div class="aviso"><b>Importante — aceptación bajo reserva</b><div id="aviso" style="margin-top:6px"></div></div>
     <label>Nombre y apellidos de quien firma</label><input id="nom">
     <label>DNI / NIE</label><input id="dni">
@@ -65,6 +65,8 @@ else db.collection('firmas').doc(TOK).get().then(function(s){
   prepararLienzo();
 }).catch(function(e){document.getElementById('cargando').textContent='No he podido abrir el presupuesto ('+e.message+')';});
 
+function descargarPdf(){var w=window.open('','_blank');if(!w){alert('Permite las ventanas emergentes para ver el PDF');return}
+w.document.write('<html><head><meta charset="utf-8"><title>Presupuesto '+(DATOS.num||'')+'</title><style>body{font-family:system-ui;background:#FAF6EC;margin:0;padding:16px}table{width:100%;border-collapse:collapse}th,td{padding:4px 5px;border-bottom:1px solid #d9d6d0;font-size:12px;text-align:left}.r,.n{text-align:right}@media print{body{padding:0}}</style></head><body>'+(DATOS.html||'')+'<p style="font-size:12px;color:#555">'+(DATOS.aviso||'')+'</p></body></html>');w.document.close();setTimeout(function(){w.print()},400)}
 var cv,ctx,pintando=false,hayFirma=false;
 function prepararLienzo(){cv=document.getElementById('cv');var r=cv.getBoundingClientRect(),d=window.devicePixelRatio||1;
 cv.width=r.width*d;cv.height=r.height*d;ctx=cv.getContext('2d');ctx.scale(d,d);ctx.lineWidth=2.2;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#1c1f22';
