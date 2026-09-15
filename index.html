@@ -158,7 +158,7 @@ img,canvas,video{max-width:100%}
 </section>
 
 <script>
-var APP_VERSION='v33';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v34';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -360,6 +360,16 @@ function rellenarDeAgenda(){var n=document.getElementById('f_nom').value;if(!n)r
 var AVISO_RESERVA='Esta aceptaci\u00f3n se hace SIEMPRE BAJO RESERVA. La firma del cliente significa que da el visto bueno al presupuesto, pero no reserva la obra por s\u00ed sola ni obliga a ninguna de las dos partes: el trabajo solo queda contratado cuando '+'el contratista confirme por escrito la fecha de inicio y, si se ha pactado, se abone la reserva previa. Hasta ese momento precios, plazos y disponibilidad pueden cambiar, y cualquiera de las dos partes puede echarse atr\u00e1s sin penalizaci\u00f3n.';
 function firmaURL(t){var base=location.href.replace(/[^/]*$/,'');return base+'firma.html?t='+encodeURIComponent(t)}
 var ULT_FIRMA=null;
+function saludoHora(){var h=new Date().getHours();return h<14?'Buenos d\u00edas':(h<21?'Buenas tardes':'Buenas noches')}
+function mensajeCliente(nom,num,url){
+return saludoHora()+' '+(nom||'')+', soy '+AJ.nombre+', de '+AJ.marca+'. Muchas gracias por contar con nosotros y por el rato que nos ha dedicado; le paso su presupuesto n\u00ba '+num+' con todo detallado partida por partida, sin sorpresas.\n\n'+
+'\ud83d\udcc4 Ver el presupuesto y el contrato: '+url+'\n\n'+
+'\u270d\ufe0f Para aceptarlo, f\u00edrmelo aqu\u00ed desde el m\u00f3vil: '+url+'#firmar\n\n'+
+'Al firmar podr\u00e1 descargar su copia. La firma es una aceptaci\u00f3n BAJO RESERVA: la obra no queda contratada hasta que le confirmemos por escrito la fecha de inicio, as\u00ed que no le compromete a nada.\n\n'+
+'Cualquier duda, por peque\u00f1a que sea, me llama al '+AJ.tel+' y se la resuelvo encantado. Un saludo,\n'+AJ.nombre+' \u00b7 '+AJ.marca}
+function mailURL(nom,num,url,email){var asunto='Presupuesto n\u00ba '+num+' \u00b7 '+AJ.marca;
+return 'mailto:'+encodeURIComponent(email||'')+'?subject='+encodeURIComponent(asunto)+'&body='+encodeURIComponent(mensajeCliente(nom,num,url))}
+
 function telWa(t){t=(t||'').replace(/[^0-9]/g,'');if(!t)return '';if(t.length===9)t='34'+t;return t}
 function waURL(txt,tel){var n=telWa(tel);return 'https://wa.me/'+(n?n:'')+'?text='+encodeURIComponent(txt)}
 
@@ -367,17 +377,18 @@ function copiarEnlace(){if(!ULT_FIRMA)return;var t=ULT_FIRMA.url;if(navigator.cl
 function compartirEnlace(){if(!ULT_FIRMA)return;if(navigator.share)navigator.share({title:'Firmar presupuesto',text:ULT_FIRMA.txt}).catch(function(){});else if(navigator.clipboard)navigator.clipboard.writeText(ULT_FIRMA.txt).then(function(){alert('Enlace copiado, p\u00e9galo en WhatsApp')});else prompt('Copia el enlace:',ULT_FIRMA.url)}
 function mandarFirma(){leer();if(!cur.nom){alert('Pon el nombre del cliente');return}if(!FB.uid){alert('Entra en tu cuenta para poder mandar el enlace');return}
 var vent=window.open('about:blank','_blank');
-pintarDocs();var presu=document.getElementById('sh_presu').innerHTML,contra=document.getElementById('sh_contrato').innerHTML;
+pintarDocs();var dos=document.getElementById('sh_dosier').outerHTML,presu=document.getElementById('sh_presu').outerHTML,contra=document.getElementById('sh_contrato').outerHTML;
 var t=(cur.num||'0')+'-'+Math.random().toString(36).slice(2,10);
 var css=(document.querySelector('style')||{}).textContent||'';
-var datos={uid:FB.uid,num:cur.num,cliente:cur.nom,obra:cur.dir||'',marca:AJ.marca,tel:AJ.tel,email:AJ.email,html:presu+contra,css:css,aviso:AVISO_RESERVA,ts:Date.now(),firma:null};
+var datos={uid:FB.uid,num:cur.num,cliente:cur.nom,obra:cur.dir||'',marca:AJ.marca,tel:AJ.tel,email:AJ.email,html:dos+presu+contra,css:css,aviso:AVISO_RESERVA,ts:Date.now(),firma:null};
 dot('#e0a800');FB.db.collection('firmas').doc(t).set(datos).then(function(){dot('var(--ok)');cur.firmaTok=t;DB.presus[cur.num]=JSON.parse(JSON.stringify(cur));save();
-var url=firmaURL(t);var txt='Hola '+cur.nom+', te paso el presupuesto n\u00ba '+cur.num+' de '+AJ.marca+'. Aqu\u00ed tienes el presupuesto entero y el contrato, y debajo lo puedes firmar desde el m\u00f3vil (tambi\u00e9n te lo puedes descargar en PDF): '+url+'\n\nOJO: la firma es una aceptaci\u00f3n bajo reserva; la obra no queda contratada hasta que te confirme la fecha por escrito.';
+var url=firmaURL(t);var txt=mensajeCliente(cur.nom,cur.num,url);
 try{if(vent&&!vent.closed)vent.location.href=waURL(txt,cur.tel);}catch(e){}
 ULT_FIRMA={url:url,txt:txt,tel:cur.tel};
 var m=document.getElementById('msg');
 m.innerHTML='Enlace mandado por WhatsApp: el cliente ve ah\u00ed el presupuesto entero y firma debajo. '+
-'<a class="ok" style="display:inline-block;padding:8px 12px;border-radius:8px;text-decoration:none;margin:4px 6px 0 0" target="_blank" rel="noopener" href="'+waURL(txt,cur.tel)+'">Volver a mandarlo</a>'+
+'<a class="ok" style="display:inline-block;padding:8px 12px;border-radius:8px;text-decoration:none;margin:4px 6px 0 0" target="_blank" rel="noopener" href="'+waURL(txt,cur.tel)+'">Volver a mandarlo por WhatsApp</a>'+
+'<a class="sec" style="display:inline-block;padding:8px 12px;border-radius:8px;text-decoration:none;border:1px solid var(--line);margin:4px 6px 0 0" href="'+mailURL(cur.nom,cur.num,url,cur.email)+'">Mandarlo por correo</a>'+
 '<button class="sec" type="button" onclick="copiarEnlace()">Copiar el enlace</button>';
 }).catch(function(e){try{if(vent&&!vent.closed)vent.close()}catch(_){}dot('#b3261e');alert('No he podido crear el enlace: '+e.message)})}
 function verFirma(n){var p=DB.presus[n];if(!p||!p.firmaTok){alert('A este presupuesto no le has mandado enlace de firma todav\u00eda');return}
@@ -420,7 +431,7 @@ DB.presus[n]=p;save();subirPresu(n);renderClientes()}
 function borrar(n){if(confirm('¿Borrar el presupuesto '+n+' de '+DB.presus[n].nom+'?')){delete DB.presus[n];save();borrarNube(n);renderClientes()}}
 var EST={borrador:['Borrador',''],enviado:['Enviado','env'],aceptado:['Aceptado','ace'],obra:['En obra','obra'],finalizado:['Acabada','fin'],cobrado:['Pagado y cerrado','cob']}
 function estaFirmado(p){return !!(p&&p.firmado&&p.firmado.fecha)};
-function fichaCli(p){var tot=p.lineas.reduce(function(s,l){return s+l.q*l.p},0)*(1+num(p.iva)/100);return '<div class="cli"><b>'+p.num+'</b><div><div style="font-weight:700">'+p.nom+(p.rev?' <span class="chip" style="background:#b3261e">'+p.rev+' por arreglar</span>':'')+'</div><div style="color:var(--muted);font-size:12px">'+(p.dir||'')+' · '+p.fecha+' · '+eur(tot)+(estaFirmado(p)?'<br><span style="color:var(--ok)">Firmado por '+p.firmado.nombre+' el '+p.firmado.fecha+'</span>':(p.firmaTok?'<br><span style="color:var(--muted)">Enlace de firma mandado, sin firmar</span>':''))+'</div></div><select class="mini" style="width:auto" onchange="estado(\''+p.num+'\',this.value)">'+Object.keys(EST).map(function(k){return '<option value="'+k+'"'+(p.estado===k?' selected':'')+'>'+EST[k][0]+'</option>'}).join('')+'</select>'+barraObra(p)+(p.firmaTok&&!estaFirmado(p)?'<div style="grid-column:1/-1;margin-top:4px"><a class="mini" style="display:inline-block;padding:5px 9px;border-radius:6px;background:var(--ok);color:#fff;text-decoration:none" target="_blank" rel="noopener" href="'+waURL('Hola '+p.nom+', te recuerdo el presupuesto n\u00ba '+p.num+'. Puedes firmarlo aqu\u00ed: '+firmaURL(p.firmaTok)+' (aceptaci\u00f3n bajo reserva)',p.tel)+'">Mandar enlace de firma por WhatsApp</a></div>':'')+'<div class="row"><button class="mini" onclick="abrir(\''+p.num+'\')">Abrir</button><button class="mini sec" onclick="borrar(\''+p.num+'\')">Borrar</button></div></div>'}
+function fichaCli(p){var tot=p.lineas.reduce(function(s,l){return s+l.q*l.p},0)*(1+num(p.iva)/100);return '<div class="cli"><b>'+p.num+'</b><div><div style="font-weight:700">'+p.nom+(p.rev?' <span class="chip" style="background:#b3261e">'+p.rev+' por arreglar</span>':'')+'</div><div style="color:var(--muted);font-size:12px">'+(p.dir||'')+' · '+p.fecha+' · '+eur(tot)+(estaFirmado(p)?'<br><span style="color:var(--ok)">Firmado por '+p.firmado.nombre+' el '+p.firmado.fecha+'</span>':(p.firmaTok?'<br><span style="color:var(--muted)">Enlace de firma mandado, sin firmar</span>':''))+'</div></div><select class="mini" style="width:auto" onchange="estado(\''+p.num+'\',this.value)">'+Object.keys(EST).map(function(k){return '<option value="'+k+'"'+(p.estado===k?' selected':'')+'>'+EST[k][0]+'</option>'}).join('')+'</select>'+barraObra(p)+(p.firmaTok&&!estaFirmado(p)?'<div style="grid-column:1/-1;margin-top:4px"><a class="mini" style="display:inline-block;padding:5px 9px;border-radius:6px;background:var(--ok);color:#fff;text-decoration:none" target="_blank" rel="noopener" href="'+waURL('Hola '+p.nom+', te recuerdo el presupuesto n\u00ba '+p.num+'. Puedes firmarlo aqu\u00ed: '+firmaURL(p.firmaTok)+' (aceptaci\u00f3n bajo reserva)',p.tel)+'">Mandar enlace por WhatsApp</a> <a class="mini" style="display:inline-block;padding:5px 9px;border-radius:6px;border:1px solid var(--line);text-decoration:none;color:var(--ink)" href="'+mailURL(p.nom,p.num,firmaURL(p.firmaTok),p.email)+'">Por correo</a></div>':'')+'<div class="row"><button class="mini" onclick="abrir(\''+p.num+'\')">Abrir</button><button class="mini sec" onclick="borrar(\''+p.num+'\')">Borrar</button></div></div>'}
 function renderClientes(){var f=norm(document.getElementById('fcli').value||'');var box=document.getElementById('listaCli');
 var arr=Object.values(DB.presus).filter(function(p){return !f||norm(p.nom+' '+p.dir).indexOf(f)>-1}).sort(function(a,b){return (b.ts||0)-(a.ts||0)});
 if(!arr.length){box.innerHTML='<p style="color:var(--muted)">Todav\u00eda no hay presupuestos guardados.</p>';return}
