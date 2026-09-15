@@ -65,7 +65,7 @@ img,canvas,video{max-width:100%}
 @media (max-width:420px){.acts button{min-width:100%;}.row>button{min-width:100%}}
 @media (min-width:1200px){.card{max-width:1100px;margin-left:auto;margin-right:auto}}
 
-@media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}#verFijo{display:none!important}html,body{background:var(--crema)!important;margin:0!important;padding:0!important;width:100%!important;height:auto!important}.sheet{background:var(--crema)!important;width:100%!important;max-width:none!important;margin:0!important;box-sizing:border-box!important;min-height:-webkit-fill-available!important}#sh_dosier{height:297mm!important;max-height:297mm!important;overflow:hidden!important;page-break-after:always!important;padding-bottom:20mm!important}#sh_dosier .portada{height:120mm!important}#sh_dosier .dos2{margin-top:6mm!important}#sh_dosier .dos2 .fotos img{height:46mm!important}#topnav,.noprint,.page:not(#page-print){display:none!important}#page-print{display:block!important;padding:0;max-width:none}.sheet{box-shadow:none;margin:0;width:auto;page-break-after:always;min-height:0;height:auto;padding:14mm 15mm}.sheet:last-child{page-break-after:auto}.portada{margin:-14mm -15mm 0}.pcont{left:15mm;right:15mm}.foot{left:15mm;right:15mm}#sh_presu .foot,#sh_contrato .foot{position:static;margin-top:10mm}@page{size:auto;margin:0}}
+@media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}#verFijo{display:none!important}html,body{background:var(--crema)!important;margin:0!important;padding:0!important;width:100%!important;height:auto!important}.sheet{background:var(--crema)!important;width:100%!important;max-width:none!important;margin:0!important;box-sizing:border-box!important;min-height:-webkit-fill-available!important}#sh_dosier{height:297mm!important;max-height:297mm!important;overflow:hidden!important;page-break-after:always!important;padding-bottom:20mm!important}#sh_presu,#sh_contrato{height:auto!important;min-height:297mm!important;overflow:visible!important}#sh_dosier .portada{height:120mm!important}#sh_dosier .dos2{margin-top:6mm!important}#sh_dosier .dos2 .fotos img{height:46mm!important}#topnav,.noprint,.page:not(#page-print){display:none!important}#page-print{display:block!important;padding:0;max-width:none}.sheet{box-shadow:none;margin:0;width:auto;page-break-after:always;min-height:0;height:auto;padding:14mm 15mm}.sheet:last-child{page-break-after:auto}.portada{margin:-14mm -15mm 0}.pcont{left:15mm;right:15mm}.foot{left:15mm;right:15mm}#sh_presu .foot,#sh_contrato .foot{position:static;margin-top:10mm}@page{size:auto;margin:0}}
 </style></head><body>
 <div id="login" style="display:none;position:fixed;inset:0;background:var(--slate);z-index:50;align-items:center;justify-content:center;padding:20px"><div class="card" style="max-width:360px;width:100%"><h2 style="font-size:26px;margin-bottom:4px" id="loginTitle">Vornicu Reformas</h2><p style="color:var(--muted);margin:0 0 10px">Entra con tu correo y tu clave.</p><label class="f">Correo</label><input id="lg_email" type="email" autocomplete="username"><label class="f" style="margin-top:8px">Clave</label><input id="lg_pass" type="password" autocomplete="current-password"><div class="row" style="margin-top:12px"><button onclick="entrar()">Entrar</button><span id="lg_msg" style="color:var(--brick)"></span></div></div></div>
 <nav id="topnav"><div class="brand" id="brandTxt">VORNICU REFORMAS</div>
@@ -158,7 +158,7 @@ img,canvas,video{max-width:100%}
 </section>
 
 <script>
-var APP_VERSION='v31';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v32';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -505,7 +505,17 @@ if(navigator.canShare&&navigator.canShare({files:[arch]}))return navigator.share
 window.open(URL.createObjectURL(blob),'_blank');return Promise.resolve()}
 doc.save(fich);return Promise.resolve()}
 return html2canvas(hojas[i],{scale:2,backgroundColor:'#FAF6EC',useCORS:true,windowWidth:794,logging:false}).then(function(cv){
-if(i)doc.addPage();var img=cv.toDataURL('image/jpeg',0.92);doc.addImage(img,'JPEG',0,0,210,297,undefined,'FAST');
+var altoPag=Math.round(cv.width*297/210);
+var ctxOrig=cv.getContext('2d');
+var filaVacia=function(y){try{var d=ctxOrig.getImageData(0,y,cv.width,1).data;for(var x=0;x<d.length;x+=16){if(Math.abs(d[x]-250)>6||Math.abs(d[x+1]-246)>6||Math.abs(d[x+2]-236)>6)return false}return true}catch(e){return true}};
+var cortes=[0],y=0;while(y+altoPag<cv.height){var c=y+altoPag,k=0;while(k<160&&!filaVacia(c-k))k++;if(k>=160)k=0;c=c-k;if(c<=y)c=y+altoPag;cortes.push(c);y=c}
+var paginas=cortes.length;
+for(var q=0;q<paginas;q++){if(i||q)doc.addPage();
+var y0=cortes[q],y1=(q+1<paginas)?cortes[q+1]:cv.height,alto=Math.min(altoPag,y1-y0);
+var tr=document.createElement('canvas');tr.width=cv.width;tr.height=altoPag;
+var c2=tr.getContext('2d');c2.fillStyle='#FAF6EC';c2.fillRect(0,0,tr.width,tr.height);
+c2.drawImage(cv,0,y0,cv.width,alto,0,0,cv.width,alto);
+doc.addImage(tr.toDataURL('image/jpeg',0.92),'JPEG',0,0,210,297,undefined,'FAST')}
 try{var hoja=hojas[i],el=hoja.querySelector('#p_firmalink');
 if(el&&el.offsetHeight>0&&window.__FIRMA_URL){var rh=hoja.getBoundingClientRect(),re=el.getBoundingClientRect(),k=297/rh.height,kx=210/rh.width;
 doc.link((re.left-rh.left)*kx,(re.top-rh.top)*k,re.width*kx,re.height*k,{url:window.__FIRMA_URL})}}catch(e){}
