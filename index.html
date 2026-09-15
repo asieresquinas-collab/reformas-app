@@ -145,7 +145,7 @@ table.lines .n{width:88px;text-align:right}table.lines .imp{text-align:right;fon
 </section>
 
 <script>
-var APP_VERSION='v6';document.getElementById('ver').textContent=APP_VERSION;
+var APP_VERSION='v7';document.getElementById('ver').textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -292,7 +292,7 @@ if(cur.iva==='0')A.push('El presupuesto va SIN IVA. Comprueba que es correcto.')
 var box=document.getElementById('revBox');if(mostrar||E.length||A.length){box.innerHTML=(E.length?'<div class="aviso" style="border-color:#b3261e;background:#fbe3e0"><b>'+E.length+' cosas que hay que arreglar antes de mandarlo:</b><br>'+E.map(function(e){return '✕ '+e}).join('<br>')+'</div>':'')+(A.length?'<div class="aviso"><b>'+A.length+' avisos (míralos, puede que estén bien):</b><br>'+A.map(function(e){return '• '+e}).join('<br>')+'</div>':'')+(!E.length&&!A.length?'<div class="aviso" style="border-color:var(--ok);background:#e6f3ea"><b>Revisado: no falta nada.</b> Cantidades, precios, cliente y coherencia entre partidas, todo en orden.</div>':'')}else box.innerHTML='';return{E:E,A:A}}
 
 /* ---------- NUBE (Firebase): los datos viven en la cuenta de Azkar, proyecto de este cliente ---------- */
-var FIREBASE_CONFIG=null; /* se rellena al crear el proyecto */
+var FIREBASE_CONFIG={apiKey:"AIzaSyDsUvYWlJUPa__voQ7oBznCDWb8o6D1m5Q",authDomain:"reformas-ioan.firebaseapp.com",projectId:"reformas-ioan",storageBucket:"reformas-ioan.firebasestorage.app",messagingSenderId:"65105142083",appId:"1:65105142083:web:cfcb082d4406f938c60ff6"};
 var FB={app:null,db:null,uid:null,unsub:null};
 function dot(c){document.getElementById('syncDot').style.background=c}
 function cargarFirebase(){if(!FIREBASE_CONFIG)return Promise.reject('sin config');if(window.firebase)return Promise.resolve();var urls=['https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js','https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js','https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js'];return urls.reduce(function(pr,u){return pr.then(function(){return new Promise(function(ok,ko){var s=document.createElement('script');s.src=u;s.onload=ok;s.onerror=ko;document.head.appendChild(s)})})},Promise.resolve())}
