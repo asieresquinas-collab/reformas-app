@@ -158,7 +158,7 @@ body.capturando #sh_dosier{height:297mm!important;max-height:297mm!important;ove
 </section>
 
 <script>
-var APP_VERSION='v37';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v38';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -442,13 +442,25 @@ if(!arr.length){box.innerHTML='<p style="color:var(--muted)">Todav\u00eda no hay
 var marcha=arr.filter(estaFirmado),capta=arr.filter(function(p){return !estaFirmado(p)});
 var bloque=function(tit,sub,lista,color){if(!lista.length)return '<div class="tarifa-cat" style="background:'+color+'">'+tit+' (0)</div><p style="color:var(--muted);margin:6px 0 14px">'+sub+'</p>';
 return '<div class="tarifa-cat" style="background:'+color+'">'+tit+' ('+lista.length+')</div>'+lista.map(fichaCli).join('')};
-box.innerHTML=bloque('EN MARCHA \u00b7 firmados','Aqu\u00ed caen solos en cuanto el cliente firma el enlace.',marcha,'#1a7a3f')
+box.innerHTML='<div class="row" style="margin-bottom:8px"><button class="sec" onclick="comprobarFirmas(true)">Comprobar firmas ahora</button><span id="firmasInfo" style="color:var(--muted);font-size:12px"></span></div>'+bloque('EN MARCHA \u00b7 firmados','Aqu\u00ed caen solos en cuanto el cliente firma el enlace.',marcha,'#1a7a3f')
 +bloque('EN CAPTACI\u00d3N \u00b7 pendientes de firma','Presupuestos mandados o en borrador que a\u00fan no ha firmado nadie.',capta,'#253340');
-comprobarFirmas()}
-function comprobarFirmas(){if(!FB.uid||!FB.db)return;var pend=Object.values(DB.presus).filter(function(p){return p.firmaTok&&!estaFirmado(p)});if(!pend.length)return;
-Promise.all(pend.map(function(p){return FB.db.collection('firmas').doc(p.firmaTok).get().then(function(d){var f=d.data();
-if(f&&f.firma){p.firmado={nombre:f.nombreFirma||'',dni:f.dni||'',fecha:f.fechaFirma||''};p.estado='aceptado';DB.presus[p.num]=p;return true}return false}).catch(function(){return false})}))
-.then(function(r){if(r.some(Boolean)){save();renderClientes()}})}
+comprobarFirmas();escucharFirmas()}
+function info(t){var e=document.getElementById('firmasInfo');if(e)e.textContent=t}
+function comprobarFirmas(manual){if(!FB.db){if(manual)info('Todav\u00eda no hay conexi\u00f3n con la nube; espera unos segundos y vuelve a darle.');return}
+var pend=Object.values(DB.presus).filter(function(p){return p.firmaTok&&!estaFirmado(p)});
+if(!pend.length){if(manual)info('No hay presupuestos esperando firma.');return}
+if(manual)info('Mirando '+pend.length+'\u2026');
+Promise.all(pend.map(function(p){return FB.db.collection('firmas').doc(p.firmaTok).get().then(function(d){
+if(!d.exists)return {n:p.num,r:'el enlace ya no existe'};var f=d.data();
+if(f&&f.firma){p.firmado={nombre:f.nombreFirma||'',dni:f.dni||'',fecha:f.fechaFirma||''};p.estado='aceptado';DB.presus[p.num]=p;try{subirPresu(p.num)}catch(_){}return {n:p.num,r:'FIRMADO',ok:true}}
+return {n:p.num,r:'sin firmar'}}).catch(function(e){return {n:p.num,r:'error: '+(e.code||e.message)}})}))
+.then(function(r){var ok=r.filter(function(x){return x.ok});if(ok.length){save();renderClientes();info(ok.length+' firmado(s) al d\u00eda')}
+else if(manual)info(r.map(function(x){return x.n+': '+x.r}).join(' \u00b7 '))})}
+function escucharFirmas(){if(!FB.db)return;Object.values(DB.presus).forEach(function(p){if(!p.firmaTok||estaFirmado(p))return;
+if(!window.__esc)window.__esc={};if(window.__esc[p.firmaTok])return;
+window.__esc[p.firmaTok]=FB.db.collection('firmas').doc(p.firmaTok).onSnapshot(function(d){var f=d.data();
+if(f&&f.firma){var q=DB.presus[p.num];if(q&&!estaFirmado(q)){q.firmado={nombre:f.nombreFirma||'',dni:f.dni||'',fecha:f.fechaFirma||''};q.estado='aceptado';save();try{subirPresu(q.num)}catch(_){}
+if(document.getElementById('page-clientes').classList.contains('on'))renderClientes()}}},function(){})})}
 /* ---------- tarifa ---------- */
 function renderTarifa(){var box=document.getElementById('tarifaBox');var T=tarifa();var cats=CAT_ORDER.slice();T.forEach(function(t){if(cats.indexOf(t.c)<0)cats.push(t.c)});box.innerHTML=cats.map(function(c){return '<div class="tarifa-cat">'+c+'</div>'+T.filter(function(t){return t.c===c}).map(function(t){return '<div class="tar"><div>'+t.d+'</div><div style="text-align:center;color:var(--muted)">'+t.u+'</div><input value="'+t.p+'" onchange="setPrecio(\''+t.id+'\',this.value)"></div>'}).join('')}).join('')}
 function setPrecio(id,v){var ex=(DB.extra||[]).find(function(x){return x.id===id});if(ex)ex.p=num(v);else DB.tarifa[id]=num(v);save()}
