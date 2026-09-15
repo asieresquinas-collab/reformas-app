@@ -33,7 +33,7 @@ button{padding:12px 16px;border-radius:8px;border:0;font-size:15px;font-weight:7
 <div class="wrap">
   <div id="cargando" class="cargando">Cargando el presupuesto…</div>
   <div id="cont" style="display:none">
-    <div class="row" style="margin-bottom:10px"><button class="sec" type="button" onclick="descargarPdf()">Descargar el PDF</button></div><div class="doc" id="doc"></div>
+    <div class="row" style="margin-bottom:10px"><button class="sec" id="btnPdf" type="button" onclick="descargarPdf()">Descargar el PDF</button></div><div class="doc" id="doc"></div>
     <div class="aviso"><b>Importante — aceptación bajo reserva</b><div id="aviso" style="margin-top:6px"></div></div>
     <div id="firmar"></div><label>Nombre y apellidos de quien firma</label><input id="nom">
     <label>DNI / NIE</label><input id="dni">
@@ -71,8 +71,32 @@ else db.collection('firmas').doc(TOK).get().then(function(s){
   if(location.hash==='#firmar')setTimeout(function(){var e=document.getElementById('firmar');if(e)e.scrollIntoView({behavior:'smooth'})},300);
 }).catch(function(e){document.getElementById('cargando').textContent='No he podido abrir el presupuesto ('+e.message+')';});
 
-function descargarPdf(){var w=window.open('','_blank');if(!w){alert('Permite las ventanas emergentes para ver el PDF');return}
-w.document.write('<html><head><meta charset="utf-8"><title>Presupuesto '+(DATOS.num||'')+'</title><style>'+(DATOS.css||'')+' body{background:#FAF6EC;margin:0}@media print{@page{size:A4;margin:8mm}}</style></head><body>'+(DATOS.html||'')+'<p style="font-size:11px;color:#555;padding:0 14px">'+(DATOS.aviso||'')+'</p></body></html>');w.document.close();setTimeout(function(){w.focus();w.print()},600)}
+var H2C='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',JSP='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+function carga(u,t){return new Promise(function(ok,ko){if(t())return ok();var e=document.createElement('script');e.src=u;e.onload=ok;e.onerror=ko;document.head.appendChild(e)})}
+function descargarPdf(){var b=document.getElementById('btnPdf');var ant=b?b.textContent:'';if(b){b.textContent='Preparando el PDF\u2026';b.disabled=true}
+var hojas=[].slice.call(document.querySelectorAll('#doc .sheet'));
+if(!hojas.length)hojas=[document.getElementById('doc')];
+carga(H2C,function(){return !!window.html2canvas}).then(function(){return carga(JSP,function(){return !!(window.jspdf&&window.jspdf.jsPDF)})}).then(function(){
+var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4',orientation:'p'});var i=0;
+function paso(){if(i>=hojas.length){var fich='Presupuesto '+(DATOS.num||'')+(DATOS.marca?' - '+DATOS.marca:'')+'.pdf';
+var blob=doc.output('blob');var esIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
+var arch=new File([blob],fich,{type:'application/pdf'});
+if(navigator.canShare&&navigator.canShare({files:[arch]}))return navigator.share({files:[arch],title:fich}).catch(function(){window.open(URL.createObjectURL(blob),'_blank')});
+if(esIOS){window.open(URL.createObjectURL(blob),'_blank');return Promise.resolve()}
+var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fich;a.click();return Promise.resolve()}
+return html2canvas(hojas[i],{scale:2,backgroundColor:'#FAF6EC',useCORS:true,windowWidth:794,logging:false}).then(function(cv){
+var altoPag=Math.round(cv.width*297/210);var c0=cv.getContext('2d');
+var vacia=function(y){try{var d=c0.getImageData(0,y,cv.width,1).data;for(var x=0;x<d.length;x+=16){if(Math.abs(d[x]-250)>6||Math.abs(d[x+1]-246)>6||Math.abs(d[x+2]-236)>6)return false}return true}catch(e){return true}};
+var tol=Math.round(altoPag*0.16);var cortes=[0],y=0;while(y+altoPag+tol<cv.height){var c=y+altoPag,k=0;while(k<160&&!vacia(c-k))k++;if(k>=160)k=0;c=c-k;if(c<=y)c=y+altoPag;cortes.push(c);y=c}
+for(var q=0;q<cortes.length;q++){if(i||q)doc.addPage();
+var y0=cortes[q],y1=(q+1<cortes.length)?cortes[q+1]:cv.height,alto=Math.min(altoPag,y1-y0);
+var tr=document.createElement('canvas');tr.width=cv.width;tr.height=altoPag;var c2=tr.getContext('2d');
+c2.fillStyle='#FAF6EC';c2.fillRect(0,0,tr.width,tr.height);
+c2.drawImage(cv,0,y0,cv.width,alto,0,0,cv.width,alto);
+doc.addImage(tr.toDataURL('image/jpeg',0.92),'JPEG',0,0,210,297,undefined,'FAST')}
+i++;return paso()})}
+return paso()}).then(function(){if(b){b.textContent=ant;b.disabled=false}})
+.catch(function(e){if(b){b.textContent=ant;b.disabled=false}alert('No he podido preparar el PDF: '+e.message)})}
 var cv,ctx,pintando=false,hayFirma=false;
 function prepararLienzo(){cv=document.getElementById('cv');var r=cv.getBoundingClientRect(),d=window.devicePixelRatio||1;
 cv.width=r.width*d;cv.height=r.height*d;ctx=cv.getContext('2d');ctx.scale(d,d);ctx.lineWidth=2.2;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#1c1f22';
