@@ -128,7 +128,7 @@ img,canvas,video{max-width:100%}
 <p><b>2b.</b> Si es obra de arquitecto, sube su PDF de mediciones o el plano de superficies en «Documentos del arquitecto»: la app saca el nombre del cliente y la dirección de la obra (si están en el documento) y además lee cantidades y metros, los casa con tu tarifa y te lo enseña antes de añadirlo.</p>
 <p><b>2bis.</b> Cuando el PDF del arquitecto trae sus precios, la app compara los suyos con los tuyos en las partidas que sí tienes puestas y saca la proporción a la que trabajas. Con el botón «Sacar los precios que faltan con mi margen» rellena las que están a cero con esa proporción (la de su propio capítulo si hay datos). Salen marcadas en rojo como <b>estimadas</b>: son un punto de partida para que las repases, no un precio cerrado.</p><p><b>2ter.</b> Todo precio que corrijas a mano en el panel del arquitecto se queda guardado para esa partida: la próxima vez que aparezca en otro PDF sale ya con tu precio (marcado en verde, «tu precio de otras veces»). Y si la partida es de tu tarifa, también se actualiza ahí. Siempre lo puedes volver a cambiar y manda el último que pongas.</p><p><b>2c.</b> «Revisar el presupuesto» comprueba que no se escapa nada: partidas a cero o sin cantidad, repetidas, partidas del arquitecto que faltan o con otra cantidad, montacargas si no hay ascensor, contenedor si hay derribos, y avisos de coherencia (suelo nuevo sin nivelar, baño sin sanitarios…). Al sacar el PDF se revisa solo.</p>
 <p><b>3.</b> Guardar. Luego «PDF completo»: sale la portada con tus obras, el presupuesto y el contrato en un solo documento para mandar por WhatsApp o correo.</p>
-<p><b>3b.</b> «Mandar a firmar»: crea un enlace para el cliente. Lo abre en el móvil, ve el presupuesto y el contrato, firma con el dedo y te llega la firma. En el enlace se avisa bien claro de que la aceptación es <b>bajo reserva</b>: la obra no queda contratada hasta que tú confirmes la fecha por escrito, así que la firma sola no ata a nadie.</p><p><b>4b.</b> En Clientes, al poner una obra «En obra» te pregunta el día que empieza y el día que calculas acabarla, y a partir de ahí lleva la cuenta: días que lleva, días que quedan y aviso en rojo si se pasa. Al ponerla «Acabada» o «Pagado y cerrado» guarda el día real y te dice si te pasaste o no de lo calculado. Esto es solo para ti: no sale en el PDF ni lo ve el cliente.</p><p><b>3c.</b> En Ajustes firmas una vez con el dedo y tu firma sale ya impresa en la casilla del contratista de todos los contratos. La del cliente sigue vacía: esa la pone él al firmar el enlace o a mano en papel.</p><p><b>4.</b> En Clientes cambias el estado (enviado, aceptado, en obra, cobrado) y duplicas un presupuesto si el cliente pide una variante.</p>
+<p><b>3b.</b> «Mandar a firmar»: se abre WhatsApp con <b>un solo enlace</b>. El cliente lo abre y ahí tiene el presupuesto entero y el contrato, con botón para descargarlo en PDF, y justo debajo firma con el dedo. Se avisa bien claro de que la aceptación es <b>bajo reserva</b>: la obra no queda contratada hasta que tú confirmes la fecha por escrito.</p><p><b>4b.</b> En Clientes, al poner una obra «En obra» te pregunta el día que empieza y el día que calculas acabarla, y a partir de ahí lleva la cuenta: días que lleva, días que quedan y aviso en rojo si se pasa. Al ponerla «Acabada» o «Pagado y cerrado» guarda el día real y te dice si te pasaste o no de lo calculado. Esto es solo para ti: no sale en el PDF ni lo ve el cliente.</p><p><b>3c.</b> En Ajustes firmas una vez con el dedo y tu firma sale ya impresa en la casilla del contratista de todos los contratos. La del cliente sigue vacía: esa la pone él al firmar el enlace o a mano en papel.</p><p><b>4.</b> En Clientes cambias el estado (enviado, aceptado, en obra, cobrado) y duplicas un presupuesto si el cliente pide una variante.</p>
 <p style="color:var(--muted)">Los presupuestos se guardan en la nube (el punto verde de arriba dice que está todo subido) y también en este aparato, así que funciona sin cobertura y se sube solo al volver. Puedes usarla desde el móvil y el ordenador a la vez.</p><p style="color:var(--muted)">Versión <span id="ver"></span></p></div></section>
 
 <!-- ================= DOCUMENTOS PARA IMPRIMIR ================= -->
@@ -158,7 +158,7 @@ img,canvas,video{max-width:100%}
 </section>
 
 <script>
-var APP_VERSION='v32';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v33';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -369,25 +369,17 @@ function mandarFirma(){leer();if(!cur.nom){alert('Pon el nombre del cliente');re
 var vent=window.open('about:blank','_blank');
 pintarDocs();var presu=document.getElementById('sh_presu').innerHTML,contra=document.getElementById('sh_contrato').innerHTML;
 var t=(cur.num||'0')+'-'+Math.random().toString(36).slice(2,10);
-var datos={uid:FB.uid,num:cur.num,cliente:cur.nom,obra:cur.dir||'',marca:AJ.marca,tel:AJ.tel,email:AJ.email,html:presu+contra,aviso:AVISO_RESERVA,ts:Date.now(),firma:null};
+var css=(document.querySelector('style')||{}).textContent||'';
+var datos={uid:FB.uid,num:cur.num,cliente:cur.nom,obra:cur.dir||'',marca:AJ.marca,tel:AJ.tel,email:AJ.email,html:presu+contra,css:css,aviso:AVISO_RESERVA,ts:Date.now(),firma:null};
 dot('#e0a800');FB.db.collection('firmas').doc(t).set(datos).then(function(){dot('var(--ok)');cur.firmaTok=t;DB.presus[cur.num]=JSON.parse(JSON.stringify(cur));save();
-var url=firmaURL(t);var txt='Hola '+cur.nom+', te paso el presupuesto n\u00ba '+cur.num+' de '+AJ.marca+'. Te adjunto el PDF con el presupuesto y el contrato, y aqu\u00ed lo puedes firmar desde el m\u00f3vil: '+url+'\n\nOJO: la firma es una aceptaci\u00f3n bajo reserva; la obra no queda contratada hasta que te confirme la fecha por escrito.';
+var url=firmaURL(t);var txt='Hola '+cur.nom+', te paso el presupuesto n\u00ba '+cur.num+' de '+AJ.marca+'. Aqu\u00ed tienes el presupuesto entero y el contrato, y debajo lo puedes firmar desde el m\u00f3vil (tambi\u00e9n te lo puedes descargar en PDF): '+url+'\n\nOJO: la firma es una aceptaci\u00f3n bajo reserva; la obra no queda contratada hasta que te confirme la fecha por escrito.';
 try{if(vent&&!vent.closed)vent.location.href=waURL(txt,cur.tel);}catch(e){}
 ULT_FIRMA={url:url,txt:txt,tel:cur.tel};
-var m0=document.getElementById('msg');m0.innerHTML='Enlace de firma creado y abierto en WhatsApp. Preparando el PDF\u2026';
-var nomPdf='Presupuesto '+cur.num+(cur.nom?' - '+cur.nom:'')+'.pdf';
-document.getElementById('sh_dosier').style.display='';document.getElementById('sh_presu').style.display='';document.getElementById('sh_contrato').style.display='';document.getElementById('sh_precios').style.display='none';var fl=document.getElementById('p_firmalink');document.getElementById('p_firmaurl').textContent=url;fl.style.display='';window.__FIRMA_URL=url;
-return pdfSinMargenes('__blob__').then(function(blob){
-var f=new File([blob],nomPdf,{type:'application/pdf'});
-if(navigator.canShare&&navigator.canShare({files:[f]}))return navigator.share({title:'Presupuesto '+cur.num,text:txt,files:[f]}).catch(function(){});
-var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=nomPdf;a.click();
-if(navigator.share)return navigator.share({title:'Presupuesto '+cur.num,text:txt}).catch(function(){});
-if(navigator.clipboard)return navigator.clipboard.writeText(txt).then(function(){alert('PDF descargado y enlace copiado. En WhatsApp adjunta el PDF y pega el texto.')});
-prompt('Copia este enlace para el cliente:',url)});
-}).then(function(){var fl=document.getElementById('p_firmalink');if(fl)fl.style.display='none';window.__FIRMA_URL=null;var m=document.getElementById('msg');
-m.innerHTML='PDF listo. El enlace de firma va dentro del PDF y adem\u00e1s lo puedes mandar aparte: '+
-'<a class="ok" style="display:inline-block;padding:8px 12px;border-radius:8px;text-decoration:none;margin:4px 6px 0 0" target="_blank" rel="noopener" href="'+waURL(txt,cur.tel)+'">Mandar el enlace por WhatsApp</a>'+
-'<button class="sec" type="button" onclick="copiarEnlace()">Copiar el enlace</button>'}).catch(function(e){try{if(vent&&!vent.closed)vent.close()}catch(_){}dot('#b3261e');alert('No he podido crear el enlace: '+e.message)})}
+var m=document.getElementById('msg');
+m.innerHTML='Enlace mandado por WhatsApp: el cliente ve ah\u00ed el presupuesto entero y firma debajo. '+
+'<a class="ok" style="display:inline-block;padding:8px 12px;border-radius:8px;text-decoration:none;margin:4px 6px 0 0" target="_blank" rel="noopener" href="'+waURL(txt,cur.tel)+'">Volver a mandarlo</a>'+
+'<button class="sec" type="button" onclick="copiarEnlace()">Copiar el enlace</button>';
+}).catch(function(e){try{if(vent&&!vent.closed)vent.close()}catch(_){}dot('#b3261e');alert('No he podido crear el enlace: '+e.message)})}
 function verFirma(n){var p=DB.presus[n];if(!p||!p.firmaTok){alert('A este presupuesto no le has mandado enlace de firma todav\u00eda');return}
 FB.db.collection('firmas').doc(p.firmaTok).get().then(function(d){var f=d.data();if(!f||!f.firma){alert('Todav\u00eda sin firmar. Enlace: '+firmaURL(p.firmaTok));return}
 var w=window.open('','_blank');w.document.write('<title>Firma '+n+'</title><body style=\"font-family:system-ui;padding:16px;background:#FAF6EC\"><h2>Presupuesto '+n+' firmado</h2><p>'+(f.nombreFirma||'')+' '+(f.dni||'')+'<br>'+(f.fechaFirma||'')+'</p><img src=\"'+f.firma+'\" style=\"max-width:100%;border:1px solid #ccc;background:#fff\"><p style=\"font-size:12px;color:#555\">'+(f.aviso||'')+'</p></body>')})}
