@@ -1,0 +1,86 @@
+<!doctype html><html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Firmar presupuesto</title>
+<style>
+:root{--crema:#FAF6EC;--ink:#1c1f22;--slate:#253340;--brick:#D7481D;--line:#d9d6d0;--muted:#6b7178}
+*{box-sizing:border-box}
+body{margin:0;background:var(--crema);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:var(--slate);color:#fff;padding:14px 16px}
+header b{font-size:18px}
+.wrap{max-width:820px;margin:0 auto;padding:14px}
+.doc{background:var(--crema);border:1px solid var(--line);border-radius:8px;padding:14px;overflow-x:auto;font-size:13px}
+.doc table{width:100%;border-collapse:collapse}
+.doc th,.doc td{padding:4px 5px;border-bottom:1px solid var(--line);text-align:left;font-size:12px}
+.doc th.r,.doc td.r,.doc .n{text-align:right}
+.aviso{background:#FBE9E2;border-left:4px solid var(--brick);padding:12px;border-radius:6px;margin:16px 0;font-size:14px;line-height:1.45}
+label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+input{width:100%;padding:10px;border:1px solid var(--line);border-radius:6px;font-size:16px;background:#fff}
+canvas{width:100%;height:170px;background:#fff;border:1px dashed var(--line);border-radius:6px;touch-action:none;display:block}
+.row{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
+button{padding:12px 16px;border-radius:8px;border:0;font-size:15px;font-weight:700;cursor:pointer}
+.ok{background:var(--brick);color:#fff}
+.sec{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.chk{display:flex;gap:8px;align-items:flex-start;margin-top:14px;font-size:14px;line-height:1.4}
+.chk input{width:22px;height:22px;flex:0 0 22px;margin-top:2px}
+.fin{background:#e8f5ec;border:1px solid #1a7a3f;color:#14532d;padding:16px;border-radius:8px;font-size:15px;line-height:1.5}
+.cargando{padding:30px;text-align:center;color:var(--muted)}
+</style></head><body>
+<header><b id="hMarca">Presupuesto</b><div id="hSub" style="font-size:13px;opacity:.85"></div></header>
+<div class="wrap">
+  <div id="cargando" class="cargando">Cargando el presupuesto…</div>
+  <div id="cont" style="display:none">
+    <div class="doc" id="doc"></div>
+    <div class="aviso"><b>Importante — aceptación bajo reserva</b><div id="aviso" style="margin-top:6px"></div></div>
+    <label>Nombre y apellidos de quien firma</label><input id="nom">
+    <label>DNI / NIE</label><input id="dni">
+    <label>Firma con el dedo aquí abajo</label>
+    <canvas id="cv"></canvas>
+    <div class="row"><button class="sec" type="button" onclick="limpiar()">Borrar firma</button></div>
+    <div class="chk"><input type="checkbox" id="acepto"><label for="acepto" style="margin:0;color:var(--ink)">He leído el presupuesto y lo acepto <b>bajo reserva</b>, sabiendo que la obra no queda contratada hasta que el contratista me confirme la fecha por escrito.</label></div>
+    <div class="row"><button class="ok" id="btn" onclick="enviar()">Firmar y enviar</button><span id="msg" style="font-size:14px;color:var(--muted)"></span></div>
+  </div>
+  <div id="fin" class="fin" style="display:none"></div>
+</div>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+var CFG={apiKey:"AIzaSyDsUvYWlJUPa__voQ7oBznCDWb8o6D1m5Q",authDomain:"reformas-ioan.firebaseapp.com",projectId:"reformas-ioan",storageBucket:"reformas-ioan.firebasestorage.app",messagingSenderId:"65105142083",appId:"1:65105142083:web:cfcb082d4406f938c60ff6"};
+firebase.initializeApp(CFG);var db=firebase.firestore();
+var TOK=new URLSearchParams(location.search).get('t'),DATOS=null;
+function pintaFin(f){document.getElementById('cont').style.display='none';document.getElementById('cargando').style.display='none';
+var d=document.getElementById('fin');d.style.display='block';
+d.innerHTML='<b>Firmado, gracias.</b><br>'+(f.nombreFirma||'')+(f.dni?' · '+f.dni:'')+'<br>'+(f.fechaFirma||'')+'<br><br>Recuerda: esta aceptación es bajo reserva; la obra queda contratada cuando el contratista te confirme la fecha por escrito.';}
+if(!TOK){document.getElementById('cargando').textContent='Enlace incompleto. Pide que te lo manden otra vez.';}
+else db.collection('firmas').doc(TOK).get().then(function(s){
+  if(!s.exists){document.getElementById('cargando').textContent='Este enlace ya no está disponible.';return}
+  DATOS=s.data();
+  document.getElementById('hMarca').textContent=DATOS.marca||'Presupuesto';
+  document.getElementById('hSub').textContent='Presupuesto nº '+(DATOS.num||'')+(DATOS.cliente?' · '+DATOS.cliente:'');
+  if(DATOS.firma){pintaFin(DATOS);return}
+  document.getElementById('doc').innerHTML=DATOS.html||'';
+  document.getElementById('aviso').textContent=DATOS.aviso||'';
+  document.getElementById('nom').value=DATOS.cliente||'';
+  document.getElementById('cargando').style.display='none';
+  document.getElementById('cont').style.display='block';
+  prepararLienzo();
+}).catch(function(e){document.getElementById('cargando').textContent='No he podido abrir el presupuesto ('+e.message+')';});
+
+var cv,ctx,pintando=false,hayFirma=false;
+function prepararLienzo(){cv=document.getElementById('cv');var r=cv.getBoundingClientRect(),d=window.devicePixelRatio||1;
+cv.width=r.width*d;cv.height=r.height*d;ctx=cv.getContext('2d');ctx.scale(d,d);ctx.lineWidth=2.2;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#1c1f22';
+var pos=function(e){var b=cv.getBoundingClientRect(),p=e.touches?e.touches[0]:e;return{x:p.clientX-b.left,y:p.clientY-b.top}};
+var ini=function(e){e.preventDefault();pintando=true;hayFirma=true;var p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y)};
+var mov=function(e){if(!pintando)return;e.preventDefault();var p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke()};
+var fin=function(){pintando=false};
+cv.addEventListener('mousedown',ini);cv.addEventListener('mousemove',mov);window.addEventListener('mouseup',fin);
+cv.addEventListener('touchstart',ini,{passive:false});cv.addEventListener('touchmove',mov,{passive:false});cv.addEventListener('touchend',fin);}
+function limpiar(){ctx.clearRect(0,0,cv.width,cv.height);hayFirma=false}
+function enviar(){var msg=document.getElementById('msg');
+if(!document.getElementById('nom').value.trim()){msg.textContent='Pon tu nombre.';return}
+if(!hayFirma){msg.textContent='Firma con el dedo en el recuadro.';return}
+if(!document.getElementById('acepto').checked){msg.textContent='Marca la casilla de aceptación bajo reserva.';return}
+document.getElementById('btn').disabled=true;msg.textContent='Enviando…';
+var f={firma:cv.toDataURL('image/png'),nombreFirma:document.getElementById('nom').value.trim(),dni:document.getElementById('dni').value.trim(),fechaFirma:new Date().toLocaleString('es-ES'),aceptado:true};
+db.collection('firmas').doc(TOK).update(f).then(function(){f.aviso=DATOS.aviso;pintaFin(f)})
+.catch(function(e){document.getElementById('btn').disabled=false;msg.textContent='No se ha podido enviar ('+e.message+')'});}
+</script></body></html>
