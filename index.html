@@ -168,7 +168,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 </section>
 
 <script>
-var APP_VERSION='v54';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v55';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -631,6 +631,9 @@ var calc=ARQ.med.filter(function(p){return !(p.pr>0)&&p.pa>0}).length;
 if(calc&&m)L.push({t:calc+' partida(s) sin precio que puedo calcular con tu margen',b:'Continuar: sacarles precio',f:'rellenarPrecios'});
 if(ARQ.med.length)L.push({t:ARQ.med.length+' partida(s) listas pero fuera del presupuesto',b:'Continuar: meterlas en el presupuesto',f:'addMediciones'});
 leer();
+var vistos={},rep=0;(cur.lineas||[]).forEach(function(l){var k=(l.d||'').toLowerCase().slice(0,40);if(vistos[k])rep++;else vistos[k]=1});
+if(rep&&!av.rep)L.push({t:rep+' trabajo(s) repetidos: revisa que no est\u00e9n dos veces',b:'Continuar: ll\u00e9vame a ellos',f:'irARepes'});
+if(cur.iva==='21'&&!av.iva&&(cur.lineas||[]).length)L.push({t:'el IVA est\u00e1 al 21%: si es reforma de vivienda de m\u00e1s de dos a\u00f1os y el material no pasa del 40%, va al 10%',b:'Continuar: lo dejo o lo cambio',f:'irAIva'});
 var cero=(cur.lineas||[]).filter(function(l){return !(l.p>0)}).length;
 if(!ARQ.med.length&&cero&&!av.cero)L.push({t:cero+' partida(s) a cero euros: esas las tienes que valorar t\u00fa',b:'Continuar: ll\u00e9vame a ellas',f:'irACero'});
 if(!ARQ.med.length&&!cur.nom&&!av.nom)L.push({t:'falta el nombre del cliente',b:'Continuar: escribirlo',f:'irACliente'});
@@ -662,6 +665,8 @@ try{
 if(f==='meterDudosas')meterDudosas();
 else if(f==='rellenarPrecios')rellenarPrecios(true);
 else if(f==='addMediciones')addMediciones();
+else if(f==='irARepes'){window.__avisado=window.__avisado||{};window.__avisado.rep=1;var t0=document.getElementById('tb');if(t0)t0.scrollIntoView({behavior:'smooth',block:'center'})}
+else if(f==='irAIva'){window.__avisado=window.__avisado||{};window.__avisado.iva=1;var e0=document.getElementById('f_iva');abrirDatos();e0.scrollIntoView({behavior:'smooth',block:'center'});e0.focus()}
 else if(f==='irACero'){window.__avisado=window.__avisado||{};window.__avisado.cero=1;var t=document.getElementById('tb');if(t)t.scrollIntoView({behavior:'smooth',block:'center'})}
 else if(f==='irACliente'){window.__avisado=window.__avisado||{};window.__avisado.nom=1;var e=document.getElementById('f_nom');e.scrollIntoView({behavior:'smooth',block:'center'});e.focus()}
 else if(f==='irAAjustes'){ST('ajustes');setTimeout(function(){var e=document.querySelector('#ajBox input');if(e){e.scrollIntoView({behavior:'smooth',block:'center'});e.focus()}},300)}
