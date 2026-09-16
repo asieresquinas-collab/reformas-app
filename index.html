@@ -169,7 +169,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 </section>
 
 <script>
-var APP_VERSION='v60';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v62';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -859,11 +859,11 @@ c.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9500;d
 c.innerHTML='<div class="card" style="width:100%;max-width:520px;max-height:85vh;overflow:auto">'+
 '<div class="row" style="justify-content:space-between;align-items:center"><h2 style="font-size:19px;margin:0">\u00bfQu\u00e9 necesitas?</h2>'+
 '<button class="sec" onclick="cerrarAyudante()">Cerrar</button></div>'+
-'<input id="qAyuda" placeholder="Escribe lo que quieres hacer\u2026" style="width:100%;margin:10px 0" oninput="pintarAyuda(this.value)">'+
+'<input id="qAyuda" placeholder="Escribe o preg\u00fantame hablando\u2026" style="width:100%;margin:10px 0" oninput="pintarAyuda(this.value)">'+'<div class="row" style="margin-bottom:10px"><button class="sec" id="btnMicAyuda" onclick="micAyuda()">\ud83c\udfa4 Preguntar hablando</button>'+'<button id="btnVozAyuda" onclick="cambiarVoz()">\ud83d\udd0a Voz activada</button></div>'+
 '<div id="resAyuda"></div></div>';
 document.body.appendChild(c)}
-c.style.display='flex';document.getElementById('qAyuda').value='';pintarAyuda('')}
-function cerrarAyudante(){var c=document.getElementById('cajaAyuda');if(c)c.style.display='none'}
+c.style.display='flex';document.getElementById('qAyuda').value='';pintarAyuda('');pintarBotonVoz()}
+function cerrarAyudante(){callar();var c=document.getElementById('cajaAyuda');if(c)c.style.display='none'}
 
 /* ---------- cuando no sabe algo: respuestas variadas, nunca la misma ---------- */
 function elNombre(){var n=(AJ.trato||'').trim();return n?n:''}
@@ -940,7 +940,55 @@ return '<p style="font-size:15px;line-height:1.5">'+t+'</p>'+
 '<p style="color:var(--muted);font-size:13px;margin:10px 0 6px">Prueba con:</p>'+
 tresPistas().map(function(x){return '<button class="sec" style="display:inline-block;margin:0 6px 6px 0" onclick="document.getElementById(\'qAyuda\').value=\''+x+'\';pintarAyuda(\''+x+'\')">'+x+'</button>'}).join('')}
 
-function pintarAyuda(q){var r=document.getElementById('resAyuda');
+
+/* ---------- el ayudante habla y escucha ---------- */
+var VOZ_ON=(localStorage.getItem('vr_voz')||'1')==='1';
+var VOZ=null;
+function vozEs(){
+if(!window.speechSynthesis)return null;
+if(VOZ)return VOZ;
+var v=speechSynthesis.getVoices()||[];
+VOZ=v.filter(function(x){return /es[-_]ES/i.test(x.lang)})[0]||v.filter(function(x){return /^es/i.test(x.lang)})[0]||null;
+return VOZ}
+if(window.speechSynthesis)speechSynthesis.onvoiceschanged=function(){VOZ=null;vozEs()};
+function callar(){try{speechSynthesis.cancel()}catch(e){}}
+function hablar(t){
+if(!VOZ_ON||!window.speechSynthesis||!t)return;
+t=String(t).replace(/\s+/g,' ').replace(/[\u2022\u2026]/g,' ').trim();
+if(t.length>420)t=t.slice(0,420);
+callar();
+var u=new SpeechSynthesisUtterance(t);
+u.lang='es-ES';u.rate=1;u.pitch=1;var v=vozEs();if(v)u.voice=v;
+try{speechSynthesis.speak(u)}catch(e){}}
+function cambiarVoz(){
+VOZ_ON=!VOZ_ON;try{localStorage.setItem('vr_voz',VOZ_ON?'1':'0')}catch(e){}
+if(!VOZ_ON)callar();
+pintarBotonVoz();
+if(VOZ_ON)hablar('Ya puedes o\u00edrme'+(elNombre()?', '+elNombre():'')+'.')}
+function pintarBotonVoz(){
+var b=document.getElementById('btnVozAyuda');if(!b)return;
+b.textContent=VOZ_ON?'\ud83d\udd0a Voz activada':'\ud83d\udd07 Voz apagada';
+b.className=VOZ_ON?'ok':'sec'}
+function textoParaLeer(){
+var r=document.getElementById('resAyuda');if(!r)return '';
+var c=r.querySelector('div,p');if(!c)return '';
+var t=(c.innerText||'').replace(/\n+/g,'. ').trim();
+return t}
+function micAyuda(){
+var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+var b=document.getElementById('btnMicAyuda');
+if(!SR){alert('Este navegador no escucha. En iPhone usa el micro del teclado (al lado de la barra espaciadora) y preg\u00fantame igual; en Android, Chrome.');return}
+callar();
+var r=new SR();r.lang='es-ES';r.continuous=false;r.interimResults=false;
+b.textContent='\u25cf Te escucho\u2026';b.className='warn';
+r.onresult=function(e){var t=e.results[0][0].transcript;
+var c=document.getElementById('qAyuda');c.value=t;pintarAyuda(t)};
+r.onerror=function(){};
+r.onend=function(){b.textContent='\ud83c\udfa4 Preguntar hablando';b.className='sec'};
+try{r.start()}catch(e){}}
+
+function pintarAyuda(q){pintarAyuda0(q);if((q||'').trim().length>2)setTimeout(function(){hablar(textoParaLeer())},60)}
+function pintarAyuda0(q){var r=document.getElementById('resAyuda');
 if(!q.trim()){r.innerHTML='<p style="color:var(--muted);font-size:13px;margin:0 0 8px">Preg\u00fantame lo que sea: c\u00f3mo se hace algo, un cliente, un precio, un bot\u00f3n\u2026</p>'+
 ['\u00bfC\u00f3mo subo el PDF del arquitecto?','\u00bfQu\u00e9 IVA le pongo?','\u00bfC\u00f3mo hago que me lo firme?','\u00bfD\u00f3nde saco fotos de la obra?','\u00bfCu\u00e1nto cobro por el pladur?','\u00bfSe guarda solo?']
 .map(function(x){return '<button class="sec" style="width:100%;text-align:left;margin-bottom:6px;white-space:normal" onclick="document.getElementById(\'qAyuda\').value=this.textContent;pintarAyuda(this.textContent)">'+x+'</button>'}).join('');return}
