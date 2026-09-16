@@ -129,7 +129,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 
 <!-- ================= AJUSTES ================= -->
 <section class="page" id="page-ajustes"><div class="card"><h2 style="font-size:22px;margin-bottom:8px">Tus datos (salen en presupuesto y contrato)</h2><div class="grid" id="ajBox">
-<div><label class="f">Nombre comercial</label><input data-k="marca"></div><div><label class="f">Nombre y apellidos</label><input data-k="nombre"></div><div><label class="f">NIF / NIE</label><input data-k="nif"></div><div><label class="f">Teléfono</label><input data-k="tel"></div><div><label class="f">Correo</label><input data-k="email"></div><div><label class="f">Dirección</label><input data-k="dir"></div><div><label class="f">IBAN (para el contrato)</label><input data-k="iban"></div><div><label class="f">Frase de portada</label><input data-k="tag"></div><div style="grid-column:1/-1"><label class="f">Texto «Quiénes somos» del dosier</label><textarea data-k="somos" rows="4"></textarea></div></div>
+<div><label class="f">Nombre comercial</label><input data-k="marca"></div><div><label class="f">Nombre y apellidos</label><input data-k="nombre"></div><div><label class="f">Cómo te llama el ayudante</label><input data-k="trato" placeholder="Tu nombre de pila"></div><div><label class="f">NIF / NIE</label><input data-k="nif"></div><div><label class="f">Teléfono</label><input data-k="tel"></div><div><label class="f">Correo</label><input data-k="email"></div><div><label class="f">Dirección</label><input data-k="dir"></div><div><label class="f">IBAN (para el contrato)</label><input data-k="iban"></div><div><label class="f">Frase de portada</label><input data-k="tag"></div><div style="grid-column:1/-1"><label class="f">Texto «Quiénes somos» del dosier</label><textarea data-k="somos" rows="4"></textarea></div></div>
 <div style="margin-top:12px;padding:10px;border:1px solid var(--line);border-radius:8px"><label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="aj_simple" onchange="cambiarModo(this.checked)" style="width:24px;height:24px;flex:0 0 24px"><span><b>Modo sencillo</b> (recomendado)<br><span style="color:var(--muted);font-size:12px">Deja a la vista solo lo del día a día. Si prefieres verlo todo como antes, quítale la marca y vuelve a estar como estaba.</span></span></label></div><div style="margin-top:12px"><label class="f">Tu firma (sale en el contrato, en la casilla del contratista)</label><canvas id="fmCv" style="width:100%;max-width:340px;height:120px;background:#fff;border:1px dashed var(--line);border-radius:6px;touch-action:none;display:block"></canvas><div class="row" style="margin-top:6px"><button class="sec" type="button" onclick="fmLimpiar()">Borrar</button><button class="ok" type="button" onclick="fmGuardar()">Guardar mi firma</button><span id="fmMsg" style="color:var(--ok);font-weight:600"></span></div></div><div class="row" style="margin-top:10px"><button class="ok" onclick="guardarAj()">Guardar datos</button><button class="sec" onclick="exportar()">Copia de seguridad</button><button class="sec" onclick="document.getElementById('imp').click()">Restaurar copia</button><button class="sec" onclick="salir()">Cerrar sesión</button><input type="file" id="imp" style="display:none" onchange="importar(this)"></div></div></section>
 
 <!-- ================= AYUDA ================= -->
@@ -229,7 +229,7 @@ var TARIFA_BASE=[
 {id:'pre7',c:'Albañilería',d:'Suministro y colocación de premarco de madera para pared de 70 mm de ancho',u:'ud',p:90,k:['premarco 70']}
 ];
 var CAT_ORDER=['Demoliciones','Instalaciones','Albañilería','Revestimientos','Carpintería y sanitarios','Montajes'];
-var AJ_DEF={marca:'Vornicu Reformas',nombre:'Vornicu Ioan Marian',nif:'Y4429633P',tel:'642 89 28 73',email:'Vornicu.i.marian@gmail.com',dir:'Calle Santutxu 80, 4º B · 48004 Bilbao',iban:'',tag:'T\u00fa nos dejas las llaves, nosotros te devolvemos un hogar. Disfruta de tu nueva vida.',somos:'Somos un equipo pequeño de albañiles con oficio, afincados en Santutxu (Bilbao). Hacemos reformas de pisos, baños y cocinas y hemos levantado viviendas completas desde los cimientos hasta la pintura. Trabajamos con presupuesto cerrado partida por partida, nos ocupamos del escombro y de las instalaciones, y dejamos la obra limpia y terminada.'};
+var AJ_DEF={marca:'Vornicu Reformas',nombre:'Vornicu Ioan Marian',trato:'Marian',nif:'Y4429633P',tel:'642 89 28 73',email:'Vornicu.i.marian@gmail.com',dir:'Calle Santutxu 80, 4º B · 48004 Bilbao',iban:'',tag:'T\u00fa nos dejas las llaves, nosotros te devolvemos un hogar. Disfruta de tu nueva vida.',somos:'Somos un equipo pequeño de albañiles con oficio, afincados en Santutxu (Bilbao). Hacemos reformas de pisos, baños y cocinas y hemos levantado viviendas completas desde los cimientos hasta la pintura. Trabajamos con presupuesto cerrado partida por partida, nos ocupamos del escombro y de las instalaciones, y dejamos la obra limpia y terminada.'};
 /* ---------- estado ---------- */
 var DB=JSON.parse(localStorage.getItem('vr_db')||'{"presus":{},"contador":100,"tarifa":{}}');
 var AJ=Object.assign({},AJ_DEF,JSON.parse(localStorage.getItem('vr_aj')||'{}'));
@@ -819,7 +819,7 @@ if(lab&&lab.length>2)INDICE.push({tipo:'campo',t:lab,pag:t,el:e})})})}
 function sinAcentos(x){return (x||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
 function buscarTodo(q){
 var qq=sinAcentos(q).trim();if(!qq)return [];
-var pal=qq.split(/\s+/).filter(function(w){return w.length>2});
+var pal=qq.split(/\s+/).filter(function(w){return w.length>3});
 var res=[];
 /* 1 respuestas explicadas */
 buscarAyuda(q).forEach(function(it){res.push({clase:'saber',t:it.t,it:it,p:100})});
@@ -828,7 +828,7 @@ if(!INDICE.length)construirIndice();
 INDICE.forEach(function(x){var tt=sinAcentos(x.t),p=0;
 if(tt===qq)p=90;else if(tt.indexOf(qq)>=0)p=60;
 else pal.forEach(function(w){if(tt.indexOf(w)>=0)p+=18});
-if(p>15)res.push({clase:x.tipo,t:x.t,pag:x.pag,el:x.el,p:p})});
+if(p>34)res.push({clase:x.tipo,t:x.t,pag:x.pag,el:x.el,p:p})});
 /* 3 sus clientes y presupuestos */
 Object.values(DB.presus||{}).forEach(function(pr){var tt=sinAcentos((pr.nom||'')+' '+(pr.dir||'')+' '+pr.num),p=0;
 if(tt.indexOf(qq)>=0)p=80;else pal.forEach(function(w){if(tt.indexOf(w)>=0)p+=20});
@@ -836,11 +836,11 @@ if(p>15)res.push({clase:'presu',t:'Presupuesto n\u00ba '+pr.num+' \u00b7 '+(pr.n
 /* 4 sus precios */
 (tarifa()||[]).forEach(function(t){var tt=sinAcentos(t.d),p=0;
 if(tt.indexOf(qq)>=0)p=70;else pal.forEach(function(w){if(tt.indexOf(w)>=0)p+=16});
-if(p>15)res.push({clase:'precio',t:t.d,precio:t.p,u:t.u,id:t.id,p:p})});
+if(p>31)res.push({clase:'precio',t:t.d,precio:t.p,u:t.u,id:t.id,p:p})});
 /* 5 trabajos del presupuesto abierto */
 (cur.lineas||[]).forEach(function(l,i){var tt=sinAcentos(l.d),p=0;
 if(tt.indexOf(qq)>=0)p=50;else pal.forEach(function(w){if(tt.indexOf(w)>=0)p+=12});
-if(p>15)res.push({clase:'linea',t:l.d,idx:i,p:p})});
+if(p>23)res.push({clase:'linea',t:l.d,idx:i,p:p})});
 return res.sort(function(a,b){return b.p-a.p}).slice(0,8)}
 function irAElemento(pag,el){ST(pag);setTimeout(function(){
 if(pag==='tarifa'){var q=document.getElementById('bTarifa');if(q){q.value='';filtrarTarifa('')}}
@@ -864,12 +864,89 @@ c.innerHTML='<div class="card" style="width:100%;max-width:520px;max-height:85vh
 document.body.appendChild(c)}
 c.style.display='flex';document.getElementById('qAyuda').value='';pintarAyuda('')}
 function cerrarAyudante(){var c=document.getElementById('cajaAyuda');if(c)c.style.display='none'}
+
+/* ---------- cuando no sabe algo: respuestas variadas, nunca la misma ---------- */
+function elNombre(){var n=(AJ.trato||'').trim();return n?n:''}
+function coma(){var n=elNombre();return n?', '+n:''}
+function vocativo(){var n=elNombre();return n?n+', ':''}
+function alAzar(lista,clave){
+var k='vr_ult_'+clave,ult=-1;try{ult=parseInt(localStorage.getItem(k))}catch(e){}
+var i=Math.floor(Math.random()*lista.length);
+if(lista.length>1){var v=0;while(i===ult&&v<8){i=Math.floor(Math.random()*lista.length);v++}}
+try{localStorage.setItem(k,i)}catch(e){}
+return lista[i]}
+function apuntar(q){
+q=(q||'').trim();if(!q)return 0;
+var L={};try{L=JSON.parse(localStorage.getItem('vr_dudas')||'{}')}catch(e){}
+var k=q.toLowerCase().slice(0,60);L[k]=(L[k]||0)+1;
+try{localStorage.setItem('vr_dudas',JSON.stringify(L))}catch(e){}
+return L[k]}
+var FUERA=[
+{k:['hola','buenas','buenos dias','buenas tardes','que tal','como estas','como va'],
+ r:['\u00a1Hola{N}! Aqu\u00ed estoy. Dime qu\u00e9 quieres hacer y te lo busco.',
+    'Buenas{N}. \u00bfCon qu\u00e9 te echo una mano?',
+    'Hola. Yo de la app lo s\u00e9 casi todo; preg\u00fantame.']},
+{k:['gracias','muchas gracias','eres un crack','genial','muy bien'],
+ r:['A mandar{N}.','De nada. Para eso estoy.','Cuando quieras.']},
+{k:['quien eres','que eres','como te llamas','eres un robot','eres una persona'],
+ r:['Soy el ayudante de tu app. No soy una persona: vivo aqu\u00ed dentro y conozco cada bot\u00f3n, tus precios y tus presupuestos.',
+    'El ayudante de la app. No s\u00e9 de la vida, pero de esto de aqu\u00ed s\u00e9 bastante.']},
+{k:['tiempo','llueve','va a llover','temperatura','clima','pronostico'],
+ r:['Del tiempo no me entero, no tengo internet para eso. Pero si es por planificar la obra, te puedo decir los d\u00edas que llevas y lo que falta.',
+    'Eso m\u00edralo en el m\u00f3vil, que yo de nubes no s\u00e9. De la obra s\u00ed: preg\u00fantame por plazos o por lo que falta.']},
+{k:['futbol','athletic','partido','madrid','barsa','liga','deporte'],
+ r:['De f\u00fatbol no tengo ni idea{N}. Lo m\u00edo son presupuestos, y en eso s\u00ed te gano.',
+    'Ah\u00ed no llego. Preg\u00fantame de la obra y nos entendemos mejor.']},
+{k:['chiste','cuentame algo','aburrido','hazme reir'],
+ r:['Para chistes soy malo. Para que no se te escape una partida a cero, soy bueno.',
+    'No soy gracioso, soy \u00fatil. \u00bfTe busco algo de la app?']},
+{k:['precio del material','cuanto vale el saco','precio cemento','ferreteria','almacen','proveedor','cuanto cuesta el material'],
+ r:['Los precios de la tienda no los tengo. Los que s\u00ed tengo son los tuyos: dime el trabajo y te digo a c\u00f3mo lo tienes puesto.',
+    'De proveedores no s\u00e9 nada. De tu tarifa s\u00ed: escribe el trabajo y te lo saco.']},
+{k:['hacienda','factura','facturar','declaracion','impuestos','autonomo','seguridad social','gestor'],
+ r:['De facturas e impuestos no me meto, para eso tu gestor. Yo llego hasta el presupuesto, el contrato y el IVA que toca poner.',
+    'Eso es cosa de tu gestor{N}. Aqu\u00ed hacemos presupuestos y contratos; el IVA s\u00ed te lo digo con el asistente.']},
+{k:['medico','salud','duele','hospital','receta'],
+ r:['De eso no s\u00e9 nada y no quiero meter la pata. Para lo de la app, aqu\u00ed me tienes.']},
+{k:['dinero','banco','prestamo','hipoteca','me pagan','cobrar al cliente','moroso','no me paga'],
+ r:['De bancos no s\u00e9. Lo que s\u00ed hago: dejar por escrito los pagos en el contrato para que no haya discusi\u00f3n. Escribe «contrato» y te llevo.',
+    'Ah\u00ed no llego, pero para que el cliente no se te escape tienes el contrato firmado. Preg\u00fantame por «firmar».']}
+];
+var NOSE=[
+ 'Esa no la tengo cogida todav\u00eda{N}. Voy aprendiendo con lo que me pregunt\u00e1is, as\u00ed que a lo mejor la pr\u00f3xima vez s\u00ed. Pru\u00e9bame con una palabra suelta.',
+ 'Pues ah\u00ed me has pillado{N}. De la app te resuelvo casi todo; dime la palabra clave y voy.',
+ 'No te sabr\u00eda decir{N}. Si me lo dices con otras palabras, seguramente s\u00ed.',
+ 'Eso no lo llevo{N}, pero no te quedes con la duda: pru\u00e9bame con una palabra del tema.',
+ 'A eso no llego todav\u00eda{N}. Cada vez s\u00e9 hacer m\u00e1s cosas, as\u00ed que ins\u00edsteme m\u00e1s adelante.',
+ 'Ni idea de eso{N}, te lo digo claro. Pero de la app preg\u00fantame lo que quieras.'
+];
+var PISTAS=['arquitecto','IVA','firmar','fotos de la obra','mis precios','mapa','cliente','borrar','contrato','PDF','plazos'];
+function tresPistas(){var c=PISTAS.slice(),o=[];for(var i=0;i<3&&c.length;i++){o.push(c.splice(Math.floor(Math.random()*c.length),1)[0])}return o}
+function fueraTema(q){
+var qq=sinAcentos(q);
+for(var i=0;i<FUERA.length;i++){
+ for(var j=0;j<FUERA[i].k.length;j++){
+  if(qq.indexOf(FUERA[i].k[j])>=0){apuntar(q);
+   var tt=alAzar(FUERA[i].r,'f'+i).replace('{N}',elNombre()?', '+elNombre():'');
+   return '<p style="font-size:15px;line-height:1.5">'+tt+'</p>'}}}
+return ''}
+function noSe(q){
+var veces=apuntar(q);
+var t=alAzar(NOSE,'nose');
+var nom=elNombre()?', '+elNombre():'';
+t=t.replace('{N}',nom);
+if(veces>=3)t='Esta ya me la has preguntado alguna vez y sigo sin saberla'+nom+'. Me la apunto, en serio. Mientras tanto pru\u00e9bame con otra cosa.';
+return '<p style="font-size:15px;line-height:1.5">'+t+'</p>'+
+'<p style="color:var(--muted);font-size:13px;margin:10px 0 6px">Prueba con:</p>'+
+tresPistas().map(function(x){return '<button class="sec" style="display:inline-block;margin:0 6px 6px 0" onclick="document.getElementById(\'qAyuda\').value=\''+x+'\';pintarAyuda(\''+x+'\')">'+x+'</button>'}).join('')}
+
 function pintarAyuda(q){var r=document.getElementById('resAyuda');
 if(!q.trim()){r.innerHTML='<p style="color:var(--muted);font-size:13px;margin:0 0 8px">Preg\u00fantame lo que sea: c\u00f3mo se hace algo, un cliente, un precio, un bot\u00f3n\u2026</p>'+
 ['\u00bfC\u00f3mo subo el PDF del arquitecto?','\u00bfQu\u00e9 IVA le pongo?','\u00bfC\u00f3mo hago que me lo firme?','\u00bfD\u00f3nde saco fotos de la obra?','\u00bfCu\u00e1nto cobro por el pladur?','\u00bfSe guarda solo?']
 .map(function(x){return '<button class="sec" style="width:100%;text-align:left;margin-bottom:6px;white-space:normal" onclick="document.getElementById(\'qAyuda\').value=this.textContent;pintarAyuda(this.textContent)">'+x+'</button>'}).join('');return}
+var fq=fueraTema(q);if(fq){r.innerHTML=fq;return}
 var lista=buscarTodo(q);
-if(!lista.length){r.innerHTML='<p>De eso no tengo nada. Prueba con una palabra suelta: arquitecto, IVA, firmar, fotos, precio, mapa, cliente, borrar\u2026</p>';return}
+if(!lista.length){r.innerHTML=noSe(q);return}
 window.__res=lista;
 r.innerHTML=lista.map(function(x,i){
 if(x.clase==='saber')return '<div style="border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:8px">'+
