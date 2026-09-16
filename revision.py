@@ -36,7 +36,9 @@ with sync_playwright() as p:
                     ("**/leaflet.min.js","application/javascript",leaf),("**/leaflet.min.css","text/css",lcss),
                     ("**/html2canvas.min.js","application/javascript",h2c),("**/jspdf.umd.min.js","application/javascript",jspdf)]:
         pg.route(u, mk_route(ct,bd))
-    pg.route("**/nominatim.openstreetmap.org/**",lambda r:r.fulfill(status=200,content_type="application/json",body='[{"lat":"43.257","lon":"-2.917"}]'))
+    def r_photon(route): route.fulfill(status=200,content_type="application/json",body='{"features":[{"geometry":{"coordinates":[-2.917,43.257]}}]}')
+    pg.route("**/photon.komoot.io/**",r_photon)
+    pg.route("**/geocode.maps.co/**",r_photon)
     pg.route("**/tile.openstreetmap.org/**",lambda r:r.fulfill(status=200,content_type="image/png",body=tile))
     pg.goto('file:///home/claude/reformas/index.html'); pg.wait_for_timeout(900)
     pg.evaluate(SIM)
@@ -91,7 +93,7 @@ with sync_playwright() as p:
     chk('agenda de clientes', 'Cliente Revision' in pg.inner_text('#agLista'))
     pg.evaluate("()=>cerrarAgenda()")
     pg.evaluate("()=>{ST('tarifa');renderTarifa()}"); pg.wait_for_timeout(300)
-    chk('tarifa se pinta', len(pg.inner_text('#tarifaBox'))>200)
+    pg.evaluate("()=>{document.getElementById('bTarifa').value='';filtrarTarifa('')}"); chk('tarifa se pinta', pg.evaluate("()=>document.querySelectorAll('#tarifaBox .tar').length")>10)
     # 10 firma guardada en ajustes
     pg.evaluate("()=>{ST('ajustes');fmInit();FM.hay=true;FM.ctx.fillRect(5,5,40,20);fmGuardar()}"); pg.wait_for_timeout(300)
     chk('firma del contratista', pg.evaluate("()=>!!(AJ.firma&&AJ.firma.length>500)"))
