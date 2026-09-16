@@ -124,7 +124,7 @@ body.capturando #sh_dosier{height:297mm!important;max-height:297mm!important;ove
 
 <!-- ================= AYUDA ================= -->
 <section class="page" id="page-ayuda"><div class="card"><h2 style="font-size:22px;margin-bottom:8px">Cómo se usa</h2>
-<p><b>1.</b> Rellena el cliente y la dirección. El número de presupuesto sale solo, uno detrás de otro.</p><p><b>0.</b> No hace falta que te acuerdes de guardar: la app se guarda sola mientras escribes, primero en el móvil y luego en la nube. El punto de arriba te lo dice: verde, todo subido; naranja, hay cambios esperando (se suben solos en cuanto haya cobertura, aunque cierres la app o apagues el móvil).</p><p><b>1b.</b> Botón «Agenda» al lado del cliente: tienes ahí todos los clientes con su teléfono, correo y dirección; pinchas uno y se rellena solo. Se guardan solos cada vez que guardas un presupuesto, y si escribes un nombre que ya está, te pone su teléfono y su correo.</p>
+<p><b>1.</b> Rellena el cliente y la dirección. El número de presupuesto sale solo, uno detrás de otro.</p><p><b>0.</b> No hace falta que te acuerdes de guardar: la app se guarda sola mientras escribes, primero en el móvil y luego en la nube. El punto de arriba te lo dice: verde, todo subido; naranja, hay cambios esperando (se suben solos en cuanto haya cobertura, aunque cierres la app o apagues el móvil).</p><p><b>0b.</b> Arriba del presupuesto tienes un solo botón <b>«Continuar»</b>: te dice qué falta (líneas del PDF sin leer, partidas sin precio, partidas por meter, cliente o dirección en blanco) y lo va resolviendo de una en una cada vez que lo pulsas, hasta que sale en verde «Todo en orden».</p><p><b>1b.</b> Botón «Agenda» al lado del cliente: tienes ahí todos los clientes con su teléfono, correo y dirección; pinchas uno y se rellena solo. Se guardan solos cada vez que guardas un presupuesto, y si escribes un nombre que ya está, te pone su teléfono y su correo.</p>
 <p><b>2.</b> Dicta o escribe lo que hay que hacer y pulsa «Convertir en partidas». Cada trabajo se busca en tu tarifa y entra con su precio. Ajusta metros o unidades.</p>
 <p><b>2b.</b> Si es obra de arquitecto, sube su PDF de mediciones o el plano de superficies en «Documentos del arquitecto»: la app saca el nombre del cliente y la dirección de la obra (si están en el documento) y además lee cantidades y metros, los casa con tu tarifa y te lo enseña antes de añadirlo.</p>
 <p><b>2bis.</b> Cuando el PDF del arquitecto trae sus precios, la app compara los suyos con los tuyos en las partidas que sí tienes puestas y saca la proporción a la que trabajas. Con el botón «Sacar los precios que faltan con mi margen» rellena las que están a cero con esa proporción (la de su propio capítulo si hay datos). Salen marcadas en rojo como <b>estimadas</b>: son un punto de partida para que las repases, no un precio cerrado.</p><p><b>2ter.</b> Todo precio que corrijas a mano en el panel del arquitecto se queda guardado para esa partida: la próxima vez que aparezca en otro PDF sale ya con tu precio (marcado en verde, «tu precio de otras veces»). Y si la partida es de tu tarifa, también se actualiza ahí. Siempre lo puedes volver a cambiar y manda el último que pongas.</p><p><b>2c.</b> «Revisar el presupuesto» comprueba que no se escapa nada: partidas a cero o sin cantidad, repetidas, partidas del arquitecto que faltan o con otra cantidad, montacargas si no hay ascensor, contenedor si hay derribos, y avisos de coherencia (suelo nuevo sin nivelar, baño sin sanitarios…). Al sacar el PDF se revisa solo.</p>
@@ -159,7 +159,7 @@ body.capturando #sh_dosier{height:297mm!important;max-height:297mm!important;ove
 </section>
 
 <script>
-var APP_VERSION='v50';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v51';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -235,12 +235,12 @@ document.querySelectorAll('.ntab').forEach(function(b){b.onclick=function(){ST(b
 function ST(t){if(t==='ajustes')setTimeout(fmInit,60);if(t==='mapa')setTimeout(function(){pintarMapa()},80);document.querySelectorAll('.ntab').forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});document.querySelectorAll('.page').forEach(function(p){p.classList.toggle('on',p.id==='page-'+t)});if(t==='clientes')renderClientes();if(t==='tarifa')renderTarifa();if(t==='ajustes')renderAj()}
 /* ---------- presupuesto ---------- */
 function siguienteNum(){var m=num(DB.contador)||0;Object.keys(DB.presus||{}).forEach(function(k){var v=num(k);if(v>m)m=v});return String(m+1)}
-function nuevo(){ARQ={med:[],plano:null,cab:null};var _ap=document.getElementById('arqPanel');if(_ap){_ap.innerHTML='';_ap.style.display='none'}var _ai=document.getElementById('arqInfo');if(_ai)_ai.textContent='';cur={num:siguienteNum(),fecha:new Date().toISOString().slice(0,10),nom:'',tel:'',email:'',dir:'',asc:'0',iva:'21',obs:'',suelo:false,lineas:[],estado:'borrador',c:{p1:40,p2:30,p3:30,plazo:'',inicio:'',gar:24}};pintar();document.getElementById('msg').textContent=''}
+function nuevo(){window.__avisado={};ARQ={med:[],plano:null,cab:null,dudosas:[]};var _ap=document.getElementById('arqPanel');if(_ap){_ap.innerHTML='';_ap.style.display='none'}var _ai=document.getElementById('arqInfo');if(_ai)_ai.textContent='';cur={num:siguienteNum(),fecha:new Date().toISOString().slice(0,10),nom:'',tel:'',email:'',dir:'',asc:'0',iva:'21',obs:'',suelo:false,lineas:[],estado:'borrador',c:{p1:40,p2:30,p3:30,plazo:'',inicio:'',gar:24}};pintar();document.getElementById('msg').textContent=''}
 function engancharAuto(){var p=document.getElementById('page-presupuesto');if(!p||p.__auto)return;p.__auto=true;
 p.addEventListener('input',autoGuardar,true);p.addEventListener('change',autoGuardar,true)}
 function pintar(){['num','fecha','nom','tel','email','dir','asc','iva','obs'].forEach(function(k){document.getElementById('f_'+k).value=cur[k]||''});document.getElementById('f_suelo').checked=!!cur.suelo;['p1','p2','p3','plazo','inicio','gar'].forEach(function(k){document.getElementById('c_'+k).value=cur.c[k]});renderLineas()}
 function leer(){['num','fecha','nom','tel','email','dir','asc','iva','obs'].forEach(function(k){cur[k]=document.getElementById('f_'+k).value});cur.suelo=document.getElementById('f_suelo').checked;['p1','p2','p3','plazo','inicio','gar'].forEach(function(k){cur.c[k]=document.getElementById('c_'+k).value});var rows=[].slice.call(document.querySelectorAll('#tb tr'));cur.lineas=rows.map(function(r,i){var old=cur.lineas[i]||{};return{d:r.querySelector('.ld').value,q:num(r.querySelector('.lq').value),u:r.querySelector('.lu').value,p:num(r.querySelector('.lp').value),code:r.dataset.code||old.code}})}
-function renderLineas(){var tb=document.getElementById('tb');tb.innerHTML='';cur.lineas.forEach(function(l,i){var tr=document.createElement('tr');if(l.code)tr.dataset.code=l.code;if(!l.p)tr.className='cero';tr.innerHTML='<td><textarea class="ld">'+l.d+'</textarea></td><td><input class="lq n" value="'+l.q+'"></td><td><input class="lu n" value="'+l.u+'"></td><td><input class="lp n" value="'+l.p+'"></td><td class="imp">'+eur(l.q*l.p)+'</td><td><button class="mini sec" title="Quitar" onclick="delLinea('+i+')">✕</button></td>';tb.appendChild(tr)});tb.querySelectorAll('input,textarea').forEach(function(e){e.oninput=calc});calc()}
+function renderLineas(){setTimeout(pintarContinuar,60);var tb=document.getElementById('tb');tb.innerHTML='';cur.lineas.forEach(function(l,i){var tr=document.createElement('tr');if(l.code)tr.dataset.code=l.code;if(!l.p)tr.className='cero';tr.innerHTML='<td><textarea class="ld">'+l.d+'</textarea></td><td><input class="lq n" value="'+l.q+'"></td><td><input class="lu n" value="'+l.u+'"></td><td><input class="lp n" value="'+l.p+'"></td><td class="imp">'+eur(l.q*l.p)+'</td><td><button class="mini sec" title="Quitar" onclick="delLinea('+i+')">✕</button></td>';tb.appendChild(tr)});tb.querySelectorAll('input,textarea').forEach(function(e){e.oninput=calc});calc()}
 function calc(){var rows=[].slice.call(document.querySelectorAll('#tb tr'));var base=0;rows.forEach(function(r){var imp=num(r.querySelector('.lq').value)*num(r.querySelector('.lp').value);r.querySelector('.imp').textContent=eur(imp);base+=imp});var ivap=num(document.getElementById('f_iva').value);var iva=base*ivap/100;document.getElementById('t_base').textContent=eur(base);document.getElementById('t_ivap').textContent=ivap;document.getElementById('t_iva').textContent=eur(iva);document.getElementById('t_tot').textContent=eur(base+iva);var ceros=rows.filter(function(r){return !num(r.querySelector('.lp').value)}).length;rows.forEach(function(r){r.classList.toggle('cero',!num(r.querySelector('.lp').value))});var ci=document.getElementById('ceroInfo');ci.style.display=ceros?'block':'none';ci.textContent=ceros?ceros+' partidas sin precio (en rojo): ponles precio o quítalas antes de mandar el presupuesto.':''}
 document.getElementById('f_iva').onchange=calc;
 document.getElementById('f_asc').onchange=function(){leer();if(this.value==='1'&&!cur.lineas.some(function(l){return /montacargas/i.test(l.d)})){var t=tarifa().find(function(x){return x.id==='mon'});cur.lineas.push({d:t.d,q:1,u:t.u,p:t.p});renderLineas()}};
@@ -330,14 +330,14 @@ var T=tarifa(),t=p.sel&&T.find(function(x){return x.id===p.sel});
 if(t&&t.u===p.u&&p.pr>0&&t.p!==p.pr)setPrecio(p.sel,p.pr);
 var ai=document.getElementById('arqInfo');if(ai)ai.textContent='Guardado: de ahora en adelante «'+p.t.slice(0,40)+'» te sale a '+eur(p.pr)+'. Puedes cambiarlo cuando quieras.';
 renderArq()}
-function rellenarPrecios(){var r=ratios(),m=mediana(r);
+function rellenarPrecios(auto){var r=ratios(),m=mediana(r);
 if(!m){alert('Todav\u00eda no hay ninguna partida con tu precio y el del arquitecto a la vez, as\u00ed que no puedo sacar la proporci\u00f3n. Pon dos o tres precios a mano y vuelve a darle.');return}
 var falt=ARQ.med.filter(function(p){return p.pa>0&&!(p.pr>0)});
 if(!falt.length){alert('No falta ning\u00fan precio');return}
-if(!confirm('Voy a poner precio a '+falt.length+' partidas multiplicando el del arquitecto por '+m.toFixed(2).replace('.',',')+'.\n\nSon una estimaci\u00f3n: rep\u00e1salas una a una antes de mandar el presupuesto. \u00bfSigo?'))return;
+if(!auto&&!confirm('Voy a poner precio a '+falt.length+' partidas multiplicando el del arquitecto por '+m.toFixed(2).replace('.',',')+'.\n\nSon una estimaci\u00f3n: rep\u00e1salas una a una antes de mandar el presupuesto. \u00bfSigo?'))return;
 var porCap=0;falt.forEach(function(p){var rc=ratioCap(capitulo(p.code));var k=rc||m;if(rc)porCap++;var v=p.pa*k;p.pr=v>=20?Math.round(v):Math.round(v*100)/100;p.estimado=true});
 renderArq();var ai=document.getElementById('arqInfo');if(ai)ai.textContent=falt.length+' precios sacados con tu proporci\u00f3n ('+m.toFixed(2).replace('.',',')+' de media'+(porCap?', y '+porCap+' con la proporci\u00f3n de su propio cap\u00edtulo':'')+'). Est\u00e1n marcados como estimados: rep\u00e1salos.'}
-function renderArq(){var _p=document.getElementById('arqPanel');
+function renderArq(){setTimeout(pintarContinuar,60);var _p=document.getElementById('arqPanel');
 if(!ARQ.med.length&&(ARQ.dudosas||[]).length){_p.style.display='block';_p.innerHTML=avisoCuadre();return}
 var T=tarifa(),box=document.getElementById('arqPanel');var h='';
 if(ARQ.med.length){h+='<h3 style="font-size:18px;margin-bottom:4px">Mediciones: '+ARQ.med.length+' partidas leídas</h3><p style="color:var(--muted);margin:0 0 6px">Cada una va con la partida de tu tarifa que le corresponde y tu precio. Si no hay, entra a cero y la valoras. Cambia lo que quieras antes de añadir.</p><table class="lines"><thead><tr><th>Partida del arquitecto</th><th class="n">Cant.</th><th>En tu tarifa</th><th class="n">Tu precio</th></tr></thead><tbody>';
@@ -604,6 +604,45 @@ var t=tokenSeguimiento(p),url=segURL(t);
 FB.db.collection('seguimiento').doc(t).set({uid:FB.uid,num:p.num,cliente:p.nom,obra:p.dir||'',marca:AJ.marca,tel:AJ.tel,ts:Date.now()},{merge:true});
 var txt=saludoHora()+' '+(p.nom||'')+', soy '+AJ.nombre+', de '+AJ.marca+'. Le dejo un enlace donde puede ver cómo va su obra: subimos fotos según vamos avanzando, así lo tiene a mano cuando quiera.\n\n📷 Seguimiento de su obra: '+url+'\n\nCualquier duda me llama al '+AJ.tel+'. Un saludo,\n'+AJ.nombre;
 var v=window.open(waURL(txt,p.tel),'_blank');if(!v&&navigator.clipboard)navigator.clipboard.writeText(txt)}
+
+/* ---------- un solo boton que va resolviendo lo que falta ---------- */
+function problemas(){
+var L=[];var av=window.__avisado||{};
+var d=(ARQ.dudosas||[]).length;
+if(d)L.push({t:d+' l\u00ednea(s) del PDF sin leer',b:'Continuar: meterlas en la lista',f:'meterDudosas'});
+var r=ratios(),m=mediana(r);
+var calc=ARQ.med.filter(function(p){return !(p.pr>0)&&p.pa>0}).length;
+if(calc&&m)L.push({t:calc+' partida(s) sin precio que puedo calcular con tu margen',b:'Continuar: sacarles precio',f:'rellenarPrecios'});
+if(ARQ.med.length)L.push({t:ARQ.med.length+' partida(s) listas pero fuera del presupuesto',b:'Continuar: meterlas en el presupuesto',f:'addMediciones'});
+leer();
+var cero=(cur.lineas||[]).filter(function(l){return !(l.p>0)}).length;
+if(!ARQ.med.length&&cero&&!av.cero)L.push({t:cero+' partida(s) a cero euros: esas las tienes que valorar t\u00fa',b:'Continuar: ll\u00e9vame a ellas',f:'irACero'});
+if(!ARQ.med.length&&!cur.nom&&!av.nom)L.push({t:'falta el nombre del cliente',b:'Continuar: escribirlo',f:'irACliente'});
+if(!ARQ.med.length&&cur.nom&&!cur.dir&&!av.dir)L.push({t:'falta la direcci\u00f3n de la obra',b:'Continuar: escribirla',f:'irADir'});
+return L}
+function pintarContinuar(){var c=document.getElementById('cajaCont');
+if(!c){c=document.createElement('div');c.id='cajaCont';c.style.cssText='margin:8px 0;padding:10px;border-radius:8px;font-size:14px';
+var p=document.getElementById('page-presupuesto');if(p)p.insertBefore(c,p.firstChild)}
+var L=problemas();
+if(!L.length){leer();var n=(cur.lineas||[]).length;
+c.style.background='#e8f5ec';c.style.borderLeft='4px solid #1a7a3f';
+var cer=(cur.lineas||[]).filter(function(l){return !(l.p>0)}).length;
+c.innerHTML=n?('<b>Todo en orden.</b> '+n+' partidas'+(cer?', '+cer+' a cero esperando tu precio.':', todas con precio.')):'<b>Presupuesto vac\u00edo.</b> Dicta los trabajos o sube el PDF del arquitecto.';return}
+var p0=L[0];
+c.style.background='#FBE9E2';c.style.borderLeft='4px solid var(--brick)';
+c.innerHTML='<b>Queda por resolver:</b> '+p0.t+(L.length>1?' <span style="color:var(--muted)">(y '+(L.length-1)+' cosa(s) m\u00e1s)</span>':'')+
+'<div style="margin-top:8px"><button class="ok" onclick="continuar()">'+p0.b+'</button></div>'}
+function continuar(){var L=problemas();if(!L.length){pintarContinuar();return}
+var f=L[0].f;
+try{
+if(f==='meterDudosas')meterDudosas();
+else if(f==='rellenarPrecios')rellenarPrecios(true);
+else if(f==='addMediciones')addMediciones();
+else if(f==='irACero'){window.__avisado=window.__avisado||{};window.__avisado.cero=1;var t=document.getElementById('tb');if(t)t.scrollIntoView({behavior:'smooth',block:'center'})}
+else if(f==='irACliente'){window.__avisado=window.__avisado||{};window.__avisado.nom=1;var e=document.getElementById('f_nom');e.scrollIntoView({behavior:'smooth',block:'center'});e.focus()}
+else if(f==='irADir'){window.__avisado=window.__avisado||{};window.__avisado.dir=1;var e2=document.getElementById('f_dir');e2.scrollIntoView({behavior:'smooth',block:'center'});e2.focus()}
+}catch(e){}
+setTimeout(pintarContinuar,400)}
 /* ---------- mapa de obras ---------- */
 var LEAF_CSS='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css',LEAF_JS='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
 var MAPAOBRAS=null,MARCAS=[];
@@ -809,7 +848,7 @@ return paso().catch(function(e){restaurar();throw e})}).catch(function(e){restau
 function imprimir(m){var pr=m==='precios';if(!pr){var r=revisar(true);if(r.E.length){document.getElementById('revBox').scrollIntoView({behavior:'smooth',block:'center'});if(!confirm('Hay '+r.E.length+' cosas que arreglar (mira el aviso en rojo). Si mandas el PDF así, faltará dinero en el presupuesto.\n¿Sacar el PDF igualmente?'))return}}if(pr)pintarPrecios();else pintarDocs();document.getElementById('sh_precios').style.display=pr?'':'none';document.getElementById('sh_presu').style.display=pr?'none':'';document.getElementById('sh_dosier').style.display=m==='todo'?'':'none';document.getElementById('sh_contrato').style.display=m==='todo'?'':'none';setTimeout(function(){var nom='Presupuesto '+((cur&&cur.num)||'')+(cur&&cur.nom?' - '+cur.nom:'')+'.pdf';pdfSinMargenes(nom).catch(function(){window.print()})},200)}
 function verContrato(){imprimir('todo')}
 /* ---------- init ---------- */
-document.getElementById('brandTxt').textContent=AJ.marca.toUpperCase();var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;engancharAuto();nuevo();iniciarNube();
+document.getElementById('brandTxt').textContent=AJ.marca.toUpperCase();var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;engancharAuto();nuevo();iniciarNube();setTimeout(pintarContinuar,300);
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
 </script><div id="agendaBox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9000;align-items:center;justify-content:center;padding:16px"><div class="card" style="max-width:520px;width:100%;max-height:80vh;overflow:auto"><div class="row" style="justify-content:space-between;align-items:center"><h2 style="font-size:20px;margin:0">Mis clientes</h2><button class="sec" type="button" onclick="cerrarAgenda()">Cerrar</button></div><input id="agBusca" placeholder="Buscar por nombre, teléfono o dirección" oninput="renderAgenda()" style="width:100%;margin:8px 0"><div id="agLista"></div><p style="color:var(--muted);font-size:12px;margin-top:8px">Cada vez que guardas un presupuesto, el cliente se queda aquí con su teléfono y su correo.</p></div></div><div id="verFijo" style="position:fixed;right:8px;bottom:8px;z-index:40;background:rgba(37,51,64,.85);color:#fff;font-size:11px;padding:3px 8px;border-radius:10px;pointer-events:none">v?</div><script>document.getElementById('verFijo').textContent=APP_VERSION;</script><section class="page" id="page-mapa"><div class="card"><div class="row" style="justify-content:space-between;align-items:center"><h2>Mapa de obras</h2><button class="sec" onclick="pintarMapa(true)">Actualizar</button></div><p style="color:var(--muted);font-size:13px">Cada chincheta es una obra. Verde: en marcha. Azul: aceptada. Naranja: mandada sin firmar. Gris: borrador. Toca una chincheta para ver qué falta, apuntar lo que hay que llevar o tirar para allá con el navegador.</p><div id="mapObras" style="height:60vh;min-height:320px;border-radius:8px;overflow:hidden;background:#e9e7e2;position:relative;z-index:0;isolation:isolate"></div><div id="mapInfo" style="color:var(--muted);font-size:12px;margin-top:6px"></div></div></div>
 </section>
