@@ -21,7 +21,7 @@ a.tel{display:inline-block;margin-top:8px;background:var(--brick);color:#fff;tex
 <div class="wrap">
   <div id="avance" style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;font-size:14px"></div>
   <div id="cont" class="vacio">Cargando las fotos…</div>
-  <div class="pie-pag" id="pie"></div>
+  <div class="pie-pag" id="pie"></div><div id="lopd2" style="font-size:12px;color:var(--muted);line-height:1.45;margin-top:14px"></div>
 </div>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -37,6 +37,7 @@ db.collection('seguimiento').doc(TOK).get().then(function(s){
   document.getElementById('hMarca').textContent=d.marca||'Cómo va mi obra';
   document.getElementById('hSub').textContent=(d.cliente?d.cliente+' · ':'')+(d.obra||'');
   if(d.total)document.getElementById('avance').innerHTML='<b>'+d.hechas+' de '+d.total+'</b> trabajos del presupuesto ya hechos<div style="height:8px;background:#ddd;border-radius:4px;margin-top:6px"><div style="height:8px;width:'+Math.round(d.hechas*100/Math.max(1,d.total))+'%;background:#1a7a3f;border-radius:4px"></div></div>';
+  document.getElementById('lopd2').innerHTML='<b>Protecci\u00f3n de datos.</b> Estas fotos son del seguimiento de su obra y las trata '+(d.marca||'el contratista')+' solo para inform\u00e1rselo a usted. El enlace es privado: no lo comparta si no quiere que otras personas lo vean. Puede pedir que se borren escribiendo o llamando al contratista.';
   if(d.tel)document.getElementById('pie').innerHTML='¿Alguna duda con la obra?<br><a class="tel" href="tel:'+d.tel.replace(/\s/g,'')+'">Llamar al '+d.tel+'</a>';
   return db.collection('seguimiento').doc(TOK).collection('fotos').orderBy('ts','desc').get();
 }).then(function(q){
