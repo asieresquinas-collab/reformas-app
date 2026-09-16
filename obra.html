@@ -1,0 +1,52 @@
+<!doctype html><html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cómo va mi obra</title>
+<style>
+:root{--crema:#FAF6EC;--ink:#1c1f22;--slate:#253340;--brick:#D7481D;--line:#d9d6d0;--muted:#6b7178}
+*{box-sizing:border-box}
+body{margin:0;background:var(--crema);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:var(--slate);color:#fff;padding:16px}
+header b{font-size:19px;display:block}
+header span{font-size:13px;opacity:.85}
+.wrap{max-width:780px;margin:0 auto;padding:14px}
+.dia{font-family:system-ui;font-weight:700;font-size:15px;margin:18px 0 8px;padding-bottom:4px;border-bottom:2px solid var(--brick)}
+.foto{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:12px}
+.foto img{width:100%;display:block}
+.foto .pie{padding:8px 10px;font-size:13px;color:var(--muted)}
+.vacio{padding:30px;text-align:center;color:var(--muted)}
+.pie-pag{margin:24px 0 10px;font-size:13px;color:var(--muted);text-align:center}
+a.tel{display:inline-block;margin-top:8px;background:var(--brick);color:#fff;text-decoration:none;padding:10px 14px;border-radius:8px;font-weight:700}
+</style></head><body>
+<header><b id="hMarca">Cómo va mi obra</b><span id="hSub"></span></header>
+<div class="wrap">
+  <div id="cont" class="vacio">Cargando las fotos…</div>
+  <div class="pie-pag" id="pie"></div>
+</div>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+var CFG={apiKey:"AIzaSyDsUvYWlJUPa__voQ7oBznCDWb8o6D1m5Q",authDomain:"reformas-ioan.firebaseapp.com",projectId:"reformas-ioan",storageBucket:"reformas-ioan.firebasestorage.app",messagingSenderId:"65105142083",appId:"1:65105142083:web:cfcb082d4406f938c60ff6"};
+firebase.initializeApp(CFG);var db=firebase.firestore();
+var TOK=new URLSearchParams(location.search).get('t');
+function fechaLarga(s){try{return new Date(s).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}catch(e){return ''}}
+if(!TOK){document.getElementById('cont').textContent='Enlace incompleto. Pida que se lo manden otra vez.';}
+else{
+db.collection('seguimiento').doc(TOK).get().then(function(s){
+  var d=s.exists?s.data():{};
+  document.getElementById('hMarca').textContent=d.marca||'Cómo va mi obra';
+  document.getElementById('hSub').textContent=(d.cliente?d.cliente+' · ':'')+(d.obra||'');
+  if(d.tel)document.getElementById('pie').innerHTML='¿Alguna duda con la obra?<br><a class="tel" href="tel:'+d.tel.replace(/\s/g,'')+'">Llamar al '+d.tel+'</a>';
+  return db.collection('seguimiento').doc(TOK).collection('fotos').orderBy('ts','desc').get();
+}).then(function(q){
+  var cont=document.getElementById('cont');
+  if(!q||q.empty){cont.className='vacio';cont.textContent='Todavía no hay fotos subidas. En cuanto empecemos verá aquí cómo va avanzando.';return}
+  var html='',dia='';
+  q.forEach(function(doc){var f=doc.data();
+    var d=fechaLarga(f.fecha||f.ts);
+    if(d!==dia){dia=d;html+='<div class="dia">'+d+'</div>'}
+    html+='<div class="foto"><img src="'+f.img+'" loading="lazy">'+(f.nota?'<div class="pie">'+String(f.nota).replace(/</g,'&lt;')+'</div>':'')+'</div>';
+  });
+  cont.className='';cont.innerHTML=html;
+}).catch(function(e){document.getElementById('cont').textContent='No he podido abrir el seguimiento ('+e.message+')'});
+}
+</script></body></html>

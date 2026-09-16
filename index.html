@@ -129,7 +129,7 @@ body.capturando #sh_dosier{height:297mm!important;max-height:297mm!important;ove
 <p><b>2b.</b> Si es obra de arquitecto, sube su PDF de mediciones o el plano de superficies en «Documentos del arquitecto»: la app saca el nombre del cliente y la dirección de la obra (si están en el documento) y además lee cantidades y metros, los casa con tu tarifa y te lo enseña antes de añadirlo.</p>
 <p><b>2bis.</b> Cuando el PDF del arquitecto trae sus precios, la app compara los suyos con los tuyos en las partidas que sí tienes puestas y saca la proporción a la que trabajas. Con el botón «Sacar los precios que faltan con mi margen» rellena las que están a cero con esa proporción (la de su propio capítulo si hay datos). Salen marcadas en rojo como <b>estimadas</b>: son un punto de partida para que las repases, no un precio cerrado.</p><p><b>2ter.</b> Todo precio que corrijas a mano en el panel del arquitecto se queda guardado para esa partida: la próxima vez que aparezca en otro PDF sale ya con tu precio (marcado en verde, «tu precio de otras veces»). Y si la partida es de tu tarifa, también se actualiza ahí. Siempre lo puedes volver a cambiar y manda el último que pongas.</p><p><b>2c.</b> «Revisar el presupuesto» comprueba que no se escapa nada: partidas a cero o sin cantidad, repetidas, partidas del arquitecto que faltan o con otra cantidad, montacargas si no hay ascensor, contenedor si hay derribos, y avisos de coherencia (suelo nuevo sin nivelar, baño sin sanitarios…). Al sacar el PDF se revisa solo.</p>
 <p><b>3.</b> Guardar. Luego «PDF completo»: sale la portada con tus obras, el presupuesto y el contrato en un solo documento para mandar por WhatsApp o correo.</p>
-<p><b>3b.</b> «Mandar a firmar»: se abre WhatsApp con <b>un solo enlace</b>. El cliente lo abre y ahí tiene el presupuesto entero y el contrato, con botón para descargarlo en PDF, y justo debajo firma con el dedo. Se avisa bien claro de que la aceptación es <b>bajo reserva</b>: la obra no queda contratada hasta que tú confirmes la fecha por escrito.</p><p><b>4c.</b> Pestaña «Mapa de obras»: todas las obras abiertas con una chincheta. Verde las que están en marcha, naranja las pendientes de firma. Tocas una y ves de qué obra es, cuántos días lleva, lo que falta y lo que hay que llevar (lo apuntas ahí mismo), y un botón «Cómo llegar» que abre el navegador. En el presupuesto del cliente sale un mapa con la chincheta de su obra.</p><p><b>4b.</b> En Clientes, al poner una obra «En obra» te pregunta el día que empieza y el día que calculas acabarla, y a partir de ahí lleva la cuenta: días que lleva, días que quedan y aviso en rojo si se pasa. Al ponerla «Acabada» o «Pagado y cerrado» guarda el día real y te dice si te pasaste o no de lo calculado. Esto es solo para ti: no sale en el PDF ni lo ve el cliente.</p><p><b>3c.</b> En Ajustes firmas una vez con el dedo y tu firma sale ya impresa en la casilla del contratista de todos los contratos. La del cliente sigue vacía: esa la pone él al firmar el enlace o a mano en papel.</p><p><b>4.</b> En Clientes cambias el estado (enviado, aceptado, en obra, cobrado) y duplicas un presupuesto si el cliente pide una variante.</p>
+<p><b>3b.</b> «Mandar a firmar»: se abre WhatsApp con <b>un solo enlace</b>. El cliente lo abre y ahí tiene el presupuesto entero y el contrato, con botón para descargarlo en PDF, y justo debajo firma con el dedo. Se avisa bien claro de que la aceptación es <b>bajo reserva</b>: la obra no queda contratada hasta que tú confirmes la fecha por escrito.</p><p><b>4d.</b> Fotos de obra: botón «Fotos» en cada obra (en Clientes y en el mapa). Sacas fotos con el móvil o subes las que tengas, les pones una nota («tabiques levantados») y quedan guardadas por días. Con «Mandar el enlace al cliente» le llega por WhatsApp un enlace donde ve cómo va avanzando su obra, ordenado por días, con tu teléfono para llamarte.</p><p><b>4c.</b> Pestaña «Mapa de obras»: todas las obras abiertas con una chincheta. Verde las que están en marcha, naranja las pendientes de firma. Tocas una y ves de qué obra es, cuántos días lleva, lo que falta y lo que hay que llevar (lo apuntas ahí mismo), y un botón «Cómo llegar» que abre el navegador. En el presupuesto del cliente sale un mapa con la chincheta de su obra.</p><p><b>4b.</b> En Clientes, al poner una obra «En obra» te pregunta el día que empieza y el día que calculas acabarla, y a partir de ahí lleva la cuenta: días que lleva, días que quedan y aviso en rojo si se pasa. Al ponerla «Acabada» o «Pagado y cerrado» guarda el día real y te dice si te pasaste o no de lo calculado. Esto es solo para ti: no sale en el PDF ni lo ve el cliente.</p><p><b>3c.</b> En Ajustes firmas una vez con el dedo y tu firma sale ya impresa en la casilla del contratista de todos los contratos. La del cliente sigue vacía: esa la pone él al firmar el enlace o a mano en papel.</p><p><b>4.</b> En Clientes cambias el estado (enviado, aceptado, en obra, cobrado) y duplicas un presupuesto si el cliente pide una variante.</p>
 <p style="color:var(--muted)">Los presupuestos se guardan en la nube (el punto verde de arriba dice que está todo subido) y también en este aparato, así que funciona sin cobertura y se sube solo al volver. Puedes usarla desde el móvil y el ordenador a la vez.</p><p style="color:var(--muted)">Versión <span id="ver"></span></p></div></section>
 
 <!-- ================= DOCUMENTOS PARA IMPRIMIR ================= -->
@@ -159,7 +159,7 @@ body.capturando #sh_dosier{height:297mm!important;max-height:297mm!important;ove
 </section>
 
 <script>
-var APP_VERSION='v39';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v40';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -463,6 +463,54 @@ window.__esc[p.firmaTok]=FB.db.collection('firmas').doc(p.firmaTok).onSnapshot(f
 if(f&&f.firma){var q=DB.presus[p.num];if(q&&!estaFirmado(q)){q.firmado={nombre:f.nombreFirma||'',dni:f.dni||'',fecha:f.fechaFirma||''};q.estado='aceptado';save();try{subirPresu(q.num)}catch(_){}
 if(document.getElementById('page-clientes').classList.contains('on'))renderClientes()}}},function(){})})}
 
+
+/* ---------- fotos de obra y seguimiento ---------- */
+function comprimirFoto(file,maxLado,calidad){return new Promise(function(ok,ko){
+var fr=new FileReader();fr.onload=function(){var im=new Image();
+im.onload=function(){var w=im.width,h=im.height,m=maxLado||1280;
+if(w>h&&w>m){h=Math.round(h*m/w);w=m}else if(h>=w&&h>m){w=Math.round(w*m/h);h=m}
+var cv=document.createElement('canvas');cv.width=w;cv.height=h;
+cv.getContext('2d').drawImage(im,0,0,w,h);
+ok(cv.toDataURL('image/jpeg',calidad||0.55))};
+im.onerror=ko;im.src=fr.result};fr.onerror=ko;fr.readAsDataURL(file)})}
+function tokenSeguimiento(p){if(p.segTok)return p.segTok;
+p.segTok=(p.num||'0')+'-s'+Math.random().toString(36).slice(2,10);DB.presus[p.num]=p;save();return p.segTok}
+function segURL(t){return location.href.replace(/[^/]*$/,'')+'obra.html?t='+encodeURIComponent(t)}
+function abrirFotos(n){var p=DB.presus[n];if(!p)return;window.__fotoObra=n;
+var inp=document.getElementById('fotoInput');if(inp){inp.value='';inp.click()}}
+function subirFotos(files){var n=window.__fotoObra,p=DB.presus[n];if(!p||!files||!files.length)return;
+if(!FB.uid||!FB.db){alert('Entra en tu cuenta para guardar las fotos en la nube');return}
+var nota=prompt('¿Qué se ve en estas fotos? (sale con la foto; puedes dejarlo vacío)','')||'';
+var t=tokenSeguimiento(p);var i=0;var info=document.getElementById('msg');
+if(info)info.textContent='Subiendo fotos…';
+var paso=function(){if(i>=files.length){if(info)info.textContent=files.length+' foto(s) guardadas';
+FB.db.collection('seguimiento').doc(t).set({uid:FB.uid,num:p.num,cliente:p.nom,obra:p.dir||'',marca:AJ.marca,tel:AJ.tel,ts:Date.now()},{merge:true});
+verFotos(n);return}
+comprimirFoto(files[i]).then(function(img){
+var id=Date.now()+'-'+i;
+return FB.db.collection('seguimiento').doc(t).collection('fotos').doc(id).set({img:img,nota:nota,fecha:new Date().toISOString(),ts:Date.now()})})
+.then(function(){i++;paso()}).catch(function(e){if(info)info.textContent='No he podido subir una foto: '+e.message;i++;paso()})};
+paso()}
+function verFotos(n){var p=DB.presus[n];if(!p||!p.segTok||!FB.db){alert('Esta obra todavía no tiene fotos');return}
+var box=document.getElementById('fotosBox'),lista=document.getElementById('fotosLista');
+document.getElementById('fotosTit').textContent='Fotos de '+p.nom+' · nº '+p.num;
+window.__fotoObra=n;box.style.display='flex';lista.innerHTML='Cargando…';
+FB.db.collection('seguimiento').doc(p.segTok).collection('fotos').orderBy('ts','desc').get().then(function(q){
+var h='';q.forEach(function(d){var f=d.data();
+h+='<div style="border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:8px">'+
+'<img src="'+f.img+'" style="width:100%;display:block">'+
+'<div style="padding:6px 8px;font-size:12px"><b>'+new Date(f.fecha||f.ts).toLocaleDateString('es-ES')+'</b>'+(f.nota?' · '+f.nota:'')+
+' <button class="mini sec" onclick="borrarFoto(\''+p.segTok+'\',\''+d.id+'\')">Borrar</button></div></div>'});
+lista.innerHTML=h||'<p style="color:var(--muted)">Todavía no hay fotos.</p>'}).catch(function(e){lista.innerHTML='No he podido leer las fotos: '+e.message})}
+function borrarFoto(t,id){if(!confirm('¿Borrar esta foto?'))return;
+FB.db.collection('seguimiento').doc(t).collection('fotos').doc(id).delete().then(function(){verFotos(window.__fotoObra)})}
+function cerrarFotos(){document.getElementById('fotosBox').style.display='none'}
+function mandarSeguimiento(n){var p=DB.presus[n];if(!p)return;
+if(!FB.uid){alert('Entra en tu cuenta primero');return}
+var t=tokenSeguimiento(p),url=segURL(t);
+FB.db.collection('seguimiento').doc(t).set({uid:FB.uid,num:p.num,cliente:p.nom,obra:p.dir||'',marca:AJ.marca,tel:AJ.tel,ts:Date.now()},{merge:true});
+var txt=saludoHora()+' '+(p.nom||'')+', soy '+AJ.nombre+', de '+AJ.marca+'. Le dejo un enlace donde puede ver cómo va su obra: subimos fotos según vamos avanzando, así lo tiene a mano cuando quiera.\n\n📷 Seguimiento de su obra: '+url+'\n\nCualquier duda me llama al '+AJ.tel+'. Un saludo,\n'+AJ.nombre;
+var v=window.open(waURL(txt,p.tel),'_blank');if(!v&&navigator.clipboard)navigator.clipboard.writeText(txt)}
 /* ---------- mapa de obras ---------- */
 var LEAF_CSS='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css',LEAF_JS='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
 var MAPA=null,MARCAS=[];
@@ -511,7 +559,7 @@ return '<div style="min-width:210px;font-family:system-ui">'+
 '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">'+
 '<button onclick="apuntarPendientes(\''+p.num+'\')" style="padding:6px 9px;border:1px solid #ccc;border-radius:6px;background:#fff;color:#1c1f22;font-weight:600">Apuntar</button>'+
 '<a href="https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(p.dir||'')+'" target="_blank" rel="noopener" style="padding:6px 9px;border-radius:6px;background:#1a7a3f;color:#fff;text-decoration:none">C\u00f3mo llegar</a>'+
-'<button onclick="abrir(\''+p.num+'\')" style="padding:6px 9px;border:1px solid #ccc;border-radius:6px;background:#fff;color:#1c1f22;font-weight:600">Abrir</button>'+
+'<button onclick="verFotos(\''+p.num+'\')" style="padding:6px 9px;border:1px solid #ccc;border-radius:6px;background:#fff;color:#1c1f22;font-weight:600">Fotos</button>'+'<button onclick="abrir(\''+p.num+'\')" style="padding:6px 9px;border:1px solid #ccc;border-radius:6px;background:#fff;color:#1c1f22;font-weight:600">Abrir</button>'+
 '</div></div>'}
 function textoDias(p){var hoy=new Date().toISOString().slice(0,10);var d=dias(p.obraIni,p.obraFin||hoy);
 return p.obraFin?('acabada en '+d+' d\u00edas'):('lleva '+d+' d\u00edas de obra')}
@@ -634,4 +682,5 @@ document.getElementById('brandTxt').textContent=AJ.marca.toUpperCase();var vf=do
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
 </script><div id="agendaBox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:60;align-items:center;justify-content:center;padding:16px"><div class="card" style="max-width:520px;width:100%;max-height:80vh;overflow:auto"><div class="row" style="justify-content:space-between;align-items:center"><h2 style="font-size:20px;margin:0">Mis clientes</h2><button class="sec" type="button" onclick="cerrarAgenda()">Cerrar</button></div><input id="agBusca" placeholder="Buscar por nombre, teléfono o dirección" oninput="renderAgenda()" style="width:100%;margin:8px 0"><div id="agLista"></div><p style="color:var(--muted);font-size:12px;margin-top:8px">Cada vez que guardas un presupuesto, el cliente se queda aquí con su teléfono y su correo.</p></div></div><div id="verFijo" style="position:fixed;right:8px;bottom:8px;z-index:40;background:rgba(37,51,64,.85);color:#fff;font-size:11px;padding:3px 8px;border-radius:10px;pointer-events:none">v?</div><script>document.getElementById('verFijo').textContent=APP_VERSION;</script><section class="page" id="page-mapa"><div class="card"><div class="row" style="justify-content:space-between;align-items:center"><h2>Mapa de obras</h2><button class="sec" onclick="pintarMapa(true)">Actualizar</button></div><p style="color:var(--muted);font-size:13px">Cada chincheta es una obra. Verde: en marcha. Naranja: pendiente de firma. Toca una chincheta para ver qué falta, apuntar lo que hay que llevar o tirar para allá con el navegador.</p><div id="mapObras" style="height:60vh;min-height:320px;border-radius:8px;overflow:hidden;background:#e9e7e2"></div><div id="mapInfo" style="color:var(--muted);font-size:12px;margin-top:6px"></div></div></div>
 </section>
+<input type="file" id="fotoInput" accept="image/*" capture="environment" multiple style="display:none" onchange="subirFotos(this.files)"><div id="fotosBox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:70;align-items:center;justify-content:center;padding:14px"><div class="card" style="max-width:560px;width:100%;max-height:85vh;overflow:auto"><div class="row" style="justify-content:space-between;align-items:center"><h2 id="fotosTit" style="font-size:18px;margin:0">Fotos</h2><button class="sec" onclick="cerrarFotos()">Cerrar</button></div><div class="row" style="margin:8px 0"><button class="ok" onclick="abrirFotos(window.__fotoObra)">Sacar o subir fotos</button><button class="sec" onclick="mandarSeguimiento(window.__fotoObra)">Mandar el enlace al cliente</button></div><div id="fotosLista"></div></div></div>
 </body></html>
