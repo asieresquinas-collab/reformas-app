@@ -159,7 +159,7 @@ body.capturando #sh_dosier{height:297mm!important;max-height:297mm!important;ove
 </section>
 
 <script>
-var APP_VERSION='v47';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v48';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -264,7 +264,15 @@ function aLineas(items){var ls=[];items.slice().sort(function(a,b){return b.y-a.
 /* diccionario: vocabulario de arquitecto → partida de la tarifa */
 var MAPA=[[/limpieza final/,'limf'],[/limpieza/,'limp'],[/ayuda.*fontan/,'ayf'],[/ayuda.*electr/,'aye'],[/acuchillad/,'acu'],[/llaves.*regulaci/,'llav'],[/conducto.*ventilaci|ventilaci.n.*ba.o|extractor/,'vent'],[/alicatado.*sin material|colocaci.n de azulejo/,'alsm'],[/desmont.*(fontaner|agua|red.*instalaci.n de agua)/,'dfon'],[/falso techo/,'tec'],[/tabique.*(pladur|knauf|yeso laminado|placa)|trasdosad/,'pla'],[/derribo.*mobiliario.*cocina/,'coc'],[/desmont.*sanitari/,'san'],[/desmont.*puerta/,'pue'],[/demolici.*tarima/,'sue'],[/tendido de paredes|lucido de paredes/,'yes'],[/colocaci.n de azulejo/,'alc'],[/parqu|vin.lico/,'flo'],[/acorazada/,'pen'],[/derribo.*tabiq|demolici.*tabiq|tabiquer.a/,'tab'],[/(levantad|retirad|desmont).*rodapi|rodapi.*(levantad|retirad|desmont)/,'rod'],[/rodapi/,'ron'],[/levantad.*puerta|carpinter.a puertas|puerta.*levantad/,'pue'],[/puerta.*entrada|entrada vivienda|acorazada|blindada/,'pen'],[/armaz.n.*corredera|corredera/,'cor'],[/puerta.*(abatible|batiente|interior)/,'pub'],[/(demolici|picado|levantad).*(alicat|aplacad|azulej)|alicat.*(demolici|picado)/,'ali'],[/alicat/,'alc'],[/(demolici|levantad).*(solado|suelo|baldos|cer.mic)/,'sol'],[/levantad.*tarima|tarima.*levantad|retirada.*suelo/,'sue'],[/tarima|flotante|suelo laminado|parqu|vin.lico/,'flo'],[/guarnecid|enlucid|enfoscad/,'yes'],[/pintura.*(techo|horizontal)/,'pit'],[/pintura/,'pip'],[/falso techo/,'tec'],[/tabique.*(pladur|knauf|yeso laminado|placa)|trasdosad/,'pla'],[/contenedor/,'con'],[/desmontaje.*el.ctric|el.ctric.*desmontaje/,'ins'],[/red.*el.ctrica|instalaci.n.*el.ctric|electrificaci|cuadro general/,'ele'],[/fontaner.a.*ba.o|instalaci.n interior.*ba.o|ba.o 3ap/,'fba'],[/fontaner.a.*cocina|instalaci.n interior.*cocina|cocina.*fontaner/,'fco'],[/calefacci|radiador|caldera|suelo radiante|aeroterm/,'cal'],[/plato de ducha|ducha/,'pd7'],[/mueble de ba.o/,'mba'],[/montaje.*armario|armario.*montaje/,'mar'],[/levantad.*sanitari|sanitari/,'san'],[/premarco/,'pre'],[/formaci.n.*hueco/,'hue'],[/nivel|recrecid|autonivel/,'niv'],[/mobiliario de cocina|desmontaje.*cocina|cocina.*desmontaje/,'coc'],[/montacargas|elevador/,'mon']];
 var DEMOL=['tab','rod','pue','ali','sol','sue','san','ins','con','mon','coc'];function casar(titulo){var n=norm(titulo);if(/^material|aislamiento|tasa|empanelad|pintad.*rodapi|pintad.*puerta|suministro de (azulejo|baldosa)/.test(n))return null;var dem=/desmont|levantad|demolici|picado|retirad|derribo/.test(n);for(var i=0;i<MAPA.length;i++)if(MAPA[i][0].test(n)){var id=MAPA[i][1];if(dem&&DEMOL.indexOf(id)<0)continue;return id}return null}
-function parseMediciones(lineas){var out=[],act=null;lineas.forEach(function(l){var m=l.match(/^(\d+(?:\.\d+)+)\s+(Ud|UD|M²|M2|m2|M|Ml|ML|m|M3)\s+(.+)$/i);if(m){act={code:m[1],u:m[2].toLowerCase().replace('²','2').replace('ud','ud'),t:m[3].replace(/\s+/g,' '),q:null,pa:null};out.push(act);return}var tt=l.match(/Total\s+(\S+)\s*:\s*([\d.]+,\d+)\s*(?:([\d.]+,\d+)\s*€)?/i);if(tt&&act&&act.q==null){act.q=num(tt[2].replace(/\./g,''));if(tt[3])act.pa=num(tt[3].replace(/\./g,''));act.u=tt[1].toLowerCase().replace('²','2')}});return out.filter(function(p){return p.q!=null&&p.q>0})}
+function nEs(x){return num(String(x).replace(/\./g,'').replace(',','.'))}
+function parseMediciones(lineas){var out=[],act=null;lineas.forEach(function(l){
+var ln=l.replace(/\s+/g,' ').trim();
+/* formato de una linea: codigo unidad texto cantidad precio importe */
+var uno=ln.match(/^(\d+(?:\.\d+)+)\s+(ud|uds|u|m2|m²|m3|ml|m|kg|pa)\s+(.+?)\s+([\d.]+,\d+|\d+)\s+([\d.]+,\d+|\d+)\s+([\d.]+,\d+|\d+)$/i);
+if(!uno)uno=ln.match(/^(\d+(?:\.\d+)+)\s+(ud|uds|u|m2|m²|m3|ml|m|kg|pa)\s+(.+?)\s+([\d.]+,\d+|\d+)\s+([\d.]+,\d+|\d+)$/i);
+if(uno){var q=nEs(uno[4]),pa=nEs(uno[5]);
+if(q>0){out.push({code:uno[1],u:uno[2].toLowerCase().replace('²','2').replace('uds','ud').replace(/^u$/,'ud'),t:uno[3].trim(),q:q,pa:pa>0?pa:null});act=null;return}}
+var m=ln.match(/^(\d+(?:\.\d+)+)\s+(Ud|UD|M²|M2|m2|M|Ml|ML|m|M3)\s+(.+)$/i);if(m){act={code:m[1],u:m[2].toLowerCase().replace('²','2').replace('ud','ud'),t:m[3].replace(/\s+/g,' '),q:null,pa:null};out.push(act);return}var tt=ln.match(/Total\s+(\S+)\s*:\s*([\d.]+,\d+)\s*(?:([\d.]+,\d+)\s*€)?/i);if(tt&&act&&act.q==null){act.q=num(tt[2].replace(/\./g,''));if(tt[3])act.pa=num(tt[3].replace(/\./g,''));act.u=tt[1].toLowerCase().replace('²','2')}});return out.filter(function(p){return p.q!=null&&p.q>0})}
 function parsePlano(items){var rooms=[],walls=[],pint=[],tap=[];items.forEach(function(it){var s=it.s.replace(/\s+/g,' ').trim();var m=s.match(/^([A-Za-zÁÉÍÓÚáéíóúñÑ. ]*?)\s*(\d+[.,]\d+)\s*m2$/i);if(m){rooms.push({n:m[1].trim(),a:num(m[2]),x:it.x,y:it.y});return}var w=s.match(/PAREDES\s*=\s*(\d+[.,]?\d*)\s*M2/i);if(w){walls.push({a:num(w[1]),x:it.x,y:it.y});return}var pi=s.match(/PINTURA\s*=\s*(\d+[.,]?\d*)\s*M2/i);if(pi){pint.push({a:num(pi[1]),x:it.x,y:it.y});return}var ta=s.match(/TAPETAS\s*=\s*(\d+[.,]?\d*)\s*ML/i);if(ta)tap.push({a:num(ta[1])})});
 var textos=items.filter(function(it){return /^[A-Za-zÁÉÍÓÚáéíóúñÑ. ]{3,}$/.test(it.s.trim())&&!/PAREDES|PINTURA|TAPETAS|PLANO|ESCALA|FECHA|REFORMA|BILBAO|FDO/i.test(it.s)});
 rooms.forEach(function(r){if(!r.n){var best=null,bd=1e9;textos.forEach(function(t){var d=Math.hypot(t.x-r.x,t.y-r.y);if(d<bd&&d<60){bd=d;best=t}});r.n=best?best.s.trim():'Estancia'}r.p=0});
@@ -556,7 +564,7 @@ function cambiarNota(t,id){var v=prompt('\u00bfQu\u00e9 pongo en esta foto?','')
 FB.db.collection('seguimiento').doc(t).collection('fotos').doc(id).set({nota:v},{merge:true}).then(function(){verFotos(window.__fotoObra)})}
 function borrarFoto(t,id){if(!confirm('¿Borrar esta foto?'))return;
 FB.db.collection('seguimiento').doc(t).collection('fotos').doc(id).delete().then(function(){verFotos(window.__fotoObra)})}
-function cerrarFotos(){document.getElementById('fotosBox').style.display='none';document.body.style.overflow='';try{if(MAPA)setTimeout(function(){MAPA.invalidateSize()},100)}catch(_){}}
+function cerrarFotos(){document.getElementById('fotosBox').style.display='none';document.body.style.overflow='';try{if(MAPAOBRAS)setTimeout(function(){MAPAOBRAS.invalidateSize()},100)}catch(_){}}
 function mandarSeguimiento(n){var p=DB.presus[n];if(!p)return;
 if(!FB.uid){alert('Entra en tu cuenta primero');return}
 var t=tokenSeguimiento(p),url=segURL(t);
@@ -565,7 +573,7 @@ var txt=saludoHora()+' '+(p.nom||'')+', soy '+AJ.nombre+', de '+AJ.marca+'. Le d
 var v=window.open(waURL(txt,p.tel),'_blank');if(!v&&navigator.clipboard)navigator.clipboard.writeText(txt)}
 /* ---------- mapa de obras ---------- */
 var LEAF_CSS='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css',LEAF_JS='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
-var MAPA=null,MARCAS=[];
+var MAPAOBRAS=null,MARCAS=[];
 function cargarLeaflet(){return new Promise(function(ok,ko){if(window.L)return ok();
 var c=document.createElement('link');c.rel='stylesheet';c.href=LEAF_CSS;document.head.appendChild(c);
 var e=document.createElement('script');e.src=LEAF_JS;e.onload=ok;e.onerror=ko;document.head.appendChild(e)})}
@@ -601,26 +609,26 @@ if(!d)return;var info=document.getElementById('mapInfo');if(info)info.textConten
 buscarNominatim(/bilbao|bizkaia|vizcaya/i.test(d)?d:d+', Bizkaia').then(function(g){
 if(!g){if(info)info.textContent='Sigo sin encontrarla. Prueba con la calle y el pueblo, sin piso ni letra.';return}
 p.lat=g.lat;p.lon=g.lon;p.dirMapa=d;DB.presus[n]=p;save();try{subirPresu(n)}catch(_){}pintarMapa()})}
-function obrasDelMapa(){return Object.values(DB.presus).filter(function(p){return p.dir&&['enviado','aceptado','obra','finalizado'].indexOf(p.estado)>=0&&p.estado!=='cobrado'})}
-function colorEstado(e){return e==='obra'?'#1a7a3f':(e==='finalizado'?'#253340':(e==='aceptado'?'#0b6bcb':'#D7481D'))}
+function obrasDelMapa(){return Object.values(DB.presus).filter(function(p){return p.dir&&p.estado!=='cobrado'})}
+function colorEstado(e){return e==='obra'?'#1a7a3f':(e==='finalizado'?'#253340':(e==='aceptado'?'#0b6bcb':(e==='borrador'?'#8a8f98':'#D7481D')))}
 function pintarMapa(forzar){var cont=document.getElementById('mapObras');if(!cont)return;
 var info=document.getElementById('mapInfo');info.textContent='Preparando el mapa\u2026';
 cargarLeaflet().then(function(){
-if(!MAPA){MAPA=L.map('mapObras').setView([43.263,-2.935],12);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'\u00a9 OpenStreetMap'}).addTo(MAPA)}
-setTimeout(function(){MAPA.invalidateSize()},150);
-MARCAS.forEach(function(m){MAPA.removeLayer(m)});MARCAS=[];
+if(!MAPAOBRAS){MAPAOBRAS=L.map('mapObras').setView([43.263,-2.935],12);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'\u00a9 OpenStreetMap'}).addTo(MAPAOBRAS)}
+setTimeout(function(){MAPAOBRAS.invalidateSize()},150);
+MARCAS.forEach(function(m){MAPAOBRAS.removeLayer(m)});MARCAS=[];
 var obras=obrasDelMapa();
 if(!obras.length){info.textContent='No hay obras abiertas con direcci\u00f3n puesta.';return}
 info.textContent='Colocando '+obras.length+' obra(s)\u2026';
 var pts=[];
-var paso=function(i){if(i>=obras.length){if(pts.length)MAPA.fitBounds(pts,{padding:[30,30],maxZoom:15});
+var paso=function(i){if(i>=obras.length){if(pts.length)MAPAOBRAS.fitBounds(pts,{padding:[30,30],maxZoom:15});
 var fall=obras.filter(function(o){return !(o.lat&&o.lon)});
 info.innerHTML=pts.length+' de '+obras.length+' obra(s) colocadas'+(fall.length?' \u00b7 sin colocar: '+fall.map(function(o){return '<b>'+o.nom+'</b> <button class="mini sec" onclick="chinchetaAMano(\''+o.num+'\')">Colocar a mano</button>'}).join(' '):'');return}
 var p=obras[i];
 var seguir=function(g){if(g){var col=colorEstado(p.estado);
 var ic=L.divIcon({className:'',html:'<div style="background:'+col+';width:22px;height:22px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)"></div>',iconSize:[22,22],iconAnchor:[11,22]});
-var m=L.marker([g.lat,g.lon],{icon:ic}).addTo(MAPA);
+var m=L.marker([g.lat,g.lon],{icon:ic}).addTo(MAPAOBRAS);
 m.bindPopup(popupObra(p));MARCAS.push(m);pts.push([g.lat,g.lon])}
 setTimeout(function(){paso(i+1)},g?350:0)};
 if(p.lat&&p.lon)seguir({lat:p.lat,lon:p.lon});
@@ -758,7 +766,7 @@ function verContrato(){imprimir('todo')}
 /* ---------- init ---------- */
 document.getElementById('brandTxt').textContent=AJ.marca.toUpperCase();var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;engancharAuto();nuevo();iniciarNube();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
-</script><div id="agendaBox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9000;align-items:center;justify-content:center;padding:16px"><div class="card" style="max-width:520px;width:100%;max-height:80vh;overflow:auto"><div class="row" style="justify-content:space-between;align-items:center"><h2 style="font-size:20px;margin:0">Mis clientes</h2><button class="sec" type="button" onclick="cerrarAgenda()">Cerrar</button></div><input id="agBusca" placeholder="Buscar por nombre, teléfono o dirección" oninput="renderAgenda()" style="width:100%;margin:8px 0"><div id="agLista"></div><p style="color:var(--muted);font-size:12px;margin-top:8px">Cada vez que guardas un presupuesto, el cliente se queda aquí con su teléfono y su correo.</p></div></div><div id="verFijo" style="position:fixed;right:8px;bottom:8px;z-index:40;background:rgba(37,51,64,.85);color:#fff;font-size:11px;padding:3px 8px;border-radius:10px;pointer-events:none">v?</div><script>document.getElementById('verFijo').textContent=APP_VERSION;</script><section class="page" id="page-mapa"><div class="card"><div class="row" style="justify-content:space-between;align-items:center"><h2>Mapa de obras</h2><button class="sec" onclick="pintarMapa(true)">Actualizar</button></div><p style="color:var(--muted);font-size:13px">Cada chincheta es una obra. Verde: en marcha. Naranja: pendiente de firma. Toca una chincheta para ver qué falta, apuntar lo que hay que llevar o tirar para allá con el navegador.</p><div id="mapObras" style="height:60vh;min-height:320px;border-radius:8px;overflow:hidden;background:#e9e7e2;position:relative;z-index:0;isolation:isolate"></div><div id="mapInfo" style="color:var(--muted);font-size:12px;margin-top:6px"></div></div></div>
+</script><div id="agendaBox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9000;align-items:center;justify-content:center;padding:16px"><div class="card" style="max-width:520px;width:100%;max-height:80vh;overflow:auto"><div class="row" style="justify-content:space-between;align-items:center"><h2 style="font-size:20px;margin:0">Mis clientes</h2><button class="sec" type="button" onclick="cerrarAgenda()">Cerrar</button></div><input id="agBusca" placeholder="Buscar por nombre, teléfono o dirección" oninput="renderAgenda()" style="width:100%;margin:8px 0"><div id="agLista"></div><p style="color:var(--muted);font-size:12px;margin-top:8px">Cada vez que guardas un presupuesto, el cliente se queda aquí con su teléfono y su correo.</p></div></div><div id="verFijo" style="position:fixed;right:8px;bottom:8px;z-index:40;background:rgba(37,51,64,.85);color:#fff;font-size:11px;padding:3px 8px;border-radius:10px;pointer-events:none">v?</div><script>document.getElementById('verFijo').textContent=APP_VERSION;</script><section class="page" id="page-mapa"><div class="card"><div class="row" style="justify-content:space-between;align-items:center"><h2>Mapa de obras</h2><button class="sec" onclick="pintarMapa(true)">Actualizar</button></div><p style="color:var(--muted);font-size:13px">Cada chincheta es una obra. Verde: en marcha. Azul: aceptada. Naranja: mandada sin firmar. Gris: borrador. Toca una chincheta para ver qué falta, apuntar lo que hay que llevar o tirar para allá con el navegador.</p><div id="mapObras" style="height:60vh;min-height:320px;border-radius:8px;overflow:hidden;background:#e9e7e2;position:relative;z-index:0;isolation:isolate"></div><div id="mapInfo" style="color:var(--muted);font-size:12px;margin-top:6px"></div></div></div>
 </section>
 <input type="file" id="fotoInput" accept="image/*" capture="environment" multiple style="display:none" onchange="subirFotos(this.files)"><div id="fotosBox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9000;align-items:center;justify-content:center;padding:14px"><div class="card" style="max-width:560px;width:100%;max-height:85vh;overflow:auto"><div class="row" style="justify-content:space-between;align-items:center"><h2 id="fotosTit" style="font-size:18px;margin:0">Fotos</h2><button class="sec" onclick="cerrarFotos()">Cerrar</button></div><div class="row" style="margin:8px 0"><button class="ok" onclick="abrirFotos(window.__fotoObra)">Sacar o subir fotos</button><button class="sec" onclick="mandarSeguimiento(window.__fotoObra)">Mandar el enlace al cliente</button></div><div id="fotosLista"></div></div></div>
 </body></html>
