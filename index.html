@@ -168,7 +168,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 </section>
 
 <script>
-var APP_VERSION='v56';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v57';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -658,7 +658,14 @@ c.innerHTML=n?('<b>Todo en orden.</b> '+n+' partidas'+(cer?', '+cer+' a cero esp
 var p0=L[0];
 c.style.background='#FBE9E2';c.style.borderLeft='4px solid var(--brick)';
 c.innerHTML='<b>Queda por resolver:</b> '+p0.t+(L.length>1?' <span style="color:var(--muted)">(y '+(L.length-1)+' cosa(s) m\u00e1s)</span>':'')+
-'<div style="margin-top:8px"><button class="ok" onclick="continuar()">'+p0.b+'</button></div>'}
+'<div style="margin-top:8px"><button class="ok" onclick="continuar()">'+p0.b+'</button>'+
+(automaticos()>1?' <button class="sec" onclick="hacerloTodo()">Hazlo todo t\u00fa</button>':'')+'</div>'}
+function automaticos(){return problemas().filter(function(p){return ['meterDudosas','rellenarPrecios','addMediciones'].indexOf(p.f)>=0}).length}
+function hacerloTodo(){var v=0;
+var paso=function(){var L=problemas().filter(function(p){return ['meterDudosas','rellenarPrecios','addMediciones'].indexOf(p.f)>=0});
+if(!L.length||v++>8){pintarContinuar();var m=document.getElementById('msg');if(m)m.textContent='Listo: lo del PDF ya est\u00e1 metido en el presupuesto';return}
+var f=L[0].f;if(f==='meterDudosas')meterDudosas();else if(f==='rellenarPrecios')rellenarPrecios(true);else addMediciones();
+setTimeout(paso,350)};paso()}
 function continuar(){var L=problemas();if(!L.length){pintarContinuar();return}
 var f=L[0].f;
 try{
