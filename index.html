@@ -169,7 +169,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 </section>
 
 <script>
-var APP_VERSION='v64';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v65';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -578,13 +578,17 @@ var h='<div style="background:#FBE9E2;border-left:4px solid var(--brick);padding
 if(parts.length){h+='<div style="display:flex;flex-direction:column;gap:6px">'+parts.map(function(t){
 return '<button class="sec" style="text-align:left;white-space:normal" onclick="guardarFotos(\''+n+'\','+t.i+')">'+(t.hecha?'\u2713 ':'')+t.d+'</button>'}).join('')+'</div>'}
 else h+='<p style="color:var(--muted)">Este presupuesto no tiene partidas todavía.</p>';
-h+='<div class="row" style="margin-top:10px"><button class="ok" onclick="guardarFotos(\''+n+'\',-1)">Escribirlo yo</button>'+
+h+='<div style="margin-top:10px;background:#FFF4E5;border-left:4px solid #C24A00;padding:10px;border-radius:6px">'+
+'<button class="ok" style="background:#C24A00;width:100%" onclick="guardarFotos(\''+n+'\',-3)">\u26a0\ufe0f Es un imprevisto</button>'+
+'<div style="font-size:12px;color:var(--muted);margin-top:6px">Algo que te has encontrado y no estaba en el presupuesto (un tubo roto, humedad, una viga en mal estado). Queda con la fecha y el cliente lo ve avisado.</div></div>';
+h+='<div class="row" style="margin-top:10px"><button class="sec" onclick="guardarFotos(\''+n+'\',-1)">Escribirlo yo</button>'+
 '<button class="sec" onclick="guardarFotos(\''+n+'\',-2)">Sin nota</button></div>';
 lista.innerHTML=h}
 function guardarFotos(n,idx){var p=DB.presus[n],files=window.__pendFiles;if(!files)return;
-var nota='';
+var nota='',tipo='';
 if(idx>=0&&p.lineas[idx]){nota=p.lineas[idx].d;p.lineas[idx].hecha=true;DB.presus[n]=p;save();try{subirPresu(n)}catch(_){}}
 else if(idx===-1){nota=prompt('¿Qué se ve en la foto?','')||''}
+else if(idx===-3){tipo='imprevisto';nota=prompt('¿Qué te has encontrado? (se lo verá el cliente)','')||'Imprevisto encontrado en la obra'}
 var t=tokenSeguimiento(p);var i=0;var lista=document.getElementById('fotosLista');
 lista.innerHTML='<p>Subiendo fotos\u2026</p>';
 var paso=function(){if(i>=files.length){window.__pendFiles=null;
@@ -593,7 +597,7 @@ FB.db.collection('seguimiento').doc(t).set({uid:FB.uid,num:p.num,cliente:p.nom,o
 verFotos(n);return}
 comprimirFoto(files[i]).then(function(img){
 var id=Date.now()+'-'+i;
-return FB.db.collection('seguimiento').doc(t).collection('fotos').doc(id).set({img:img,nota:nota,fecha:new Date().toISOString(),ts:Date.now()})})
+return FB.db.collection('seguimiento').doc(t).collection('fotos').doc(id).set({img:img,nota:nota,tipo:tipo,fecha:new Date().toISOString(),ts:Date.now()})})
 .then(function(){i++;paso()}).catch(function(e){lista.innerHTML='<p>No he podido subir una foto: '+e.message+'</p>';i++;paso()})};
 paso()}
 function verFotos(n){var p=DB.presus[n];if(!p)return;if(!FB.db){alert('Espera a que conecte con la nube y vuelve a darle');return}
@@ -603,7 +607,8 @@ document.getElementById('fotosTit').textContent='Fotos de '+p.nom+' · nº '+p.n
 window.__fotoObra=n;box.style.display='flex';lista.innerHTML='Cargando…';
 FB.db.collection('seguimiento').doc(p.segTok).collection('fotos').orderBy('ts','desc').get().then(function(q){
 var h='';q.forEach(function(d){var f=d.data();
-h+='<div style="border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:8px">'+
+h+='<div style="border:'+(f.tipo==='imprevisto'?'2px solid #C24A00':'1px solid var(--line)')+';border-radius:8px;overflow:hidden;margin-bottom:8px">'+
+(f.tipo==='imprevisto'?'<div style="background:#C24A00;color:#fff;font-size:12px;font-weight:700;padding:4px 8px">\u26a0\ufe0f Imprevisto</div>':'')+
 '<img src="'+f.img+'" style="width:100%;display:block">'+
 '<div style="padding:6px 8px;font-size:12px"><b>'+new Date(f.fecha||f.ts).toLocaleDateString('es-ES')+'</b>'+(f.nota?' · '+f.nota:'')+
 ' <button class="mini sec" onclick="cambiarNota(\''+p.segTok+'\',\''+d.id+'\')">Cambiar</button>'+
