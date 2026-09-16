@@ -169,7 +169,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 </section>
 
 <script>
-var APP_VERSION='v62';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v63';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -920,10 +920,44 @@ var NOSE=[
  'A eso no llego todav\u00eda{N}. Cada vez s\u00e9 hacer m\u00e1s cosas, as\u00ed que ins\u00edsteme m\u00e1s adelante.',
  'Ni idea de eso{N}, te lo digo claro. Pero de la app preg\u00fantame lo que quieras.'
 ];
+
+/* ---------- lo que s\u00e9 hacer: se ense\u00f1a entero ---------- */
+var LOQUESE=[
+ ['Hacerte el presupuesto entero desde el PDF del arquitecto','arquitecto'],
+ ['Convertir en partidas lo que me cuentes hablando','dictar'],
+ ['Decirte si va al 10% o al 21% de IVA','iva'],
+ ['Mandarlo al cliente por WhatsApp y que te lo firme con el dedo','firmar'],
+ ['Sacarte el PDF con portada y contrato','pdf'],
+ ['Avisarte de los trabajos sin precio antes de que los regales','cero'],
+ ['Guardarte tus precios y cambiarlos cuando quieras','mis precios'],
+ ['Ense\u00f1arte todas tus obras en un mapa','mapa'],
+ ['Subir fotos de la obra y que el cliente vea c\u00f3mo avanza','fotos'],
+ ['Llevarte la cuenta de los d\u00edas de cada obra','plazos'],
+ ['Guardarte los clientes con su tel\u00e9fono y su direcci\u00f3n','cliente'],
+ ['Rellenarte la lista de precios que te manda el estudio','lista de precios'],
+ ['Dejar el contrato con los pagos y la garant\u00eda por escrito','contrato'],
+ ['Guardar tu firma para que salga en todos los contratos','mi firma'],
+ ['Darte los papeles de protecci\u00f3n de datos hechos','privacidad'],
+ ['Borrar un presupuesto o los trabajos de uno','borrar']
+];
+function menuSe(cab){
+var n=elNombre(),h=cab||('Esto es lo que s\u00e9 hacer'+(n?', '+n:'')+'. Toca lo que quieras y te llevo:');
+return '<p style="font-size:15px;line-height:1.5;margin:0 0 10px">'+h+'</p>'+
+LOQUESE.map(function(x){
+ return '<button class="sec" style="width:100%;text-align:left;margin-bottom:6px;white-space:normal;line-height:1.35" '+
+ 'onclick="document.getElementById(\'qAyuda\').value=\''+x[1]+'\';pintarAyuda(\''+x[1]+'\')">'+x[0]+'</button>'}).join('')+
+'<p style="color:var(--muted);font-size:13px;margin-top:8px">Y si no lo ves aqu\u00ed, preg\u00fantamelo con tus palabras.</p>'}
+function textoMenu(cab){
+return (cab||'Esto es lo que s\u00e9 hacer.')+' '+LOQUESE.map(function(x){return x[0]}).join('. ')+'.'}
+
 var PISTAS=['arquitecto','IVA','firmar','fotos de la obra','mis precios','mapa','cliente','borrar','contrato','PDF','plazos'];
 function tresPistas(){var c=PISTAS.slice(),o=[];for(var i=0;i<3&&c.length;i++){o.push(c.splice(Math.floor(Math.random()*c.length),1)[0])}return o}
+function esQueSabes(q){var qq=sinAcentos(q);
+var cl=['en que me puedes ayudar','en que me ayudas','que me puedes ayudar','que puedes hacer','que sabes hacer','que sabes','que haces','para que sirves','que mas','ayudame','necesito ayuda','no se que hacer','no se por donde empezar','ayuda','como funciona','como va esto','que hago','por donde empiezo','para que vales','opciones','menu','dime que puedes'];
+for(var i=0;i<cl.length;i++)if(qq.indexOf(cl[i])>=0)return true;return false}
 function fueraTema(q){
 var qq=sinAcentos(q);
+if(esQueSabes(q))return menuSe();
 for(var i=0;i<FUERA.length;i++){
  for(var j=0;j<FUERA[i].k.length;j++){
   if(qq.indexOf(FUERA[i].k[j])>=0){apuntar(q);
@@ -936,9 +970,7 @@ var t=alAzar(NOSE,'nose');
 var nom=elNombre()?', '+elNombre():'';
 t=t.replace('{N}',nom);
 if(veces>=3)t='Esta ya me la has preguntado alguna vez y sigo sin saberla'+nom+'. Me la apunto, en serio. Mientras tanto pru\u00e9bame con otra cosa.';
-return '<p style="font-size:15px;line-height:1.5">'+t+'</p>'+
-'<p style="color:var(--muted);font-size:13px;margin:10px 0 6px">Prueba con:</p>'+
-tresPistas().map(function(x){return '<button class="sec" style="display:inline-block;margin:0 6px 6px 0" onclick="document.getElementById(\'qAyuda\').value=\''+x+'\';pintarAyuda(\''+x+'\')">'+x+'</button>'}).join('')}
+return '<p style="font-size:15px;line-height:1.5">'+t+'</p>'+menuSe('Pero mira todo lo que s\u00ed s\u00e9 hacer:')}
 
 
 /* ---------- el ayudante habla y escucha ---------- */
@@ -989,9 +1021,7 @@ try{r.start()}catch(e){}}
 
 function pintarAyuda(q){pintarAyuda0(q);if((q||'').trim().length>2)setTimeout(function(){hablar(textoParaLeer())},60)}
 function pintarAyuda0(q){var r=document.getElementById('resAyuda');
-if(!q.trim()){r.innerHTML='<p style="color:var(--muted);font-size:13px;margin:0 0 8px">Preg\u00fantame lo que sea: c\u00f3mo se hace algo, un cliente, un precio, un bot\u00f3n\u2026</p>'+
-['\u00bfC\u00f3mo subo el PDF del arquitecto?','\u00bfQu\u00e9 IVA le pongo?','\u00bfC\u00f3mo hago que me lo firme?','\u00bfD\u00f3nde saco fotos de la obra?','\u00bfCu\u00e1nto cobro por el pladur?','\u00bfSe guarda solo?']
-.map(function(x){return '<button class="sec" style="width:100%;text-align:left;margin-bottom:6px;white-space:normal" onclick="document.getElementById(\'qAyuda\').value=this.textContent;pintarAyuda(this.textContent)">'+x+'</button>'}).join('');return}
+if(!q.trim()){r.innerHTML=menuSe('Hola'+(elNombre()?' '+elNombre():'')+'. Preg\u00fantame con tus palabras, o toca una de estas:');return}
 var fq=fueraTema(q);if(fq){r.innerHTML=fq;return}
 var lista=buscarTodo(q);
 if(!lista.length){r.innerHTML=noSe(q);return}
