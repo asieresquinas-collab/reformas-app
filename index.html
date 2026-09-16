@@ -74,7 +74,8 @@ body.simple #btnEnviar{display:inline-block}
 body.simple .extraBtn{display:none}
 body:not(.simple) #btnMasOpc{display:none}
 body.simple.vermasbtn .extraBtn{display:inline-block}
-@media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}#verFijo{display:none!important}html,body{background:var(--crema)!important;margin:0!important;padding:0!important;width:100%!important;height:auto!important}.sheet{background:var(--crema)!important;width:100%!important;max-width:none!important;margin:0!important;box-sizing:border-box!important;min-height:-webkit-fill-available!important}#sh_dosier{height:297mm!important;max-height:297mm!important;overflow:hidden!important;page-break-after:always!important;padding-bottom:20mm!important}#sh_presu,#sh_contrato{height:auto!important;min-height:0!important;overflow:visible!important}#sh_dosier .portada{height:120mm!important}#sh_dosier .dos2{margin-top:6mm!important}#sh_dosier .dos2 .fotos img{height:46mm!important}#topnav,.noprint,.page:not(#page-print){display:none!important}#page-print{display:block!important;padding:0;max-width:none}.sheet{box-shadow:none;margin:0;width:auto;page-break-after:always;min-height:0;height:auto;padding:14mm 15mm}.sheet:last-child{page-break-after:auto}.portada{margin:-14mm -15mm 0}.pcont{left:15mm;right:15mm}.foot{left:15mm;right:15mm}#sh_presu .foot,#sh_contrato .foot{position:static;margin-top:10mm}@page{size:auto;margin:0}}
+#btnAyuda{cursor:pointer}
+@media print{#btnAyuda{display:none!important}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}#verFijo{display:none!important}html,body{background:var(--crema)!important;margin:0!important;padding:0!important;width:100%!important;height:auto!important}.sheet{background:var(--crema)!important;width:100%!important;max-width:none!important;margin:0!important;box-sizing:border-box!important;min-height:-webkit-fill-available!important}#sh_dosier{height:297mm!important;max-height:297mm!important;overflow:hidden!important;page-break-after:always!important;padding-bottom:20mm!important}#sh_presu,#sh_contrato{height:auto!important;min-height:0!important;overflow:visible!important}#sh_dosier .portada{height:120mm!important}#sh_dosier .dos2{margin-top:6mm!important}#sh_dosier .dos2 .fotos img{height:46mm!important}#topnav,.noprint,.page:not(#page-print){display:none!important}#page-print{display:block!important;padding:0;max-width:none}.sheet{box-shadow:none;margin:0;width:auto;page-break-after:always;min-height:0;height:auto;padding:14mm 15mm}.sheet:last-child{page-break-after:auto}.portada{margin:-14mm -15mm 0}.pcont{left:15mm;right:15mm}.foot{left:15mm;right:15mm}#sh_presu .foot,#sh_contrato .foot{position:static;margin-top:10mm}@page{size:auto;margin:0}}
 </style></head><body>
 <div id="login" style="display:none;position:fixed;inset:0;background:var(--slate);z-index:50;align-items:center;justify-content:center;padding:20px"><div class="card" style="max-width:360px;width:100%"><h2 style="font-size:26px;margin-bottom:4px" id="loginTitle">Vornicu Reformas</h2><p style="color:var(--muted);margin:0 0 10px">Entra con tu correo y tu clave.</p><label class="f">Correo</label><input id="lg_email" type="email" autocomplete="username"><label class="f" style="margin-top:8px">Clave</label><input id="lg_pass" type="password" autocomplete="current-password"><div class="row" style="margin-top:12px"><button onclick="entrar()">Entrar</button><span id="lg_msg" style="color:var(--brick)"></span></div></div></div>
 <nav id="topnav"><div class="brand" id="brandTxt">VORNICU REFORMAS</div>
@@ -168,7 +169,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 </section>
 
 <script>
-var APP_VERSION='v58';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v59';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -764,6 +765,62 @@ else{p.innerHTML='<div style="background:#FBE9E2;border-left:4px solid var(--bri
 function ponIva(v){var e=document.getElementById('f_iva');if(e){e.value=v;leer();pintarContinuar()}
 cur.ivaJustificado=(v==='10');cerrarIva()}
 function cerrarIva(){var c=document.getElementById('cajaIva');if(c)c.style.display='none'}
+
+/* ---------- ayudante de la app (por codigo, sin IA) ---------- */
+var AYUDA=[
+{k:['presupuesto nuevo','empezar','nuevo','otro presupuesto','empezar otro','empiezo'],t:'Para empezar uno nuevo: bot\u00f3n «Nuevo presupuesto», abajo del todo de la pantalla del presupuesto. El n\u00famero sube solo.',a:function(){ST('presupuesto');nuevo();},b:'H\u00e1zmelo'},
+{k:['arquitecto','pdf del arquitecto','mediciones','subir pdf','plano'],t:'Sube el PDF en «\u00bfTe han mandado un PDF del arquitecto?». La app lee los trabajos, les pone tus precios y te los mete. Si algo falta, el bot\u00f3n «Continuar» lo resuelve.',a:function(){ST('presupuesto');var e=document.getElementById('pdfArq');if(e){e.scrollIntoView({behavior:'smooth',block:'center'});resaltar(e.parentElement||e)}},b:'Ll\u00e9vame'},
+{k:['dictar','voz','hablar','micro','contar la obra'],t:'En «Cu\u00e9ntame lo que quiere el cliente» escribes o dictas con el micro, y luego «Convertir en trabajos».',a:function(){ST('presupuesto');var e=document.getElementById('dictado');if(e){e.scrollIntoView({behavior:'smooth',block:'center'});e.focus();resaltar(e)}},b:'Ll\u00e9vame'},
+{k:['iva','10','21','impuesto','cuanto iva'],t:'Al lado del IVA tienes «\u00bfCu\u00e1l me toca?». Te hace tres preguntas y te dice si va al 10% o al 21%, y si va al 10% mete en el contrato la declaraci\u00f3n que firma el cliente.',a:function(){ST('presupuesto');abrirDatos();asistenteIva()},b:'\u00c1brelo'},
+{k:['firmar','firma del cliente','que lo firme','enlace de firma','aceptar'],t:'Bot\u00f3n «Enviar al cliente» y luego «Mandarle el presupuesto para que lo firme»: se abre WhatsApp con un enlace donde ve todo y firma con el dedo.',a:function(){ST('presupuesto');menuEnviar()},b:'\u00c1brelo'},
+{k:['mi firma','firmar yo','mi firma en el contrato','firma contratista'],t:'Tu firma se hace una sola vez: Ajustes, recuadro «Tu firma», firmas con el dedo y «Guardar mi firma». Sale en todos los contratos.',a:function(){ST('ajustes');setTimeout(function(){fmInit();var c=document.getElementById('fmCv');if(c){c.scrollIntoView({behavior:'smooth',block:'center'});resaltar(c)}},300)},b:'Ll\u00e9vame'},
+{k:['pdf','descargar','imprimir','papel','mandar pdf'],t:'Bot\u00f3n «Enviar al cliente»: ah\u00ed eliges bajarte el PDF completo (con portada y contrato) o solo el presupuesto.',a:function(){ST('presupuesto');menuEnviar()},b:'\u00c1brelo'},
+{k:['foto','fotos','camara','obra fotos','ense\u00f1ar la obra'],t:'En Clientes, cada obra tiene «Fotos de la obra». Sacas la foto, eliges de qu\u00e9 trabajo es y queda guardada. Con «Mandar el enlace al cliente» \u00e9l ve c\u00f3mo avanza.',a:function(){ST('clientes')},b:'Ll\u00e9vame'},
+{k:['mapa','chincheta','donde esta la obra','ir a la obra','navegador'],t:'Pesta\u00f1a «Mapa de obras»: cada chincheta es una obra. Tocas una y tienes lo que falta, lo que hay que llevar y «C\u00f3mo llegar».',a:function(){ST('mapa')},b:'Ll\u00e9vame'},
+{k:['precio','cambiar precio','tarifa','mis precios','cuanto cobro'],t:'Pesta\u00f1a «Mis precios» (dentro de «M\u00e1s\u2026»). Hay buscador arriba: escribes «pladur» y te salen los tuyos. Lo que cambies vale para los siguientes presupuestos.',a:function(){ST('tarifa')},b:'Ll\u00e9vame'},
+{k:['cliente','telefono','agenda','datos del cliente','guardar cliente'],t:'Al lado del nombre tienes «Agenda»: ah\u00ed est\u00e1n todos tus clientes con su tel\u00e9fono y su direcci\u00f3n; pinchas uno y se rellena solo.',a:function(){ST('presupuesto');abrirDatos();abrirAgenda()},b:'\u00c1brela'},
+{k:['borrar','borro','borra','quitar','quito','eliminar','borrar presupuesto','borrar trabajos','borrar partidas'],t:'Abajo, en «M\u00e1s opciones\u2026», tienes «Borrar todos los trabajos» (deja el cliente) y «Borrar este presupuesto» (lo borra entero, tambi\u00e9n de la nube).',a:function(){ST('presupuesto');document.body.classList.add('vermasbtn');var b=document.getElementById('btnMasOpc');if(b){b.textContent='Menos opciones';b.scrollIntoView({behavior:'smooth',block:'center'})}},b:'Ll\u00e9vame'},
+{k:['guardar','se guarda','perder','se pierde','copia'],t:'No hace falta guardar: se guarda solo mientras escribes, en el m\u00f3vil y en la nube. El punto de arriba: verde, todo subido; naranja, falta subir algo (se sube solo en cuanto haya cobertura).',a:null},
+{k:['firmado','quien ha firmado','ya firmo','en marcha'],t:'En Clientes, los firmados est\u00e1n arriba en «EN MARCHA» con el nombre de quien firm\u00f3 y el d\u00eda. Si no aparece, dale a «Comprobar firmas ahora».',a:function(){ST('clientes')},b:'Ll\u00e9vame'},
+{k:['dias','cuanto lleva','plazo','tiempo de obra','acabar'],t:'En Clientes, al poner una obra «En obra» te pregunta cu\u00e1ndo empieza y cu\u00e1ndo calculas acabar. Luego te dice los d\u00edas que lleva y si te pasas. Eso no lo ve el cliente.',a:function(){ST('clientes')},b:'Ll\u00e9vame'},
+{k:['lista de precios','estudio','me han mandado precios','rellenar precios'],t:'Pesta\u00f1a «Lista de precios» (dentro de «M\u00e1s\u2026»): subes el listado que te manda el estudio, pones tus precios y sacas el PDF para devolv\u00e9rselo.',a:function(){ST('precios')},b:'Ll\u00e9vame'},
+{k:['datos','mis datos','nombre empresa','telefono mio','logo','cambiar nombre'],t:'Pesta\u00f1a «Ajustes»: ah\u00ed pones tu nombre, NIF, tel\u00e9fono, correo y el texto de presentaci\u00f3n que sale en la portada.',a:function(){ST('ajustes')},b:'Ll\u00e9vame'},
+{k:['proteccion de datos','privacidad','lopd','rgpd','papeles'],t:'Pesta\u00f1a «Mis papeles» (dentro de «M\u00e1s\u2026»): tienes la pol\u00edtica de privacidad y el registro de datos, listos para copiar o mandar por WhatsApp.',a:function(){ST('legal')},b:'Ll\u00e9vame'},
+{k:['contrato','condiciones','pago','plazo de pago','garantia'],t:'Pesta\u00f1a «Contrato» (dentro de «M\u00e1s\u2026»): pones los porcentajes de pago, el plazo y la garant\u00eda. Sale detr\u00e1s del presupuesto.',a:function(){ST('contrato')},b:'Ll\u00e9vame'},
+{k:['cero','sin precio','falta precio','rojo','a cero'],t:'Las l\u00edneas en rojo son trabajos sin precio: si los mandas as\u00ed, los haces gratis. El bot\u00f3n «Continuar» de arriba te lleva a ellos.',a:function(){ST('presupuesto');pintarContinuar();window.scrollTo({top:0,behavior:'smooth'})},b:'Ll\u00e9vame'},
+{k:['version','actualizar','no sale lo nuevo','v','cerrar app'],t:'Abajo a la derecha ves la versi\u00f3n. Si no es la \u00faltima, cierra la app del todo y vu\u00e9lvela a abrir.',a:null},
+{k:['entrar','contrase\u00f1a','login','cuenta','no puedo entrar'],t:'Entras con tu correo y tu contrase\u00f1a. Si no puedes, comprueba que tienes internet; los presupuestos siguen en el m\u00f3vil aunque no entres.',a:null}
+];
+function resaltar(e){if(!e)return;var o=e.style.boxShadow;e.style.boxShadow='0 0 0 4px rgba(215,72,29,.55)';setTimeout(function(){e.style.boxShadow=o},2200)}
+function buscarAyuda(q){q=(q||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+if(!q.trim())return [];
+var pal=q.split(/\s+/).filter(function(w){return w.length>2});
+return AYUDA.map(function(it){var p=0;
+it.k.forEach(function(k){var kk=k.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+if(q.indexOf(kk)>=0)p+=3+kk.length/4;
+pal.forEach(function(w){if(kk===w)p+=4;else if(kk.indexOf(w)>=0)p+=1.5;else if(w.length>4&&kk.indexOf(w.slice(0,5))>=0)p+=1})});
+return {it:it,p:p}}).filter(function(x){return x.p>0}).sort(function(a,b){return b.p-a.p}).slice(0,3).map(function(x){return x.it})}
+function abrirAyudante(){var c=document.getElementById('cajaAyuda');
+if(!c){c=document.createElement('div');c.id='cajaAyuda';
+c.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9500;display:flex;align-items:flex-end;justify-content:center;padding:10px';
+c.innerHTML='<div class="card" style="width:100%;max-width:520px;max-height:85vh;overflow:auto">'+
+'<div class="row" style="justify-content:space-between;align-items:center"><h2 style="font-size:19px;margin:0">\u00bfQu\u00e9 necesitas?</h2>'+
+'<button class="sec" onclick="cerrarAyudante()">Cerrar</button></div>'+
+'<input id="qAyuda" placeholder="Escribe lo que quieres hacer\u2026" style="width:100%;margin:10px 0" oninput="pintarAyuda(this.value)">'+
+'<div id="resAyuda"></div></div>';
+document.body.appendChild(c)}
+c.style.display='flex';document.getElementById('qAyuda').value='';pintarAyuda('')}
+function cerrarAyudante(){var c=document.getElementById('cajaAyuda');if(c)c.style.display='none'}
+function pintarAyuda(q){var r=document.getElementById('resAyuda');
+var lista=buscarAyuda(q);
+if(!q.trim()){r.innerHTML='<p style="color:var(--muted);font-size:13px;margin:0 0 8px">Preguntas de siempre:</p>'+
+['\u00bfC\u00f3mo subo el PDF del arquitecto?','\u00bfQu\u00e9 IVA le pongo?','\u00bfC\u00f3mo hago que me lo firme?','\u00bfD\u00f3nde saco fotos de la obra?','\u00bfC\u00f3mo cambio un precio?','\u00bfSe guarda solo?']
+.map(function(x){return '<button class="sec" style="width:100%;text-align:left;margin-bottom:6px;white-space:normal" onclick="document.getElementById(\'qAyuda\').value=\''+x.replace(/'/g,"\\'")+'\';pintarAyuda(\''+x.replace(/'/g,"\\'")+'\')">'+x+'</button>'}).join('');return}
+if(!lista.length){r.innerHTML='<p>No s\u00e9 contestar a eso. Prueba con otra palabra: arquitecto, IVA, firmar, fotos, precios, mapa, borrar.</p>';return}
+r.innerHTML=lista.map(function(it,i){return '<div style="border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:8px">'+
+'<div style="font-size:14px;line-height:1.45">'+it.t+'</div>'+
+(it.a?'<button class="ok" style="margin-top:8px" onclick="hacerAyuda('+AYUDA.indexOf(it)+')">'+(it.b||'Ll\u00e9vame')+'</button>':'')+'</div>'}).join('')}
+function hacerAyuda(i){var it=AYUDA[i];cerrarAyudante();if(it&&it.a)setTimeout(it.a,150)}
 /* ---------- mapa de obras ---------- */
 var LEAF_CSS='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css',LEAF_JS='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
 var MAPAOBRAS=null,MARCAS=[];
@@ -1014,4 +1071,5 @@ if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(
 </section>
 <input type="file" id="fotoInput" accept="image/*" capture="environment" multiple style="display:none" onchange="subirFotos(this.files)"><div id="fotosBox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9000;align-items:center;justify-content:center;padding:14px"><div class="card" style="max-width:560px;width:100%;max-height:85vh;overflow:auto"><div class="row" style="justify-content:space-between;align-items:center"><h2 id="fotosTit" style="font-size:18px;margin:0">Fotos</h2><button class="sec" onclick="cerrarFotos()">Cerrar</button></div><p style="font-size:12px;color:var(--muted);margin:6px 0">Saca fotos del trabajo, no de personas ni de cosas del cliente que no hagan falta. El enlace que le mandes es privado.</p><div class="row" style="margin:8px 0"><button class="ok" onclick="abrirFotos(window.__fotoObra)">Sacar o subir fotos</button><button class="sec" onclick="mandarSeguimiento(window.__fotoObra)">Mandar el enlace al cliente</button></div><div id="fotosLista"></div></div></div>
 <section class="page" id="page-legal"><div class="card"><h2>Mis papeles de protección de datos</h2><p style="color:var(--muted);font-size:13px">Dos textos que tienes que tener por ley. Están rellenados con tus datos. Si un cliente te los pide, se los mandas con el botón.</p><div class="row"><button class="ok" onclick="copiarLegal('privacidad')">Copiar la política de privacidad</button><button class="sec" onclick="waLegal('privacidad')">Mandarla por WhatsApp</button></div><div id="txtPriv" style="white-space:pre-wrap;background:#f2f1ee;border-radius:8px;padding:12px;margin-top:8px;font-size:13px;line-height:1.5"></div><div class="row" style="margin-top:16px"><button class="ok" onclick="copiarLegal('registro')">Copiar el registro de datos</button><button class="sec" onclick="waLegal('registro')">Mandarlo por WhatsApp</button></div><div id="txtReg" style="white-space:pre-wrap;background:#f2f1ee;border-radius:8px;padding:12px;margin-top:8px;font-size:13px;line-height:1.5"></div></div></section>
+<button id="btnAyuda" onclick="abrirAyudante()" title="¿Qué necesitas?" style="position:fixed;right:12px;bottom:40px;z-index:8000;width:54px;height:54px;border-radius:50%;background:var(--brick);color:#fff;font-size:26px;font-weight:700;border:0;box-shadow:0 3px 10px rgba(0,0,0,.35)">?</button>
 </body></html>
