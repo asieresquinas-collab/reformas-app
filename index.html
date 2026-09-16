@@ -169,7 +169,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 </section>
 
 <script>
-var APP_VERSION='v59';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v60';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -248,7 +248,8 @@ function siguienteNum(){var m=num(DB.contador)||0;Object.keys(DB.presus||{}).for
 function nuevo(){window.__avisado={};ARQ={med:[],plano:null,cab:null,dudosas:[]};var _ap=document.getElementById('arqPanel');if(_ap){_ap.innerHTML='';_ap.style.display='none'}var _ai=document.getElementById('arqInfo');if(_ai)_ai.textContent='';cur={num:siguienteNum(),fecha:new Date().toISOString().slice(0,10),nom:'',tel:'',email:'',dir:'',asc:'0',iva:'21',obs:'',suelo:false,lineas:[],estado:'borrador',c:{p1:40,p2:30,p3:30,plazo:'',inicio:'',gar:24}};pintar();document.getElementById('msg').textContent=''}
 function engancharAuto(){var p=document.getElementById('page-presupuesto');if(!p||p.__auto)return;p.__auto=true;
 p.addEventListener('input',autoGuardar,true);p.addEventListener('change',autoGuardar,true)}
-function pintar(){['num','fecha','nom','tel','email','dir','asc','iva','obs'].forEach(function(k){document.getElementById('f_'+k).value=cur[k]||''});document.getElementById('f_suelo').checked=!!cur.suelo;['p1','p2','p3','plazo','inicio','gar'].forEach(function(k){document.getElementById('c_'+k).value=cur.c[k]});renderLineas()}
+function pintar(){if(!cur.c)cur.c={p1:40,p2:30,p3:30,plazo:'',inicio:'',gar:24};if(!cur.lineas)cur.lineas=[];
+['num','fecha','nom','tel','email','dir','asc','iva','obs'].forEach(function(k){document.getElementById('f_'+k).value=cur[k]||''});document.getElementById('f_suelo').checked=!!cur.suelo;['p1','p2','p3','plazo','inicio','gar'].forEach(function(k){document.getElementById('c_'+k).value=cur.c[k]});renderLineas()}
 function leer(){['num','fecha','nom','tel','email','dir','asc','iva','obs'].forEach(function(k){cur[k]=document.getElementById('f_'+k).value});cur.suelo=document.getElementById('f_suelo').checked;['p1','p2','p3','plazo','inicio','gar'].forEach(function(k){cur.c[k]=document.getElementById('c_'+k).value});var rows=[].slice.call(document.querySelectorAll('#tb tr'));cur.lineas=rows.map(function(r,i){var old=cur.lineas[i]||{};return{d:r.querySelector('.ld').value,q:num(r.querySelector('.lq').value),u:r.querySelector('.lu').value,p:num(r.querySelector('.lp').value),code:r.dataset.code||old.code}})}
 function renderLineas(){setTimeout(function(){pintarContinuar();plegarDatos()},60);var tb=document.getElementById('tb');tb.innerHTML='';cur.lineas.forEach(function(l,i){var tr=document.createElement('tr');if(l.code)tr.dataset.code=l.code;if(!l.p)tr.className='cero';tr.innerHTML='<td><textarea class="ld">'+l.d+'</textarea></td><td><input class="lq n" value="'+l.q+'"></td><td><input class="lu n" value="'+l.u+'"></td><td><input class="lp n" value="'+l.p+'"></td><td class="imp">'+eur(l.q*l.p)+'</td><td><button class="mini sec" title="Quitar" onclick="delLinea('+i+')">✕</button></td>';tb.appendChild(tr)});tb.querySelectorAll('input,textarea').forEach(function(e){e.oninput=calc});calc()}
 function calc(){var rows=[].slice.call(document.querySelectorAll('#tb tr'));var base=0;rows.forEach(function(r){var imp=num(r.querySelector('.lq').value)*num(r.querySelector('.lp').value);r.querySelector('.imp').textContent=eur(imp);base+=imp});var ivap=num(document.getElementById('f_iva').value);var iva=base*ivap/100;document.getElementById('t_base').textContent=eur(base);document.getElementById('t_ivap').textContent=ivap;document.getElementById('t_iva').textContent=eur(iva);document.getElementById('t_tot').textContent=eur(base+iva);var ceros=rows.filter(function(r){return !num(r.querySelector('.lp').value)}).length;rows.forEach(function(r){r.classList.toggle('cero',!num(r.querySelector('.lp').value))});var ci=document.getElementById('ceroInfo');ci.style.display=ceros?'block':'none';ci.textContent=ceros?ceros+' partidas sin precio (en rojo): ponles precio o quítalas antes de mandar el presupuesto.':''}
@@ -788,18 +789,70 @@ var AYUDA=[
 {k:['proteccion de datos','privacidad','lopd','rgpd','papeles'],t:'Pesta\u00f1a «Mis papeles» (dentro de «M\u00e1s\u2026»): tienes la pol\u00edtica de privacidad y el registro de datos, listos para copiar o mandar por WhatsApp.',a:function(){ST('legal')},b:'Ll\u00e9vame'},
 {k:['contrato','condiciones','pago','plazo de pago','garantia'],t:'Pesta\u00f1a «Contrato» (dentro de «M\u00e1s\u2026»): pones los porcentajes de pago, el plazo y la garant\u00eda. Sale detr\u00e1s del presupuesto.',a:function(){ST('contrato')},b:'Ll\u00e9vame'},
 {k:['cero','sin precio','falta precio','rojo','a cero'],t:'Las l\u00edneas en rojo son trabajos sin precio: si los mandas as\u00ed, los haces gratis. El bot\u00f3n «Continuar» de arriba te lleva a ellos.',a:function(){ST('presupuesto');pintarContinuar();window.scrollTo({top:0,behavior:'smooth'})},b:'Ll\u00e9vame'},
-{k:['version','actualizar','no sale lo nuevo','v','cerrar app'],t:'Abajo a la derecha ves la versi\u00f3n. Si no es la \u00faltima, cierra la app del todo y vu\u00e9lvela a abrir.',a:null},
+{k:['version','actualizar','no sale lo nuevo','cerrar la app','no se actualiza'],t:'Abajo a la derecha ves la versi\u00f3n. Si no es la \u00faltima, cierra la app del todo y vu\u00e9lvela a abrir.',a:null},
 {k:['entrar','contrase\u00f1a','login','cuenta','no puedo entrar'],t:'Entras con tu correo y tu contrase\u00f1a. Si no puedes, comprueba que tienes internet; los presupuestos siguen en el m\u00f3vil aunque no entres.',a:null}
 ];
 function resaltar(e){if(!e)return;var o=e.style.boxShadow;e.style.boxShadow='0 0 0 4px rgba(215,72,29,.55)';setTimeout(function(){e.style.boxShadow=o},2200)}
 function buscarAyuda(q){q=(q||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 if(!q.trim())return [];
-var pal=q.split(/\s+/).filter(function(w){return w.length>2});
+var pal=q.split(/\s+/).filter(function(w){return w.length>3});
 return AYUDA.map(function(it){var p=0;
 it.k.forEach(function(k){var kk=k.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 if(q.indexOf(kk)>=0)p+=3+kk.length/4;
 pal.forEach(function(w){if(kk===w)p+=4;else if(kk.indexOf(w)>=0)p+=1.5;else if(w.length>4&&kk.indexOf(w.slice(0,5))>=0)p+=1})});
 return {it:it,p:p}}).filter(function(x){return x.p>0}).sort(function(a,b){return b.p-a.p}).slice(0,3).map(function(x){return x.it})}
+
+/* ---------- el ratoncito: indice completo de la app y de los datos ---------- */
+var NOMPAG={presupuesto:'Presupuesto',clientes:'Clientes',mapa:'Mapa de obras',contrato:'Contrato',tarifa:'Mis precios',precios:'Lista de precios',ajustes:'Ajustes',legal:'Mis papeles',ayuda:'Ayuda'};
+var INDICE=[];
+function construirIndice(){INDICE=[];
+Object.keys(NOMPAG).forEach(function(t){var p=document.getElementById('page-'+t);if(!p)return;
+p.querySelectorAll('button,label,h2,h3,summary,a').forEach(function(e){
+var txt=(e.textContent||'').replace(/\s+/g,' ').trim();
+if(!txt||txt.length<3||txt.length>70)return;
+if(e.closest('#page-print'))return;
+INDICE.push({tipo:e.tagName==='BUTTON'?'boton':'sitio',t:txt,pag:t,el:e})});
+p.querySelectorAll('input,select,textarea').forEach(function(e){
+var lab=e.previousElementSibling&&/LABEL/.test(e.previousElementSibling.tagName)?e.previousElementSibling.textContent:(e.placeholder||e.id||'');
+lab=(lab||'').replace(/\s+/g,' ').trim();
+if(lab&&lab.length>2)INDICE.push({tipo:'campo',t:lab,pag:t,el:e})})})}
+function sinAcentos(x){return (x||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+function buscarTodo(q){
+var qq=sinAcentos(q).trim();if(!qq)return [];
+var pal=qq.split(/\s+/).filter(function(w){return w.length>2});
+var res=[];
+/* 1 respuestas explicadas */
+buscarAyuda(q).forEach(function(it){res.push({clase:'saber',t:it.t,it:it,p:100})});
+/* 2 cualquier boton, campo o sitio de la app */
+if(!INDICE.length)construirIndice();
+INDICE.forEach(function(x){var tt=sinAcentos(x.t),p=0;
+if(tt===qq)p=90;else if(tt.indexOf(qq)>=0)p=60;
+else pal.forEach(function(w){if(tt.indexOf(w)>=0)p+=18});
+if(p>15)res.push({clase:x.tipo,t:x.t,pag:x.pag,el:x.el,p:p})});
+/* 3 sus clientes y presupuestos */
+Object.values(DB.presus||{}).forEach(function(pr){var tt=sinAcentos((pr.nom||'')+' '+(pr.dir||'')+' '+pr.num),p=0;
+if(tt.indexOf(qq)>=0)p=80;else pal.forEach(function(w){if(tt.indexOf(w)>=0)p+=20});
+if(p>15)res.push({clase:'presu',t:'Presupuesto n\u00ba '+pr.num+' \u00b7 '+(pr.nom||'sin nombre')+(pr.dir?' \u00b7 '+pr.dir:''),num:pr.num,p:p})});
+/* 4 sus precios */
+(tarifa()||[]).forEach(function(t){var tt=sinAcentos(t.d),p=0;
+if(tt.indexOf(qq)>=0)p=70;else pal.forEach(function(w){if(tt.indexOf(w)>=0)p+=16});
+if(p>15)res.push({clase:'precio',t:t.d,precio:t.p,u:t.u,id:t.id,p:p})});
+/* 5 trabajos del presupuesto abierto */
+(cur.lineas||[]).forEach(function(l,i){var tt=sinAcentos(l.d),p=0;
+if(tt.indexOf(qq)>=0)p=50;else pal.forEach(function(w){if(tt.indexOf(w)>=0)p+=12});
+if(p>15)res.push({clase:'linea',t:l.d,idx:i,p:p})});
+return res.sort(function(a,b){return b.p-a.p}).slice(0,8)}
+function irAElemento(pag,el){ST(pag);setTimeout(function(){
+if(pag==='tarifa'){var q=document.getElementById('bTarifa');if(q){q.value='';filtrarTarifa('')}}
+try{el.scrollIntoView({behavior:'smooth',block:'center'})}catch(e){}
+resaltar(el);if(/INPUT|TEXTAREA|SELECT/.test(el.tagName))try{el.focus()}catch(e){}},260)}
+function pulsar(pag,el){ST(pag);setTimeout(function(){try{el.click()}catch(e){}},220)}
+function verPrecio(id){ST('tarifa');setTimeout(function(){
+var f=document.querySelector('[data-id="'+id+'"]')||document.querySelector('#tarifaBox .tar');
+var q=document.getElementById('bTarifa');if(q){q.value='';filtrarTarifa('')}
+if(f){f.scrollIntoView({behavior:'smooth',block:'center'});resaltar(f)}},300)}
+function irALinea(i){ST('presupuesto');setTimeout(function(){
+var f=document.querySelectorAll('#tb tr')[i];if(f){f.scrollIntoView({behavior:'smooth',block:'center'});resaltar(f)}},250)}
 function abrirAyudante(){var c=document.getElementById('cajaAyuda');
 if(!c){c=document.createElement('div');c.id='cajaAyuda';
 c.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9500;display:flex;align-items:flex-end;justify-content:center;padding:10px';
@@ -812,14 +865,33 @@ document.body.appendChild(c)}
 c.style.display='flex';document.getElementById('qAyuda').value='';pintarAyuda('')}
 function cerrarAyudante(){var c=document.getElementById('cajaAyuda');if(c)c.style.display='none'}
 function pintarAyuda(q){var r=document.getElementById('resAyuda');
-var lista=buscarAyuda(q);
-if(!q.trim()){r.innerHTML='<p style="color:var(--muted);font-size:13px;margin:0 0 8px">Preguntas de siempre:</p>'+
-['\u00bfC\u00f3mo subo el PDF del arquitecto?','\u00bfQu\u00e9 IVA le pongo?','\u00bfC\u00f3mo hago que me lo firme?','\u00bfD\u00f3nde saco fotos de la obra?','\u00bfC\u00f3mo cambio un precio?','\u00bfSe guarda solo?']
-.map(function(x){return '<button class="sec" style="width:100%;text-align:left;margin-bottom:6px;white-space:normal" onclick="document.getElementById(\'qAyuda\').value=\''+x.replace(/'/g,"\\'")+'\';pintarAyuda(\''+x.replace(/'/g,"\\'")+'\')">'+x+'</button>'}).join('');return}
-if(!lista.length){r.innerHTML='<p>No s\u00e9 contestar a eso. Prueba con otra palabra: arquitecto, IVA, firmar, fotos, precios, mapa, borrar.</p>';return}
-r.innerHTML=lista.map(function(it,i){return '<div style="border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:8px">'+
-'<div style="font-size:14px;line-height:1.45">'+it.t+'</div>'+
-(it.a?'<button class="ok" style="margin-top:8px" onclick="hacerAyuda('+AYUDA.indexOf(it)+')">'+(it.b||'Ll\u00e9vame')+'</button>':'')+'</div>'}).join('')}
+if(!q.trim()){r.innerHTML='<p style="color:var(--muted);font-size:13px;margin:0 0 8px">Preg\u00fantame lo que sea: c\u00f3mo se hace algo, un cliente, un precio, un bot\u00f3n\u2026</p>'+
+['\u00bfC\u00f3mo subo el PDF del arquitecto?','\u00bfQu\u00e9 IVA le pongo?','\u00bfC\u00f3mo hago que me lo firme?','\u00bfD\u00f3nde saco fotos de la obra?','\u00bfCu\u00e1nto cobro por el pladur?','\u00bfSe guarda solo?']
+.map(function(x){return '<button class="sec" style="width:100%;text-align:left;margin-bottom:6px;white-space:normal" onclick="document.getElementById(\'qAyuda\').value=this.textContent;pintarAyuda(this.textContent)">'+x+'</button>'}).join('');return}
+var lista=buscarTodo(q);
+if(!lista.length){r.innerHTML='<p>De eso no tengo nada. Prueba con una palabra suelta: arquitecto, IVA, firmar, fotos, precio, mapa, cliente, borrar\u2026</p>';return}
+window.__res=lista;
+r.innerHTML=lista.map(function(x,i){
+if(x.clase==='saber')return '<div style="border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:8px">'+
+'<div style="font-size:14px;line-height:1.45">'+x.t+'</div>'+
+(x.it.a?'<button class="ok" style="margin-top:8px" onclick="hacerAyuda('+AYUDA.indexOf(x.it)+')">'+(x.it.b||'H\u00e1zmelo')+'</button>':'')+'</div>';
+if(x.clase==='boton')return fila('Bot\u00f3n en '+NOMPAG[x.pag],x.t,'Pulsarlo por m\u00ed',i);
+if(x.clase==='campo')return fila('Casilla en '+NOMPAG[x.pag],x.t,'Ll\u00e9vame ah\u00ed',i);
+if(x.clase==='sitio')return fila('Est\u00e1 en '+NOMPAG[x.pag],x.t,'Ll\u00e9vame ah\u00ed',i);
+if(x.clase==='presu')return fila('Presupuesto tuyo',x.t,'Abrirlo',i);
+if(x.clase==='precio')return fila('Tu precio',x.t+' \u2014 <b>'+eur(x.precio)+'</b>/'+x.u,'Ver o cambiarlo',i);
+if(x.clase==='linea')return fila('En este presupuesto',x.t,'Ll\u00e9vame',i);
+return ''}).join('')}
+function fila(cab,txt,bot,i){return '<div style="border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:8px">'+
+'<div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px">'+cab+'</div>'+
+'<div style="font-size:14px;line-height:1.4;margin:2px 0 6px">'+txt+'</div>'+
+'<button class="ok" onclick="hacerRes('+i+')">'+bot+'</button></div>'}
+function hacerRes(i){var x=(window.__res||[])[i];if(!x)return;cerrarAyudante();
+if(x.clase==='boton')pulsar(x.pag,x.el);
+else if(x.clase==='campo'||x.clase==='sitio')irAElemento(x.pag,x.el);
+else if(x.clase==='presu')abrir(x.num);
+else if(x.clase==='precio')verPrecio(x.id);
+else if(x.clase==='linea')irALinea(x.idx)}
 function hacerAyuda(i){var it=AYUDA[i];cerrarAyudante();if(it&&it.a)setTimeout(it.a,150)}
 /* ---------- mapa de obras ---------- */
 var LEAF_CSS='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css',LEAF_JS='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
@@ -1065,7 +1137,7 @@ return paso().catch(function(e){restaurar();throw e})}).catch(function(e){restau
 function imprimir(m){var pr=m==='precios';if(!pr){var r=revisar(true);if(r.E.length){document.getElementById('revBox').scrollIntoView({behavior:'smooth',block:'center'});if(!confirm('Hay '+r.E.length+' cosas que arreglar (mira el aviso en rojo). Si mandas el PDF así, faltará dinero en el presupuesto.\n¿Sacar el PDF igualmente?'))return}}if(pr)pintarPrecios();else pintarDocs();document.getElementById('sh_precios').style.display=pr?'':'none';document.getElementById('sh_presu').style.display=pr?'none':'';document.getElementById('sh_dosier').style.display=m==='todo'?'':'none';document.getElementById('sh_contrato').style.display=m==='todo'?'':'none';setTimeout(function(){var nom='Presupuesto '+((cur&&cur.num)||'')+(cur&&cur.nom?' - '+cur.nom:'')+'.pdf';pdfSinMargenes(nom).catch(function(){window.print()})},200)}
 function verContrato(){imprimir('todo')}
 /* ---------- init ---------- */
-document.getElementById('brandTxt').textContent=AJ.marca.toUpperCase();var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;engancharAuto();aplicarModo();nuevo();iniciarNube();setTimeout(pintarContinuar,300);
+document.getElementById('brandTxt').textContent=AJ.marca.toUpperCase();var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;engancharAuto();aplicarModo();nuevo();iniciarNube();setTimeout(construirIndice,900);setTimeout(pintarContinuar,300);
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
 </script><div id="agendaBox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9000;align-items:center;justify-content:center;padding:16px"><div class="card" style="max-width:520px;width:100%;max-height:80vh;overflow:auto"><div class="row" style="justify-content:space-between;align-items:center"><h2 style="font-size:20px;margin:0">Mis clientes</h2><button class="sec" type="button" onclick="cerrarAgenda()">Cerrar</button></div><input id="agBusca" placeholder="Buscar por nombre, teléfono o dirección" oninput="renderAgenda()" style="width:100%;margin:8px 0"><div id="agLista"></div><p style="color:var(--muted);font-size:12px;margin-top:8px">Cada vez que guardas un presupuesto, el cliente se queda aquí con su teléfono y su correo.</p></div></div><div id="verFijo" style="position:fixed;right:8px;bottom:8px;z-index:40;background:rgba(37,51,64,.85);color:#fff;font-size:11px;padding:3px 8px;border-radius:10px;pointer-events:none">v?</div><script>document.getElementById('verFijo').textContent=APP_VERSION;</script><section class="page" id="page-mapa"><div class="card"><div class="row" style="justify-content:space-between;align-items:center"><h2>Mapa de obras</h2><button class="sec" onclick="pintarMapa(true)">Actualizar</button></div><p style="color:var(--muted);font-size:13px">Cada chincheta es una obra. Verde: en marcha. Azul: aceptada. Naranja: mandada sin firmar. Gris: borrador. Toca una chincheta para ver qué falta, apuntar lo que hay que llevar o tirar para allá con el navegador.</p><div id="mapObras" style="height:60vh;min-height:320px;border-radius:8px;overflow:hidden;background:#e9e7e2;position:relative;z-index:0;isolation:isolate"></div><div id="mapInfo" style="color:var(--muted);font-size:12px;margin-top:6px"></div></div></div>
 </section>
