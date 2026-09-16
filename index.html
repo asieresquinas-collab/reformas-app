@@ -159,7 +159,7 @@ body.capturando #sh_dosier{height:297mm!important;max-height:297mm!important;ove
 </section>
 
 <script>
-var APP_VERSION='v40';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v41';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -518,12 +518,37 @@ function cargarLeaflet(){return new Promise(function(ok,ko){if(window.L)return o
 var c=document.createElement('link');c.rel='stylesheet';c.href=LEAF_CSS;document.head.appendChild(c);
 var e=document.createElement('script');e.src=LEAF_JS;e.onload=ok;e.onerror=ko;document.head.appendChild(e)})}
 function geoCache(){if(!DB.geo)DB.geo={};return DB.geo}
+function limpiaDir(d){return (d||'')
+.replace(/\b(n[º°o]?\.?\s*)(\d+)/gi,'$2')
+.replace(/\b(piso|pta|puerta|esc|escalera|bajo|bj)\b\.?\s*\S*/gi,'')
+.replace(/\b\d+\s*[ºo]?\s*(izq|izqda|izquierda|dcha|derecha|centro|[a-h])\b/gi,'')
+.replace(/,\s*[a-h]\b/gi,'')
+.replace(/\s{2,}/g,' ').replace(/[,\s]+$/,'').trim()}
+function variantes(d){var base=limpiaDir(d),out=[];
+var conCiudad=function(x){return /bilbao|bizkaia|vizcaya|bilbo/i.test(x)?x:(x+', Bilbao, Bizkaia')};
+out.push(conCiudad(base));
+var calleNum=base.match(/^([^,]+?\s+\d+)/);
+if(calleNum)out.push(conCiudad(calleNum[1]));
+var soloCalle=base.split(',')[0].replace(/\s+\d+.*$/,'').trim();
+if(soloCalle&&soloCalle.length>3)out.push(conCiudad(soloCalle));
+return out.filter(function(v,i,a){return v&&a.indexOf(v)===i})}
+function buscarNominatim(q){
+return fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=es&q='+encodeURIComponent(q),{headers:{'Accept':'application/json'}})
+.then(function(r){return r.json()}).then(function(j){if(!j||!j.length)return null;
+return {lat:parseFloat(j[0].lat),lon:parseFloat(j[0].lon)}}).catch(function(){return null})}
 function geocodificar(dir){var d=(dir||'').trim();if(!d)return Promise.resolve(null);
 var k=d.toLowerCase();var c=geoCache()[k];if(c)return Promise.resolve(c);
-var q=encodeURIComponent(d+(/bilbao|bizkaia|vizcaya/i.test(d)?'':', Bilbao, Bizkaia'));
-return fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+q,{headers:{'Accept':'application/json'}})
-.then(function(r){return r.json()}).then(function(j){if(!j||!j.length)return null;
-var p={lat:parseFloat(j[0].lat),lon:parseFloat(j[0].lon)};geoCache()[k]=p;save();return p}).catch(function(){return null})}
+var vs=variantes(d),i=0;
+var intento=function(){if(i>=vs.length)return Promise.resolve(null);
+return buscarNominatim(vs[i]).then(function(p){if(p)return p;i++;
+return new Promise(function(ok){setTimeout(function(){ok(intento())},600)})})};
+return intento().then(function(p){if(p){geoCache()[k]=p;save()}return p})}
+function chinchetaAMano(n){var p=DB.presus[n];if(!p)return;
+var d=prompt('No encuentro esa direcci\u00f3n. Esc\u00edbela como la buscar\u00edas en un mapa (calle, n\u00famero y pueblo):',limpiaDir(p.dir||''));
+if(!d)return;var info=document.getElementById('mapInfo');if(info)info.textContent='Buscando\u2026';
+buscarNominatim(/bilbao|bizkaia|vizcaya/i.test(d)?d:d+', Bizkaia').then(function(g){
+if(!g){if(info)info.textContent='Sigo sin encontrarla. Prueba con la calle y el pueblo, sin piso ni letra.';return}
+p.lat=g.lat;p.lon=g.lon;p.dirMapa=d;DB.presus[n]=p;save();try{subirPresu(n)}catch(_){}pintarMapa()})}
 function obrasDelMapa(){return Object.values(DB.presus).filter(function(p){return p.dir&&['enviado','aceptado','obra','finalizado'].indexOf(p.estado)>=0&&p.estado!=='cobrado'})}
 function colorEstado(e){return e==='obra'?'#1a7a3f':(e==='finalizado'?'#253340':(e==='aceptado'?'#0b6bcb':'#D7481D'))}
 function pintarMapa(forzar){var cont=document.getElementById('mapObras');if(!cont)return;
@@ -538,7 +563,8 @@ if(!obras.length){info.textContent='No hay obras abiertas con direcci\u00f3n pue
 info.textContent='Colocando '+obras.length+' obra(s)\u2026';
 var pts=[];
 var paso=function(i){if(i>=obras.length){if(pts.length)MAPA.fitBounds(pts,{padding:[30,30],maxZoom:15});
-info.textContent=pts.length+' de '+obras.length+' obras colocadas'+(pts.length<obras.length?' (alguna direcci\u00f3n no la encuentra: af\u00ednala en la ficha)':'');return}
+var fall=obras.filter(function(o){return !(o.lat&&o.lon)});
+info.innerHTML=pts.length+' de '+obras.length+' obra(s) colocadas'+(fall.length?' \u00b7 sin colocar: '+fall.map(function(o){return '<b>'+o.nom+'</b> <button class="mini sec" onclick="chinchetaAMano(\''+o.num+'\')">Colocar a mano</button>'}).join(' '):'');return}
 var p=obras[i];
 var seguir=function(g){if(g){var col=colorEstado(p.estado);
 var ic=L.divIcon({className:'',html:'<div style="background:'+col+';width:22px;height:22px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)"></div>',iconSize:[22,22],iconAnchor:[11,22]});
