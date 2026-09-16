@@ -17,6 +17,20 @@ header span{font-size:13px;opacity:.85}
 .foto .cab{background:#C24A00;color:#fff;font-size:12px;font-weight:700;padding:5px 10px}
 .foto.imp .pie{color:var(--ink)}
 .aviso-imp{background:#FFF4E5;border-left:4px solid #C24A00;padding:10px;border-radius:6px;font-size:13px;margin-top:10px}
+.hist{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px}
+.hist h1{font-size:17px;margin:0 0 4px}
+.hist .dat{font-size:13px;color:var(--muted)}
+.linea{position:relative;padding-left:22px}
+.linea:before{content:"";position:absolute;left:6px;top:4px;bottom:0;width:2px;background:var(--line)}
+.dia{position:relative}
+.dia:before{content:"";position:absolute;left:-22px;top:6px;width:14px;height:14px;border-radius:50%;background:var(--brick);border:3px solid var(--crema)}
+.paso{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.guardar{display:block;width:100%;margin:16px 0;background:var(--slate);color:#fff;border:0;border-radius:8px;padding:13px;font-size:15px;font-weight:700;cursor:pointer}
+.irfin{display:inline-block;font-size:13px;color:var(--brick);margin-bottom:6px}
+@media print{header{background:#253340!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.guardar,.irfin,a.tel,.pie-pag{display:none!important}
+.foto{page-break-inside:avoid;break-inside:avoid}
+body{background:#fff}}
 .vacio{padding:30px;text-align:center;color:var(--muted)}
 .pie-pag{margin:24px 0 10px;font-size:13px;color:var(--muted);text-align:center}
 a.tel{display:inline-block;margin-top:8px;background:var(--brick);color:#fff;text-decoration:none;padding:10px 14px;border-radius:8px;font-weight:700}
@@ -40,21 +54,32 @@ db.collection('seguimiento').doc(TOK).get().then(function(s){
   var d=s.exists?s.data():{};
   document.getElementById('hMarca').textContent=d.marca||'Cómo va mi obra';
   document.getElementById('hSub').textContent=(d.cliente?d.cliente+' · ':'')+(d.obra||'');
+  window.__d=d;
   if(d.total)document.getElementById('avance').innerHTML='<b>'+d.hechas+' de '+d.total+'</b> trabajos del presupuesto ya hechos<div style="height:8px;background:#ddd;border-radius:4px;margin-top:6px"><div style="height:8px;width:'+Math.round(d.hechas*100/Math.max(1,d.total))+'%;background:#1a7a3f;border-radius:4px"></div></div>';
   document.getElementById('lopd2').innerHTML='<b>Protecci\u00f3n de datos.</b> Estas fotos son del seguimiento de su obra y las trata '+(d.marca||'el contratista')+' solo para inform\u00e1rselo a usted. El enlace es privado: no lo comparta si no quiere que otras personas lo vean. Puede pedir que se borren escribiendo o llamando al contratista.';
   if(d.tel)document.getElementById('pie').innerHTML='¿Alguna duda con la obra?<br><a class="tel" href="tel:'+d.tel.replace(/\s/g,'')+'">Llamar al '+d.tel+'</a>';
-  return db.collection('seguimiento').doc(TOK).collection('fotos').orderBy('ts','desc').get();
+  return db.collection('seguimiento').doc(TOK).collection('fotos').orderBy('ts','asc').get();
 }).then(function(q){
+  var d0=window.__d||{};
   var cont=document.getElementById('cont');
   if(!q||q.empty){cont.className='vacio';cont.textContent='Todavía no hay fotos subidas. En cuanto empecemos verá aquí cómo va avanzando.';return}
-  var html='',dia='',nImp=0;
+  var html='',dia='',nImp=0,nDias=0,pri='',ult='';
   q.forEach(function(doc){var f=doc.data();
     var d=fechaLarga(f.fecha||f.ts);
-    if(d!==dia){dia=d;html+='<div class="dia">'+d+'</div>'}
+    if(!pri)pri=d;ult=d;
+    if(d!==dia){dia=d;nDias++;html+='<div class="dia"><div class="paso">Paso '+nDias+'</div>'+d+'</div>'}
     var imp=(f.tipo==='imprevisto');if(imp)nImp++;
     html+='<div class="foto'+(imp?' imp':'')+'">'+(imp?'<div class="cab">\u26a0\ufe0f Imprevisto encontrado en la obra</div>':'')+'<img src="'+f.img+'" loading="lazy">'+(f.nota?'<div class="pie">'+String(f.nota).replace(/</g,'&lt;')+'</div>':'')+'</div>';
   });
-  cont.className='';cont.innerHTML=html+(nImp?'<div class="aviso-imp"><b>Sobre los imprevistos.</b> Lo marcado en naranja es algo que ha aparecido al abrir la obra y no estaba en el presupuesto. Se le ense\u00f1a para que lo vea antes de decidir nada: cualquier trabajo de m\u00e1s se le pasar\u00e1 por escrito y no se hace sin que usted lo apruebe.</div>':'');
+  var cab='<div class="hist"><h1>La historia de tu obra</h1><div class="dat">'+
+    (d0.obra?d0.obra+'<br>':'')+'Empez\u00f3 el '+pri+'<br>'+
+    'Lo \u00faltimo, el '+ult+'<br>'+
+    nDias+(nDias===1?' jornada':' jornadas')+' con fotos \u00b7 '+q.size+(q.size===1?' foto':' fotos')+
+    (nImp?' \u00b7 '+nImp+(nImp===1?' imprevisto':' imprevistos'):'')+'</div>'+
+    (nDias>1?'<a class="irfin" href="#final">Ir a lo \u00faltimo \u2193</a>':'')+'</div>';
+  cont.className='';cont.innerHTML=cab+'<div class="linea">'+html+'</div><div id="final"></div>'+
+  (nImp?'<div class="aviso-imp"><b>Sobre los imprevistos.</b> Lo marcado en naranja es algo que ha aparecido al abrir la obra y no estaba en el presupuesto. Se le ense\u00f1a para que lo vea antes de decidir nada: cualquier trabajo de m\u00e1s se le pasar\u00e1 por escrito y no se hace sin que usted lo apruebe.</div>':'')+
+  '<button class="guardar" onclick="window.print()">Guardar la historia de mi obra</button>';
 }).catch(function(e){document.getElementById('cont').textContent='No he podido abrir el seguimiento ('+e.message+')'});
 }
 </script></body></html>
