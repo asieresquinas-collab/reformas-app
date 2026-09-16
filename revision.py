@@ -54,10 +54,14 @@ with sync_playwright() as p:
     # 2 presupuesto: dictado -> partidas
     pg.evaluate("()=>ST('presupuesto')")
     pg.fill('#f_nom','Cliente Revision'); pg.fill('#f_dir','Zabalbide 40'); pg.fill('#f_tel','600112233')
+    pg.evaluate("()=>meterPor('voz')"); pg.wait_for_timeout(300)
+    chk('elegir como meter: voz', pg.evaluate("()=>document.getElementById('cardVoz').offsetParent!==null"))
     pg.fill('#dictado','cocina de 5 metros: tirar tabique, quitar alicatado, suelo nuevo, instalacion electrica entera')
     pg.evaluate("()=>convertir()"); pg.wait_for_timeout(500)
     chk('dictado crea partidas', pg.evaluate("()=>cur.lineas.length")>0, pg.evaluate("()=>cur.lineas.length"))
     # 3 PDF arquitecto
+    pg.evaluate("()=>meterPor('pdf')"); pg.wait_for_timeout(300)
+    chk('elegir como meter: PDF', pg.evaluate("()=>document.getElementById('cardPdf').offsetParent!==null"))
     pg.set_input_files('#pdfArq','/home/claude/mediciones.pdf'); pg.wait_for_timeout(4000)
     chk('lee mediciones del arquitecto', pg.evaluate("()=>ARQ.med.length")>0, pg.evaluate("()=>ARQ.med.length"))
     chk('panel del arquitecto visible', pg.evaluate("()=>document.getElementById('arqPanel').style.display")=='block')

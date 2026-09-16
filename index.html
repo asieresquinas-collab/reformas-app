@@ -86,9 +86,9 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 <section class="page on" id="page-presupuesto">
 <div class="card"><div class="grid">
 <div id="resumenCli" style="display:none;background:#f2f1ee;border-radius:8px;padding:10px;margin-bottom:8px;font-size:14px;cursor:pointer" onclick="abrirDatos()"></div><div id="cajaDatos"><div><label class="f">Cliente</label><div style="display:flex;gap:6px"><input id="f_nom" placeholder="Nombre y apellidos" style="flex:1;min-width:0" onchange="rellenarDeAgenda()" list="agDatalist"><datalist id="agDatalist"></datalist><button class="sec" type="button" onclick="abrirAgenda()" title="Elegir de mis clientes">Agenda</button></div></div><div><label class="f">Dirección de la obra</label><input id="f_dir" placeholder="Calle, piso, municipio"></div>
-<div id="cliMasBtn" style="margin-top:2px"><button class="sec" type="button" style="width:100%" onclick="verMasCliente()">Teléfono, correo e IVA &#9662;</button></div>
-<div id="cliExtra"><div><label class="f">Teléfono</label><input id="f_tel"></div>
-<div><label class="f">Correo</label><input id="f_email"></div><div><label class="f">Piso sin ascensor</label><select id="f_asc"><option value="0">No / tiene ascensor</option><option value="1">Sí, sin ascensor (suplemento)</option></select></div><div><label class="f">IVA</label><button class="mini sec" type="button" style="float:right" onclick="asistenteIva()">¿Cuál me toca?</button><select id="f_iva"><option value="21">21 %</option><option value="10">10 % (vivienda &gt; 2 años, obra de reforma)</option><option value="0">Sin IVA</option></select></div>
+<div><label class="f">Teléfono</label><input id="f_tel"></div>
+<div id="cliMasBtn" style="margin-top:2px"><button class="sec" type="button" style="width:100%" onclick="verMasCliente()">Correo, IVA y más &#9662;</button></div>
+<div id="cliExtra"><div><label class="f">Correo</label><input id="f_email"></div><div><label class="f">Piso sin ascensor</label><select id="f_asc"><option value="0">No / tiene ascensor</option><option value="1">Sí, sin ascensor (suplemento)</option></select></div><div><label class="f">IVA</label><button class="mini sec" type="button" style="float:right" onclick="asistenteIva()">¿Cuál me toca?</button><select id="f_iva"><option value="21">21 %</option><option value="10">10 % (vivienda &gt; 2 años, obra de reforma)</option><option value="0">Sin IVA</option></select></div>
 <div><label class="f">Nº presupuesto</label><input id="f_num"></div><div><label class="f">Fecha</label><input id="f_fecha" type="date"></div></div>
 </div></div></div>
 
