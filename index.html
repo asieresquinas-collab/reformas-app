@@ -69,7 +69,7 @@ body.capturando #sh_dosier{height:297mm!important;max-height:297mm!important;ove
 </style></head><body>
 <div id="login" style="display:none;position:fixed;inset:0;background:var(--slate);z-index:50;align-items:center;justify-content:center;padding:20px"><div class="card" style="max-width:360px;width:100%"><h2 style="font-size:26px;margin-bottom:4px" id="loginTitle">Vornicu Reformas</h2><p style="color:var(--muted);margin:0 0 10px">Entra con tu correo y tu clave.</p><label class="f">Correo</label><input id="lg_email" type="email" autocomplete="username"><label class="f" style="margin-top:8px">Clave</label><input id="lg_pass" type="password" autocomplete="current-password"><div class="row" style="margin-top:12px"><button onclick="entrar()">Entrar</button><span id="lg_msg" style="color:var(--brick)"></span></div></div></div>
 <nav id="topnav"><div class="brand" id="brandTxt">VORNICU REFORMAS</div>
-<button class="ntab on" data-t="presupuesto">Presupuesto</button><button class="ntab" data-t="clientes">Clientes</button><button class="ntab" data-t="contrato">Contrato</button><button class="ntab" data-t="tarifa">Tarifa</button><button class="ntab" data-t="precios">Lista de precios</button><button class="ntab" data-t="ajustes">Ajustes</button><button class="ntab" data-t="ayuda">Ayuda</button>
+<button class="ntab on" data-t="presupuesto">Presupuesto</button><button class="ntab" data-t="clientes">Clientes</button><button class="ntab" data-t="mapa">Mapa de obras</button><button class="ntab" data-t="contrato">Contrato</button><button class="ntab" data-t="tarifa">Tarifa</button><button class="ntab" data-t="precios">Lista de precios</button><button class="ntab" data-t="ajustes">Ajustes</button><button class="ntab" data-t="ayuda">Ayuda</button>
 <div class="acts"><span id="syncDot" title="Guardado en la nube" style="width:10px;height:10px;background:#888;display:inline-block"></span><button class="warn" onclick="imprimir('todo')">PDF completo</button><button class="sec" style="border-color:#fff;color:#fff;background:transparent" onclick="imprimir('presu')">Solo presupuesto</button><button class="ok" onclick="mandarFirma()">Mandar a firmar</button></div></nav>
 
 <!-- ================= PRESUPUESTO ================= -->
@@ -107,6 +107,7 @@ body.capturando #sh_dosier{height:297mm!important;max-height:297mm!important;ove
 <div class="grid"><div><label class="f">Al firmar (%)</label><input id="c_p1" type="number" value="40"></div><div><label class="f">A mitad de obra (%)</label><input id="c_p2" type="number" value="30"></div><div><label class="f">Al terminar (%)</label><input id="c_p3" type="number" value="30"></div><div><label class="f">Plazo de ejecución</label><input id="c_plazo" placeholder="Ej.: 6 semanas desde el inicio"></div><div><label class="f">Fecha prevista de inicio</label><input id="c_inicio" type="date"></div><div><label class="f">Garantía (meses)</label><input id="c_gar" type="number" value="24"></div></div>
 <div class="row" style="margin-top:10px"><button onclick="verContrato()">Ver contrato</button></div></div></section>
 
+
 <!-- ================= LISTA DE PRECIOS PARA ARQUITECTO ================= -->
 <section class="page" id="page-precios"><div class="card"><h2 style="font-size:22px;margin-bottom:6px">Lista de precios que te pide un arquitecto</h2>
 <p style="color:var(--muted);margin:0 0 8px">Cuando un estudio te manda su listado de partidas para que pongas tus precios, súbelo aquí. La app lo lee, rellena lo que ya tienes en tu tarifa y tú completas el resto. Luego guardas esos precios en tu tarifa (para la próxima vez ya estarán) y sacas el PDF con tus precios para devolvérselo.</p>
@@ -128,7 +129,7 @@ body.capturando #sh_dosier{height:297mm!important;max-height:297mm!important;ove
 <p><b>2b.</b> Si es obra de arquitecto, sube su PDF de mediciones o el plano de superficies en «Documentos del arquitecto»: la app saca el nombre del cliente y la dirección de la obra (si están en el documento) y además lee cantidades y metros, los casa con tu tarifa y te lo enseña antes de añadirlo.</p>
 <p><b>2bis.</b> Cuando el PDF del arquitecto trae sus precios, la app compara los suyos con los tuyos en las partidas que sí tienes puestas y saca la proporción a la que trabajas. Con el botón «Sacar los precios que faltan con mi margen» rellena las que están a cero con esa proporción (la de su propio capítulo si hay datos). Salen marcadas en rojo como <b>estimadas</b>: son un punto de partida para que las repases, no un precio cerrado.</p><p><b>2ter.</b> Todo precio que corrijas a mano en el panel del arquitecto se queda guardado para esa partida: la próxima vez que aparezca en otro PDF sale ya con tu precio (marcado en verde, «tu precio de otras veces»). Y si la partida es de tu tarifa, también se actualiza ahí. Siempre lo puedes volver a cambiar y manda el último que pongas.</p><p><b>2c.</b> «Revisar el presupuesto» comprueba que no se escapa nada: partidas a cero o sin cantidad, repetidas, partidas del arquitecto que faltan o con otra cantidad, montacargas si no hay ascensor, contenedor si hay derribos, y avisos de coherencia (suelo nuevo sin nivelar, baño sin sanitarios…). Al sacar el PDF se revisa solo.</p>
 <p><b>3.</b> Guardar. Luego «PDF completo»: sale la portada con tus obras, el presupuesto y el contrato en un solo documento para mandar por WhatsApp o correo.</p>
-<p><b>3b.</b> «Mandar a firmar»: se abre WhatsApp con <b>un solo enlace</b>. El cliente lo abre y ahí tiene el presupuesto entero y el contrato, con botón para descargarlo en PDF, y justo debajo firma con el dedo. Se avisa bien claro de que la aceptación es <b>bajo reserva</b>: la obra no queda contratada hasta que tú confirmes la fecha por escrito.</p><p><b>4b.</b> En Clientes, al poner una obra «En obra» te pregunta el día que empieza y el día que calculas acabarla, y a partir de ahí lleva la cuenta: días que lleva, días que quedan y aviso en rojo si se pasa. Al ponerla «Acabada» o «Pagado y cerrado» guarda el día real y te dice si te pasaste o no de lo calculado. Esto es solo para ti: no sale en el PDF ni lo ve el cliente.</p><p><b>3c.</b> En Ajustes firmas una vez con el dedo y tu firma sale ya impresa en la casilla del contratista de todos los contratos. La del cliente sigue vacía: esa la pone él al firmar el enlace o a mano en papel.</p><p><b>4.</b> En Clientes cambias el estado (enviado, aceptado, en obra, cobrado) y duplicas un presupuesto si el cliente pide una variante.</p>
+<p><b>3b.</b> «Mandar a firmar»: se abre WhatsApp con <b>un solo enlace</b>. El cliente lo abre y ahí tiene el presupuesto entero y el contrato, con botón para descargarlo en PDF, y justo debajo firma con el dedo. Se avisa bien claro de que la aceptación es <b>bajo reserva</b>: la obra no queda contratada hasta que tú confirmes la fecha por escrito.</p><p><b>4c.</b> Pestaña «Mapa de obras»: todas las obras abiertas con una chincheta. Verde las que están en marcha, naranja las pendientes de firma. Tocas una y ves de qué obra es, cuántos días lleva, lo que falta y lo que hay que llevar (lo apuntas ahí mismo), y un botón «Cómo llegar» que abre el navegador. En el presupuesto del cliente sale un mapa con la chincheta de su obra.</p><p><b>4b.</b> En Clientes, al poner una obra «En obra» te pregunta el día que empieza y el día que calculas acabarla, y a partir de ahí lleva la cuenta: días que lleva, días que quedan y aviso en rojo si se pasa. Al ponerla «Acabada» o «Pagado y cerrado» guarda el día real y te dice si te pasaste o no de lo calculado. Esto es solo para ti: no sale en el PDF ni lo ve el cliente.</p><p><b>3c.</b> En Ajustes firmas una vez con el dedo y tu firma sale ya impresa en la casilla del contratista de todos los contratos. La del cliente sigue vacía: esa la pone él al firmar el enlace o a mano en papel.</p><p><b>4.</b> En Clientes cambias el estado (enviado, aceptado, en obra, cobrado) y duplicas un presupuesto si el cliente pide una variante.</p>
 <p style="color:var(--muted)">Los presupuestos se guardan en la nube (el punto verde de arriba dice que está todo subido) y también en este aparato, así que funciona sin cobertura y se sube solo al volver. Puedes usarla desde el móvil y el ordenador a la vez.</p><p style="color:var(--muted)">Versión <span id="ver"></span></p></div></section>
 
 <!-- ================= DOCUMENTOS PARA IMPRIMIR ================= -->
@@ -145,7 +146,7 @@ body.capturando #sh_dosier{height:297mm!important;max-height:297mm!important;ove
 <div style="display:flex;justify-content:flex-end;margin-top:8px"><div class="tot" style="width:260px"><div><span>Base imponible</span><b id="p_base"></b></div><div><span>IVA <span id="p_ivap"></span> %</span><b id="p_iva"></b></div><div class="big"><span>Total</span><b id="p_tot"></b></div></div></div>
 <div id="p_obs" class="condp"></div>
 <div class="condp">Presupuesto válido 30 días. Los materiales de acabado (azulejo, suelo, sanitarios, puertas) se presupuestan en formato comercial; si el cliente elige otro, se ajusta la diferencia. No incluye licencias ni tasas municipales salvo que se indique. Cualquier trabajo no recogido aquí se valorará aparte antes de hacerlo.</div>
-<div id="p_firmalink" style="display:none;margin-top:8mm;border:1px solid var(--line);border-left:4px solid var(--brick);padding:8px 10px;font-size:11px;line-height:1.45"><b>Para aceptarlo y firmarlo desde el móvil:</b><br><span id="p_firmaurl" style="word-break:break-all"></span><br><span style="color:var(--muted)">La firma es una aceptación <b>bajo reserva</b>: la obra no queda contratada hasta que el contratista confirme la fecha por escrito.</span></div><div class="foot" style="position:static;margin-top:12mm"><span id="p_f1"></span><span id="p_f2"></span></div></div>
+<div id="p_mapa" style="display:none;margin-top:8mm"><div style="font-size:11px;color:var(--muted);margin-bottom:3px">Dirección de la obra</div><img id="p_mapaimg" style="width:100%;max-height:70mm;object-fit:cover;border:1px solid var(--line);border-radius:4px"><div id="p_mapatxt" style="font-size:11px;margin-top:3px"></div></div><div id="p_firmalink" style="display:none;margin-top:8mm;border:1px solid var(--line);border-left:4px solid var(--brick);padding:8px 10px;font-size:11px;line-height:1.45"><b>Para aceptarlo y firmarlo desde el móvil:</b><br><span id="p_firmaurl" style="word-break:break-all"></span><br><span style="color:var(--muted)">La firma es una aceptación <b>bajo reserva</b>: la obra no queda contratada hasta que el contratista confirme la fecha por escrito.</span></div><div class="foot" style="position:static;margin-top:12mm"><span id="p_f1"></span><span id="p_f2"></span></div></div>
 
 <div class="sheet" id="sh_contrato"><div class="dochead"><div class="who" id="c_who"></div><div class="doc"><h2>Contrato de obra</h2><div id="c_meta"></div></div></div>
 <div id="c_body"></div>
@@ -158,7 +159,7 @@ body.capturando #sh_dosier{height:297mm!important;max-height:297mm!important;ove
 </section>
 
 <script>
-var APP_VERSION='v38';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v39';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -231,7 +232,7 @@ function num(v){return parseFloat(String(v).replace(',','.'))||0}
 function norm(s){return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
 /* ---------- navegación ---------- */
 document.querySelectorAll('.ntab').forEach(function(b){b.onclick=function(){ST(b.dataset.t)}});
-function ST(t){if(t==='ajustes')setTimeout(fmInit,60);document.querySelectorAll('.ntab').forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});document.querySelectorAll('.page').forEach(function(p){p.classList.toggle('on',p.id==='page-'+t)});if(t==='clientes')renderClientes();if(t==='tarifa')renderTarifa();if(t==='ajustes')renderAj()}
+function ST(t){if(t==='ajustes')setTimeout(fmInit,60);if(t==='mapa')setTimeout(function(){pintarMapa()},80);document.querySelectorAll('.ntab').forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});document.querySelectorAll('.page').forEach(function(p){p.classList.toggle('on',p.id==='page-'+t)});if(t==='clientes')renderClientes();if(t==='tarifa')renderTarifa();if(t==='ajustes')renderAj()}
 /* ---------- presupuesto ---------- */
 function nuevo(){ARQ={med:[],plano:null,cab:null};var _ap=document.getElementById('arqPanel');if(_ap){_ap.innerHTML='';_ap.style.display='none'}var _ai=document.getElementById('arqInfo');if(_ai)_ai.textContent='';cur={num:String(DB.contador+1),fecha:new Date().toISOString().slice(0,10),nom:'',tel:'',email:'',dir:'',asc:'0',iva:'21',obs:'',suelo:false,lineas:[],estado:'borrador',c:{p1:40,p2:30,p3:30,plazo:'',inicio:'',gar:24}};pintar();document.getElementById('msg').textContent=''}
 function pintar(){['num','fecha','nom','tel','email','dir','asc','iva','obs'].forEach(function(k){document.getElementById('f_'+k).value=cur[k]||''});document.getElementById('f_suelo').checked=!!cur.suelo;['p1','p2','p3','plazo','inicio','gar'].forEach(function(k){document.getElementById('c_'+k).value=cur.c[k]});renderLineas()}
@@ -461,6 +462,62 @@ if(!window.__esc)window.__esc={};if(window.__esc[p.firmaTok])return;
 window.__esc[p.firmaTok]=FB.db.collection('firmas').doc(p.firmaTok).onSnapshot(function(d){var f=d.data();
 if(f&&f.firma){var q=DB.presus[p.num];if(q&&!estaFirmado(q)){q.firmado={nombre:f.nombreFirma||'',dni:f.dni||'',fecha:f.fechaFirma||''};q.estado='aceptado';save();try{subirPresu(q.num)}catch(_){}
 if(document.getElementById('page-clientes').classList.contains('on'))renderClientes()}}},function(){})})}
+
+/* ---------- mapa de obras ---------- */
+var LEAF_CSS='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css',LEAF_JS='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+var MAPA=null,MARCAS=[];
+function cargarLeaflet(){return new Promise(function(ok,ko){if(window.L)return ok();
+var c=document.createElement('link');c.rel='stylesheet';c.href=LEAF_CSS;document.head.appendChild(c);
+var e=document.createElement('script');e.src=LEAF_JS;e.onload=ok;e.onerror=ko;document.head.appendChild(e)})}
+function geoCache(){if(!DB.geo)DB.geo={};return DB.geo}
+function geocodificar(dir){var d=(dir||'').trim();if(!d)return Promise.resolve(null);
+var k=d.toLowerCase();var c=geoCache()[k];if(c)return Promise.resolve(c);
+var q=encodeURIComponent(d+(/bilbao|bizkaia|vizcaya/i.test(d)?'':', Bilbao, Bizkaia'));
+return fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+q,{headers:{'Accept':'application/json'}})
+.then(function(r){return r.json()}).then(function(j){if(!j||!j.length)return null;
+var p={lat:parseFloat(j[0].lat),lon:parseFloat(j[0].lon)};geoCache()[k]=p;save();return p}).catch(function(){return null})}
+function obrasDelMapa(){return Object.values(DB.presus).filter(function(p){return p.dir&&['enviado','aceptado','obra','finalizado'].indexOf(p.estado)>=0&&p.estado!=='cobrado'})}
+function colorEstado(e){return e==='obra'?'#1a7a3f':(e==='finalizado'?'#253340':(e==='aceptado'?'#0b6bcb':'#D7481D'))}
+function pintarMapa(forzar){var cont=document.getElementById('mapObras');if(!cont)return;
+var info=document.getElementById('mapInfo');info.textContent='Preparando el mapa\u2026';
+cargarLeaflet().then(function(){
+if(!MAPA){MAPA=L.map('mapObras').setView([43.263,-2.935],12);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'\u00a9 OpenStreetMap'}).addTo(MAPA)}
+setTimeout(function(){MAPA.invalidateSize()},150);
+MARCAS.forEach(function(m){MAPA.removeLayer(m)});MARCAS=[];
+var obras=obrasDelMapa();
+if(!obras.length){info.textContent='No hay obras abiertas con direcci\u00f3n puesta.';return}
+info.textContent='Colocando '+obras.length+' obra(s)\u2026';
+var pts=[];
+var paso=function(i){if(i>=obras.length){if(pts.length)MAPA.fitBounds(pts,{padding:[30,30],maxZoom:15});
+info.textContent=pts.length+' de '+obras.length+' obras colocadas'+(pts.length<obras.length?' (alguna direcci\u00f3n no la encuentra: af\u00ednala en la ficha)':'');return}
+var p=obras[i];
+var seguir=function(g){if(g){var col=colorEstado(p.estado);
+var ic=L.divIcon({className:'',html:'<div style="background:'+col+';width:22px;height:22px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)"></div>',iconSize:[22,22],iconAnchor:[11,22]});
+var m=L.marker([g.lat,g.lon],{icon:ic}).addTo(MAPA);
+m.bindPopup(popupObra(p));MARCAS.push(m);pts.push([g.lat,g.lon])}
+setTimeout(function(){paso(i+1)},g?350:0)};
+if(p.lat&&p.lon)seguir({lat:p.lat,lon:p.lon});
+else geocodificar(p.dir).then(function(g){if(g){p.lat=g.lat;p.lon=g.lon;DB.presus[p.num]=p;save()}seguir(g)})};
+paso(0)}).catch(function(){info.textContent='No he podido cargar el mapa. Vuelve a darle a Actualizar.'})}
+function popupObra(p){var tot=p.lineas.reduce(function(s,l){return s+l.q*l.p},0)*(1+num(p.iva)/100);
+var est=(EST[p.estado]||['',''])[0];
+var falta=(p.pendientes||'').replace(/</g,'&lt;');
+return '<div style="min-width:210px;font-family:system-ui">'+
+'<b>'+p.nom+'</b><br><span style="color:#666;font-size:12px">'+(p.dir||'')+'</span><br>'+
+'<span style="font-size:12px">N\u00ba '+p.num+' \u00b7 '+est+' \u00b7 '+eur(tot)+'</span>'+
+(p.obraIni?'<br><span style="font-size:12px">'+textoDias(p)+'</span>':'')+
+'<div style="margin-top:6px;font-size:12px"><b>Qu\u00e9 falta / qu\u00e9 llevar:</b><br>'+(falta?falta.replace(/\n/g,'<br>'):'<i>nada apuntado</i>')+'</div>'+
+'<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">'+
+'<button onclick="apuntarPendientes(\''+p.num+'\')" style="padding:6px 9px;border:1px solid #ccc;border-radius:6px;background:#fff;color:#1c1f22;font-weight:600">Apuntar</button>'+
+'<a href="https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(p.dir||'')+'" target="_blank" rel="noopener" style="padding:6px 9px;border-radius:6px;background:#1a7a3f;color:#fff;text-decoration:none">C\u00f3mo llegar</a>'+
+'<button onclick="abrir(\''+p.num+'\')" style="padding:6px 9px;border:1px solid #ccc;border-radius:6px;background:#fff;color:#1c1f22;font-weight:600">Abrir</button>'+
+'</div></div>'}
+function textoDias(p){var hoy=new Date().toISOString().slice(0,10);var d=dias(p.obraIni,p.obraFin||hoy);
+return p.obraFin?('acabada en '+d+' d\u00edas'):('lleva '+d+' d\u00edas de obra')}
+function apuntarPendientes(n){var p=DB.presus[n];if(!p)return;
+var v=prompt('Qu\u00e9 falta en esta obra y qu\u00e9 hay que llevar (una cosa por l\u00ednea):',p.pendientes||'');
+if(v===null)return;p.pendientes=v;DB.presus[n]=p;save();try{subirPresu(n)}catch(_){}pintarMapa()}
 /* ---------- tarifa ---------- */
 function renderTarifa(){var box=document.getElementById('tarifaBox');var T=tarifa();var cats=CAT_ORDER.slice();T.forEach(function(t){if(cats.indexOf(t.c)<0)cats.push(t.c)});box.innerHTML=cats.map(function(c){return '<div class="tarifa-cat">'+c+'</div>'+T.filter(function(t){return t.c===c}).map(function(t){return '<div class="tar"><div>'+t.d+'</div><div style="text-align:center;color:var(--muted)">'+t.u+'</div><input value="'+t.p+'" onchange="setPrecio(\''+t.id+'\',this.value)"></div>'}).join('')}).join('')}
 function setPrecio(id,v){var ex=(DB.extra||[]).find(function(x){return x.id===id});if(ex)ex.p=num(v);else DB.tarifa[id]=num(v);save()}
@@ -483,6 +540,36 @@ function exportar(){var a=document.createElement('a');a.href='data:application/j
 function importar(inp){var f=inp.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var o=JSON.parse(r.result);if(o.db){DB=o.db;save()}if(o.aj){AJ=o.aj;lsSet('vr_aj',JSON.stringify(AJ))}alert('Copia restaurada');location.reload()}catch(e){alert('Ese archivo no vale')}};r.readAsText(f)}
 /* ---------- documentos ---------- */
 function who(){return AJ.marca+'<small>'+AJ.nombre+' · '+AJ.nif+'<br>'+AJ.dir+'<br>'+AJ.tel+' · '+AJ.email+'</small>'}
+
+/* mapa estatico para el documento (sin claves, con teselas de OpenStreetMap) */
+function tileURL(x,y,z){return 'https://tile.openstreetmap.org/'+z+'/'+x+'/'+y+'.png'}
+function lon2x(lon,z){return (lon+180)/360*Math.pow(2,z)}
+function lat2y(lat,z){var r=lat*Math.PI/180;return (1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*Math.pow(2,z)}
+function mapaImagen(lat,lon,z){z=z||16;
+return new Promise(function(ok){
+var cx=lon2x(lon,z),cy=lat2y(lat,z),W=3,H=2,T=256;
+var cv=document.createElement('canvas');cv.width=W*T;cv.height=H*T;var c=cv.getContext('2d');
+c.fillStyle='#e9e7e2';c.fillRect(0,0,cv.width,cv.height);
+var x0=Math.floor(cx)-1,y0=Math.floor(cy)-1,pend=W*H,fallo=false;
+var offx=(cx-x0)*T-cv.width/2,offy=(cy-y0)*T-cv.height/2;
+var fin=function(){if(--pend>0)return;
+var px=cv.width/2,py=cv.height/2;
+c.beginPath();c.arc(px,py-14,9,0,Math.PI*2);c.fillStyle='#D7481D';c.fill();
+c.beginPath();c.moveTo(px-9,py-10);c.lineTo(px+9,py-10);c.lineTo(px,py+6);c.closePath();c.fill();
+c.beginPath();c.arc(px,py-14,3.4,0,Math.PI*2);c.fillStyle='#fff';c.fill();
+try{ok(fallo?null:cv.toDataURL('image/jpeg',0.85))}catch(e){ok(null)}};
+for(var i=0;i<W;i++)for(var j=0;j<H;j++){(function(i,j){var im=new Image();im.crossOrigin='anonymous';
+im.onload=function(){c.drawImage(im,i*T-offx,j*T-offy);fin()};
+im.onerror=function(){fallo=true;fin()};
+im.src=tileURL(x0+i,y0+j,z)})(i,j)}})}
+function pintarMapaDoc(){var box=document.getElementById('p_mapa');if(!box)return Promise.resolve();
+var d=(cur.dir||'').trim();if(!d){box.style.display='none';return Promise.resolve()}
+document.getElementById('p_mapatxt').textContent=d;
+var poner=function(g){if(!g)  {box.style.display='none';return Promise.resolve()}
+return mapaImagen(g.lat,g.lon).then(function(img){if(!img){box.style.display='none';return}
+document.getElementById('p_mapaimg').src=img;box.style.display=''})};
+if(cur.lat&&cur.lon)return poner({lat:cur.lat,lon:cur.lon});
+return geocodificar(d).then(function(g){if(g){cur.lat=g.lat;cur.lon=g.lon}return poner(g)})}
 function pintarEnlaceFirma(){var fl=document.getElementById('p_firmalink');if(!fl)return;
 if(cur.firmaTok){var u=firmaURL(cur.firmaTok);document.getElementById('p_firmaurl').textContent=u;fl.style.display='';window.__FIRMA_URL=u}
 else{fl.style.display='none';window.__FIRMA_URL=null}}
@@ -505,7 +592,7 @@ document.getElementById('c_body').innerHTML=['<p class="clausula">En Bilbao, a '
 '<p class="clausula"><b>Séptima. Garantía.</b> El contratista garantiza la mano de obra durante '+(c.gar||24)+' meses desde la entrega. No cubre el desgaste normal, el mal uso ni los materiales aportados por el cliente, que responden de su propia garantía de fabricante.',
 (cur.suelo?'<p class="clausula"><b>Octava. Suelo existente.</b> El cliente decide mantener el suelo actual bajo el suelo flotante nuevo. El contratista no responde de desniveles, ruidos, juntas abiertas ni de ningún problema derivado de esa decisión, ahora o en el futuro.':''),
 '<p class="clausula"><b>Protección de datos.</b> Los datos del cliente los trata '+AJ.nombre+' solo para preparar y ejecutar esta obra y su facturación. Puede ejercer sus derechos escribiendo a '+AJ.email+'.'].join('');
-document.getElementById('c_firma1').textContent=AJ.nombre;var fi=document.getElementById('c_firmaimg');if(AJ.firma){fi.src=AJ.firma;fi.style.display=''}else{fi.style.display='none'}document.getElementById('c_firma2').textContent=cur.nom;document.getElementById('c_f1').textContent=ft;document.getElementById('c_f2').textContent='Contrato · presupuesto '+cur.num;pintarEnlaceFirma()}
+document.getElementById('c_firma1').textContent=AJ.nombre;var fi=document.getElementById('c_firmaimg');if(AJ.firma){fi.src=AJ.firma;fi.style.display=''}else{fi.style.display='none'}document.getElementById('c_firma2').textContent=cur.nom;document.getElementById('c_f1').textContent=ft;document.getElementById('c_f2').textContent='Contrato · presupuesto '+cur.num;pintarEnlaceFirma();pintarMapaDoc()}
 function fechaES(s){if(!s)return '';var d=new Date(s+'T00:00:00');return d.toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'})}
 var H2C_URL='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',JSPDF_URL='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
 function cargarJS(u,test){return new Promise(function(ok,ko){if(test())return ok();var e=document.createElement('script');e.src=u;e.onload=ok;e.onerror=ko;document.head.appendChild(e)})}
@@ -545,4 +632,6 @@ function verContrato(){imprimir('todo')}
 /* ---------- init ---------- */
 document.getElementById('brandTxt').textContent=AJ.marca.toUpperCase();var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;nuevo();iniciarNube();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
-</script><div id="agendaBox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:60;align-items:center;justify-content:center;padding:16px"><div class="card" style="max-width:520px;width:100%;max-height:80vh;overflow:auto"><div class="row" style="justify-content:space-between;align-items:center"><h2 style="font-size:20px;margin:0">Mis clientes</h2><button class="sec" type="button" onclick="cerrarAgenda()">Cerrar</button></div><input id="agBusca" placeholder="Buscar por nombre, teléfono o dirección" oninput="renderAgenda()" style="width:100%;margin:8px 0"><div id="agLista"></div><p style="color:var(--muted);font-size:12px;margin-top:8px">Cada vez que guardas un presupuesto, el cliente se queda aquí con su teléfono y su correo.</p></div></div><div id="verFijo" style="position:fixed;right:8px;bottom:8px;z-index:40;background:rgba(37,51,64,.85);color:#fff;font-size:11px;padding:3px 8px;border-radius:10px;pointer-events:none">v?</div><script>document.getElementById('verFijo').textContent=APP_VERSION;</script></body></html>
+</script><div id="agendaBox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:60;align-items:center;justify-content:center;padding:16px"><div class="card" style="max-width:520px;width:100%;max-height:80vh;overflow:auto"><div class="row" style="justify-content:space-between;align-items:center"><h2 style="font-size:20px;margin:0">Mis clientes</h2><button class="sec" type="button" onclick="cerrarAgenda()">Cerrar</button></div><input id="agBusca" placeholder="Buscar por nombre, teléfono o dirección" oninput="renderAgenda()" style="width:100%;margin:8px 0"><div id="agLista"></div><p style="color:var(--muted);font-size:12px;margin-top:8px">Cada vez que guardas un presupuesto, el cliente se queda aquí con su teléfono y su correo.</p></div></div><div id="verFijo" style="position:fixed;right:8px;bottom:8px;z-index:40;background:rgba(37,51,64,.85);color:#fff;font-size:11px;padding:3px 8px;border-radius:10px;pointer-events:none">v?</div><script>document.getElementById('verFijo').textContent=APP_VERSION;</script><section class="page" id="page-mapa"><div class="card"><div class="row" style="justify-content:space-between;align-items:center"><h2>Mapa de obras</h2><button class="sec" onclick="pintarMapa(true)">Actualizar</button></div><p style="color:var(--muted);font-size:13px">Cada chincheta es una obra. Verde: en marcha. Naranja: pendiente de firma. Toca una chincheta para ver qué falta, apuntar lo que hay que llevar o tirar para allá con el navegador.</p><div id="mapObras" style="height:60vh;min-height:320px;border-radius:8px;overflow:hidden;background:#e9e7e2"></div><div id="mapInfo" style="color:var(--muted);font-size:12px;margin-top:6px"></div></div></div>
+</section>
+</body></html>
