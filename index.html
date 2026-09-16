@@ -65,8 +65,8 @@ img,canvas,video{max-width:100%}
 @media (max-width:420px){.acts button{min-width:100%;}.row>button{min-width:100%}}
 @media (min-width:1200px){.card{max-width:1100px;margin-left:auto;margin-right:auto}}
 
-body.capturando #sh_dosier{height:297mm!important;max-height:297mm!important;overflow:hidden!important;padding:14mm 15mm 20mm!important}body.capturando #sh_dosier .portada{height:120mm!important;margin:-14mm -15mm 0!important}body.capturando #sh_dosier .dos2{margin-top:6mm!important}body.capturando #sh_dosier .dos2 .fotos img{height:46mm!important}body.capturando .sheet{box-shadow:none!important;margin:0!important;width:210mm!important;max-width:210mm!important;padding:14mm 15mm!important;background:var(--crema)!important}body.capturando #sh_presu,body.capturando #sh_contrato{height:auto!important;min-height:0!important}body.capturando .foot{left:15mm!important;right:15mm!important}body.capturando #sh_presu .foot,body.capturando #sh_contrato .foot{position:static!important;margin-top:10mm!important}body.simple .ntab[data-t="contrato"],body.simple .ntab[data-t="tarifa"],body.simple .ntab[data-t="precios"],body.simple .ntab[data-t="ayuda"]{display:none}
-body.simple.vermas .ntab[data-t="contrato"],body.simple.vermas .ntab[data-t="tarifa"],body.simple.vermas .ntab[data-t="precios"],body.simple.vermas .ntab[data-t="ayuda"]{display:block}
+body.capturando #sh_dosier{height:297mm!important;max-height:297mm!important;overflow:hidden!important;padding:14mm 15mm 20mm!important}body.capturando #sh_dosier .portada{height:120mm!important;margin:-14mm -15mm 0!important}body.capturando #sh_dosier .dos2{margin-top:6mm!important}body.capturando #sh_dosier .dos2 .fotos img{height:46mm!important}body.capturando .sheet{box-shadow:none!important;margin:0!important;width:210mm!important;max-width:210mm!important;padding:14mm 15mm!important;background:var(--crema)!important}body.capturando #sh_presu,body.capturando #sh_contrato{height:auto!important;min-height:0!important}body.capturando .foot{left:15mm!important;right:15mm!important}body.capturando #sh_presu .foot,body.capturando #sh_contrato .foot{position:static!important;margin-top:10mm!important}body.simple .ntab[data-t="contrato"],body.simple .ntab[data-t="tarifa"],body.simple .ntab[data-t="precios"],body.simple .ntab[data-t="ayuda"],body.simple .ntab[data-t="legal"]{display:none}
+body.simple.vermas .ntab[data-t="contrato"],body.simple.vermas .ntab[data-t="tarifa"],body.simple.vermas .ntab[data-t="precios"],body.simple.vermas .ntab[data-t="ayuda"],body.simple.vermas .ntab[data-t="legal"]{display:block}
 body:not(.simple) #masTabs{display:none}
 body.simple .acts .warn,body.simple .acts .sec,body.simple .acts .ok:not(#btnEnviar){display:none}
 body.simple #btnEnviar{display:inline-block}
@@ -78,7 +78,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 </style></head><body>
 <div id="login" style="display:none;position:fixed;inset:0;background:var(--slate);z-index:50;align-items:center;justify-content:center;padding:20px"><div class="card" style="max-width:360px;width:100%"><h2 style="font-size:26px;margin-bottom:4px" id="loginTitle">Vornicu Reformas</h2><p style="color:var(--muted);margin:0 0 10px">Entra con tu correo y tu clave.</p><label class="f">Correo</label><input id="lg_email" type="email" autocomplete="username"><label class="f" style="margin-top:8px">Clave</label><input id="lg_pass" type="password" autocomplete="current-password"><div class="row" style="margin-top:12px"><button onclick="entrar()">Entrar</button><span id="lg_msg" style="color:var(--brick)"></span></div></div></div>
 <nav id="topnav"><div class="brand" id="brandTxt">VORNICU REFORMAS</div>
-<button class="ntab on" data-t="presupuesto">Presupuesto</button><button class="ntab" data-t="clientes">Clientes</button><button class="ntab" data-t="mapa">Mapa de obras</button><button class="ntab" data-t="contrato">Contrato</button><button class="ntab" data-t="tarifa">Mis precios</button><button class="ntab" data-t="precios">Lista de precios</button><button class="ntab" id="masTabs" type="button" onclick="verMas()">Más…</button><button class="ntab" data-t="ajustes">Ajustes</button><button class="ntab" data-t="ayuda">Ayuda</button>
+<button class="ntab on" data-t="presupuesto">Presupuesto</button><button class="ntab" data-t="clientes">Clientes</button><button class="ntab" data-t="mapa">Mapa de obras</button><button class="ntab" data-t="contrato">Contrato</button><button class="ntab" data-t="tarifa">Mis precios</button><button class="ntab" data-t="precios">Lista de precios</button><button class="ntab" id="masTabs" type="button" onclick="verMas()">Más…</button><button class="ntab" data-t="ajustes">Ajustes</button><button class="ntab" data-t="legal">Mis papeles</button><button class="ntab" data-t="ayuda">Ayuda</button>
 <div class="acts"><span id="syncDot" title="Guardado en la nube" style="width:10px;height:10px;background:#888;display:inline-block"></span><button class="warn" onclick="imprimir('todo')">PDF completo</button><button class="sec" style="border-color:#fff;color:#fff;background:transparent" onclick="imprimir('presu')">Solo presupuesto</button><button class="ok" onclick="mandarFirma()">Mandar a firmar</button><button class="ok" id="btnEnviar" onclick="menuEnviar()">Enviar al cliente</button></div></nav>
 
 <!-- ================= PRESUPUESTO ================= -->
@@ -168,7 +168,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 </section>
 
 <script>
-var APP_VERSION='v53';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v54';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -241,7 +241,7 @@ function num(v){return parseFloat(String(v).replace(',','.'))||0}
 function norm(s){return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
 /* ---------- navegación ---------- */
 document.querySelectorAll('.ntab').forEach(function(b){b.onclick=function(){ST(b.dataset.t)}});
-function ST(t){if(t==='ajustes')setTimeout(fmInit,60);if(t==='mapa')setTimeout(function(){pintarMapa()},80);document.querySelectorAll('.ntab').forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});document.querySelectorAll('.page').forEach(function(p){p.classList.toggle('on',p.id==='page-'+t)});if(t==='clientes')renderClientes();if(t==='tarifa'){renderTarifa();setTimeout(plegarTarifa,60)}if(t==='ajustes')renderAj()}
+function ST(t){if(t==='ajustes')setTimeout(fmInit,60);if(t==='mapa')setTimeout(function(){pintarMapa()},80);document.querySelectorAll('.ntab').forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});document.querySelectorAll('.page').forEach(function(p){p.classList.toggle('on',p.id==='page-'+t)});if(t==='clientes')renderClientes();if(t==='tarifa'){renderTarifa();setTimeout(plegarTarifa,60)}if(t==='ajustes')renderAj();if(t==='legal')pintarLegal()}
 /* ---------- presupuesto ---------- */
 function siguienteNum(){var m=num(DB.contador)||0;Object.keys(DB.presus||{}).forEach(function(k){var v=num(k);if(v>m)m=v});return String(m+1)}
 function nuevo(){window.__avisado={};ARQ={med:[],plano:null,cab:null,dudosas:[]};var _ap=document.getElementById('arqPanel');if(_ap){_ap.innerHTML='';_ap.style.display='none'}var _ai=document.getElementById('arqInfo');if(_ai)_ai.textContent='';cur={num:siguienteNum(),fecha:new Date().toISOString().slice(0,10),nom:'',tel:'',email:'',dir:'',asc:'0',iva:'21',obs:'',suelo:false,lineas:[],estado:'borrador',c:{p1:40,p2:30,p3:30,plazo:'',inicio:'',gar:24}};pintar();document.getElementById('msg').textContent=''}
@@ -669,6 +669,47 @@ else if(f==='irAFirma'){window.__avisado=window.__avisado||{};window.__avisado.f
 else if(f==='irADir'){window.__avisado=window.__avisado||{};window.__avisado.dir=1;var e2=document.getElementById('f_dir');e2.scrollIntoView({behavior:'smooth',block:'center'});e2.focus()}
 }catch(e){}
 setTimeout(pintarContinuar,400)}
+
+/* ---------- papeles de proteccion de datos ---------- */
+function textoPrivacidad(){var n=AJ.nombre||'[tu nombre]',f=AJ.nif||'[tu NIF]',d=AJ.dir||'[tu direcci\u00f3n]',t=AJ.tel||'[tu tel\u00e9fono]',e=AJ.email||'[tu correo]',m=AJ.marca||n;
+return 'POL\u00cdTICA DE PRIVACIDAD \u2014 '+m+'\n\n'+
+'\u00bfQui\u00e9n guarda tus datos?\n'+n+', con NIF '+f+', domicilio en '+d+', tel\u00e9fono '+t+' y correo '+e+'.\n\n'+
+'\u00bfQu\u00e9 datos guardo?\nTu nombre y apellidos, tu tel\u00e9fono, tu correo, la direcci\u00f3n de la obra y, si firmas el presupuesto, tu firma y la fecha. Si lo pides t\u00fa, tambi\u00e9n fotos del avance de la obra. Nada m\u00e1s.\n\n'+
+'\u00bfPara qu\u00e9 los uso?\nPara hacerte el presupuesto, hacer la obra, poder avisarte de c\u00f3mo va y para la factura y los papeles de Hacienda. Para nada m\u00e1s: no hago publicidad con ellos ni los vendo a nadie.\n\n'+
+'\u00bfPor qu\u00e9 puedo guardarlos?\nPorque hace falta para el contrato que tenemos y porque la ley de Hacienda me obliga a guardar las facturas.\n\n'+
+'\u00bfCu\u00e1nto tiempo?\nMientras dure la obra y despu\u00e9s el tiempo que obliga la ley para facturas y garant\u00edas. Pasado eso, se borran.\n\n'+
+'\u00bfSe los doy a alguien?\nNo. Solo a mi gestor\u00eda para la factura y a Hacienda si la ley lo exige. Los presupuestos y las fotos est\u00e1n guardados en Google (Firebase), en servidores de la Uni\u00f3n Europea.\n\n'+
+'\u00bfQu\u00e9 puedes pedirme?\nVer qu\u00e9 datos tuyos tengo, que los corrija si hay algo mal, que los borre, o que deje de usarlos. Basta con que me escribas a '+e+' o me llames al '+t+'. Te contesto en menos de un mes y no te cuesta nada.\n\n'+
+'Si crees que no lo hago bien, puedes reclamar en la Agencia Espa\u00f1ola de Protecci\u00f3n de Datos (www.aepd.es).\n\n'+
+'Fecha: '+new Date().toLocaleDateString('es-ES')}
+function textoRegistro(){var n=AJ.nombre||'[tu nombre]',f=AJ.nif||'[tu NIF]',e=AJ.email||'[tu correo]',m=AJ.marca||n;
+return 'REGISTRO DE DATOS QUE GUARDO \u2014 '+m+'\n(documento interno, no se publica; se ense\u00f1a si lo piden)\n\n'+
+'Responsable: '+n+', NIF '+f+', correo '+e+'.\n\n'+
+'1) CLIENTES Y PRESUPUESTOS\n'+
+'   Qu\u00e9 guardo: nombre, tel\u00e9fono, correo, direcci\u00f3n de la obra, presupuestos, contratos y firmas.\n'+
+'   Para qu\u00e9: hacer y cobrar la obra.\n'+
+'   Por qu\u00e9 puedo: contrato con el cliente y obligaciones fiscales.\n'+
+'   Cu\u00e1nto: lo que dure la obra m\u00e1s lo que obliga Hacienda y la garant\u00eda.\n'+
+'   D\u00f3nde: en mi m\u00f3vil y en Google Firebase (servidores en la Uni\u00f3n Europea).\n'+
+'   Qui\u00e9n lo ve: solo yo, y mi gestor\u00eda para facturar.\n\n'+
+'2) FOTOS DE OBRA\n'+
+'   Qu\u00e9 guardo: fotos del trabajo hecho en cada obra.\n'+
+'   Para qu\u00e9: ense\u00f1ar al cliente c\u00f3mo avanza.\n'+
+'   Por qu\u00e9 puedo: el cliente lo pide y lo acepta.\n'+
+'   Cu\u00e1nto: hasta que acaba la obra y su garant\u00eda, o antes si el cliente lo pide.\n'+
+'   D\u00f3nde: Google Firebase (Uni\u00f3n Europea), en un enlace privado.\n\n'+
+'3) SEGURIDAD\n'+
+'   Entro con usuario y contrase\u00f1a. Los enlaces que mando llevan una clave larga que no se puede adivinar. El m\u00f3vil va con c\u00f3digo de desbloqueo.\n\n'+
+'4) SI HAY UN PROBLEMA\n'+
+'   Si pierdo datos o alguien entra donde no debe, aviso a los clientes afectados y, si es grave, a la Agencia Espa\u00f1ola de Protecci\u00f3n de Datos en 72 horas.\n\n'+
+'Fecha: '+new Date().toLocaleDateString('es-ES')}
+function pintarLegal(){var a=document.getElementById('txtPriv'),b=document.getElementById('txtReg');
+if(a)a.textContent=textoPrivacidad();if(b)b.textContent=textoRegistro()}
+function copiarLegal(cual){var t=cual==='registro'?textoRegistro():textoPrivacidad();
+if(navigator.clipboard)navigator.clipboard.writeText(t).then(function(){alert('Copiado. Ya lo puedes pegar donde quieras.')},function(){prompt('Copia el texto:',t)});
+else prompt('Copia el texto:',t)}
+function waLegal(cual){var t=cual==='registro'?textoRegistro():textoPrivacidad();
+window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')}
 /* ---------- mapa de obras ---------- */
 var LEAF_CSS='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css',LEAF_JS='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
 var MAPAOBRAS=null,MARCAS=[];
@@ -908,4 +949,5 @@ if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(
 </script><div id="agendaBox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9000;align-items:center;justify-content:center;padding:16px"><div class="card" style="max-width:520px;width:100%;max-height:80vh;overflow:auto"><div class="row" style="justify-content:space-between;align-items:center"><h2 style="font-size:20px;margin:0">Mis clientes</h2><button class="sec" type="button" onclick="cerrarAgenda()">Cerrar</button></div><input id="agBusca" placeholder="Buscar por nombre, teléfono o dirección" oninput="renderAgenda()" style="width:100%;margin:8px 0"><div id="agLista"></div><p style="color:var(--muted);font-size:12px;margin-top:8px">Cada vez que guardas un presupuesto, el cliente se queda aquí con su teléfono y su correo.</p></div></div><div id="verFijo" style="position:fixed;right:8px;bottom:8px;z-index:40;background:rgba(37,51,64,.85);color:#fff;font-size:11px;padding:3px 8px;border-radius:10px;pointer-events:none">v?</div><script>document.getElementById('verFijo').textContent=APP_VERSION;</script><section class="page" id="page-mapa"><div class="card"><div class="row" style="justify-content:space-between;align-items:center"><h2>Mapa de obras</h2><button class="sec" onclick="pintarMapa(true)">Actualizar</button></div><p style="color:var(--muted);font-size:13px">Cada chincheta es una obra. Verde: en marcha. Azul: aceptada. Naranja: mandada sin firmar. Gris: borrador. Toca una chincheta para ver qué falta, apuntar lo que hay que llevar o tirar para allá con el navegador.</p><div id="mapObras" style="height:60vh;min-height:320px;border-radius:8px;overflow:hidden;background:#e9e7e2;position:relative;z-index:0;isolation:isolate"></div><div id="mapInfo" style="color:var(--muted);font-size:12px;margin-top:6px"></div></div></div>
 </section>
 <input type="file" id="fotoInput" accept="image/*" capture="environment" multiple style="display:none" onchange="subirFotos(this.files)"><div id="fotosBox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9000;align-items:center;justify-content:center;padding:14px"><div class="card" style="max-width:560px;width:100%;max-height:85vh;overflow:auto"><div class="row" style="justify-content:space-between;align-items:center"><h2 id="fotosTit" style="font-size:18px;margin:0">Fotos</h2><button class="sec" onclick="cerrarFotos()">Cerrar</button></div><p style="font-size:12px;color:var(--muted);margin:6px 0">Saca fotos del trabajo, no de personas ni de cosas del cliente que no hagan falta. El enlace que le mandes es privado.</p><div class="row" style="margin:8px 0"><button class="ok" onclick="abrirFotos(window.__fotoObra)">Sacar o subir fotos</button><button class="sec" onclick="mandarSeguimiento(window.__fotoObra)">Mandar el enlace al cliente</button></div><div id="fotosLista"></div></div></div>
+<section class="page" id="page-legal"><div class="card"><h2>Mis papeles de protección de datos</h2><p style="color:var(--muted);font-size:13px">Dos textos que tienes que tener por ley. Están rellenados con tus datos. Si un cliente te los pide, se los mandas con el botón.</p><div class="row"><button class="ok" onclick="copiarLegal('privacidad')">Copiar la política de privacidad</button><button class="sec" onclick="waLegal('privacidad')">Mandarla por WhatsApp</button></div><div id="txtPriv" style="white-space:pre-wrap;background:#f2f1ee;border-radius:8px;padding:12px;margin-top:8px;font-size:13px;line-height:1.5"></div><div class="row" style="margin-top:16px"><button class="ok" onclick="copiarLegal('registro')">Copiar el registro de datos</button><button class="sec" onclick="waLegal('registro')">Mandarlo por WhatsApp</button></div><div id="txtReg" style="white-space:pre-wrap;background:#f2f1ee;border-radius:8px;padding:12px;margin-top:8px;font-size:13px;line-height:1.5"></div></div></section>
 </body></html>
