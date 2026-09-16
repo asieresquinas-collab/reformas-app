@@ -71,7 +71,7 @@ db.collection('seguimiento').doc(TOK).get().then(function(s){
     var imp=(f.tipo==='imprevisto');if(imp)nImp++;
     html+='<div class="foto'+(imp?' imp':'')+'">'+(imp?'<div class="cab">\u26a0\ufe0f Imprevisto encontrado en la obra</div>':'')+'<img src="'+f.img+'" loading="lazy">'+(f.nota?'<div class="pie">'+String(f.nota).replace(/</g,'&lt;')+'</div>':'')+'</div>';
   });
-  var cab='<div class="hist"><h1>La historia de tu obra</h1><div class="dat">'+
+  var cab='<div class="hist"><h1>Diario de obra</h1><div class="dat">'+
     (d0.obra?d0.obra+'<br>':'')+'Empez\u00f3 el '+pri+'<br>'+
     'Lo \u00faltimo, el '+ult+'<br>'+
     nDias+(nDias===1?' jornada':' jornadas')+' con fotos \u00b7 '+q.size+(q.size===1?' foto':' fotos')+
@@ -79,7 +79,7 @@ db.collection('seguimiento').doc(TOK).get().then(function(s){
     (nDias>1?'<a class="irfin" href="#final">Ir a lo \u00faltimo \u2193</a>':'')+'</div>';
   cont.className='';cont.innerHTML=cab+'<div class="linea">'+html+'</div><div id="final"></div>'+
   (nImp?'<div class="aviso-imp"><b>Sobre los imprevistos.</b> Lo marcado en naranja es algo que ha aparecido al abrir la obra y no estaba en el presupuesto. Se le ense\u00f1a para que lo vea antes de decidir nada: cualquier trabajo de m\u00e1s se le pasar\u00e1 por escrito y no se hace sin que usted lo apruebe.</div>':'')+
-  '<button class="guardar" onclick="window.print()">Guardar la historia de mi obra</button>';
+  '<button class="guardar" onclick="window.print()">Descargar el diario de obra</button>';
 }).catch(function(e){document.getElementById('cont').textContent='No he podido abrir el seguimiento ('+e.message+')'});
 }
 </script></body></html>
