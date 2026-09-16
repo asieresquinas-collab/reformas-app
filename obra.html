@@ -19,6 +19,7 @@ a.tel{display:inline-block;margin-top:8px;background:var(--brick);color:#fff;tex
 </style></head><body>
 <header><b id="hMarca">Cómo va mi obra</b><span id="hSub"></span></header>
 <div class="wrap">
+  <div id="avance" style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;font-size:14px"></div>
   <div id="cont" class="vacio">Cargando las fotos…</div>
   <div class="pie-pag" id="pie"></div>
 </div>
@@ -35,6 +36,7 @@ db.collection('seguimiento').doc(TOK).get().then(function(s){
   var d=s.exists?s.data():{};
   document.getElementById('hMarca').textContent=d.marca||'Cómo va mi obra';
   document.getElementById('hSub').textContent=(d.cliente?d.cliente+' · ':'')+(d.obra||'');
+  if(d.total)document.getElementById('avance').innerHTML='<b>'+d.hechas+' de '+d.total+'</b> trabajos del presupuesto ya hechos<div style="height:8px;background:#ddd;border-radius:4px;margin-top:6px"><div style="height:8px;width:'+Math.round(d.hechas*100/Math.max(1,d.total))+'%;background:#1a7a3f;border-radius:4px"></div></div>';
   if(d.tel)document.getElementById('pie').innerHTML='¿Alguna duda con la obra?<br><a class="tel" href="tel:'+d.tel.replace(/\s/g,'')+'">Llamar al '+d.tel+'</a>';
   return db.collection('seguimiento').doc(TOK).collection('fotos').orderBy('ts','desc').get();
 }).then(function(q){
