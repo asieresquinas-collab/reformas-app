@@ -159,7 +159,7 @@ body.capturando #sh_dosier{height:297mm!important;max-height:297mm!important;ove
 </section>
 
 <script>
-var APP_VERSION='v46';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v47';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -234,7 +234,8 @@ function norm(s){return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f
 document.querySelectorAll('.ntab').forEach(function(b){b.onclick=function(){ST(b.dataset.t)}});
 function ST(t){if(t==='ajustes')setTimeout(fmInit,60);if(t==='mapa')setTimeout(function(){pintarMapa()},80);document.querySelectorAll('.ntab').forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});document.querySelectorAll('.page').forEach(function(p){p.classList.toggle('on',p.id==='page-'+t)});if(t==='clientes')renderClientes();if(t==='tarifa')renderTarifa();if(t==='ajustes')renderAj()}
 /* ---------- presupuesto ---------- */
-function nuevo(){ARQ={med:[],plano:null,cab:null};var _ap=document.getElementById('arqPanel');if(_ap){_ap.innerHTML='';_ap.style.display='none'}var _ai=document.getElementById('arqInfo');if(_ai)_ai.textContent='';cur={num:String(DB.contador+1),fecha:new Date().toISOString().slice(0,10),nom:'',tel:'',email:'',dir:'',asc:'0',iva:'21',obs:'',suelo:false,lineas:[],estado:'borrador',c:{p1:40,p2:30,p3:30,plazo:'',inicio:'',gar:24}};pintar();document.getElementById('msg').textContent=''}
+function siguienteNum(){var m=num(DB.contador)||0;Object.keys(DB.presus||{}).forEach(function(k){var v=num(k);if(v>m)m=v});return String(m+1)}
+function nuevo(){ARQ={med:[],plano:null,cab:null};var _ap=document.getElementById('arqPanel');if(_ap){_ap.innerHTML='';_ap.style.display='none'}var _ai=document.getElementById('arqInfo');if(_ai)_ai.textContent='';cur={num:siguienteNum(),fecha:new Date().toISOString().slice(0,10),nom:'',tel:'',email:'',dir:'',asc:'0',iva:'21',obs:'',suelo:false,lineas:[],estado:'borrador',c:{p1:40,p2:30,p3:30,plazo:'',inicio:'',gar:24}};pintar();document.getElementById('msg').textContent=''}
 function engancharAuto(){var p=document.getElementById('page-presupuesto');if(!p||p.__auto)return;p.__auto=true;
 p.addEventListener('input',autoGuardar,true);p.addEventListener('change',autoGuardar,true)}
 function pintar(){['num','fecha','nom','tel','email','dir','asc','iva','obs'].forEach(function(k){document.getElementById('f_'+k).value=cur[k]||''});document.getElementById('f_suelo').checked=!!cur.suelo;['p1','p2','p3','plazo','inicio','gar'].forEach(function(k){document.getElementById('c_'+k).value=cur.c[k]});renderLineas()}
@@ -355,6 +356,7 @@ var __autoT=null;
 function autoGuardar(){clearTimeout(__autoT);__autoT=setTimeout(function(){
 try{leer();if(!cur||!cur.num)return;
 if(!cur.nom&&!(cur.lineas||[]).length)return;
+if(num(cur.num)>num(DB.contador||0))DB.contador=num(cur.num);
 DB.presus[cur.num]=JSON.parse(JSON.stringify(cur));lsSet('vr_db',JSON.stringify(DB));marcarPend(cur.num);vaciarCola();
 var m=document.getElementById('msg');if(m&&!m.innerHTML)m.textContent='Guardado solo';}catch(e){}},1200)}
 function pend(){if(!DB.pend)DB.pend={presus:{},config:false};if(!DB.pend.presus)DB.pend.presus={};return DB.pend}
