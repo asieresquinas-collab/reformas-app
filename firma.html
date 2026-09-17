@@ -2,7 +2,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Firmar presupuesto</title>
 <style>
-:root{--crema:#FAF6EC;--ink:#1c1f22;--slate:#253340;--brick:#D7481D;--line:#d9d6d0;--muted:#6b7178}
+:root{--crema:#FBF8F1;--ink:#1c1f22;--slate:#111214;--brick:#C9962B;--line:#d9d6d0;--muted:#6b7178}
 *{box-sizing:border-box}
 body{margin:0;background:var(--crema);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
 header{background:var(--slate);color:#fff;padding:14px 16px}
@@ -17,7 +17,7 @@ header b{font-size:18px}
 .aviso{background:#FBE9E2;border-left:4px solid var(--brick);padding:12px;border-radius:6px;margin:16px 0;font-size:14px;line-height:1.45}
 label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
 input[type=text],input:not([type]){width:100%;padding:10px;border:1px solid var(--line);border-radius:6px;font-size:16px;background:#fff;-webkit-appearance:none}
-input[type=checkbox]{-webkit-appearance:checkbox;appearance:checkbox;width:26px;height:26px;min-width:26px;accent-color:#D7481D}
+input[type=checkbox]{-webkit-appearance:checkbox;appearance:checkbox;width:26px;height:26px;min-width:26px;accent-color:#C9962B}
 canvas{width:100%;height:170px;-webkit-user-select:none;user-select:none;background:#fff;border:1px dashed var(--line);border-radius:6px;touch-action:none;display:block}
 .row{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
 button{padding:12px 16px;border-radius:8px;border:0;font-size:15px;font-weight:700;cursor:pointer}
@@ -26,7 +26,7 @@ button{padding:12px 16px;border-radius:8px;border:0;font-size:15px;font-weight:7
 .chk{display:flex;gap:8px;align-items:flex-start;margin-top:14px;font-size:14px;line-height:1.4}
 .chk{cursor:pointer;background:#fff;border:1px solid var(--line);border-radius:8px;padding:12px}
 .chk input{flex:0 0 26px;margin-top:2px}
-.fin{background:#e8f5ec;border:1px solid #1a7a3f;color:#14532d;padding:16px;border-radius:8px;font-size:15px;line-height:1.5}
+.fin{background:#e8f5ec;border:1px solid #A8801E;color:#14532d;padding:16px;border-radius:8px;font-size:15px;line-height:1.5}
 .cargando{padding:30px;text-align:center;color:var(--muted)}
 </style></head><body>
 <header><b id="hMarca">Presupuesto</b><div id="hSub" style="font-size:13px;opacity:.85"></div></header>
@@ -87,14 +87,14 @@ var arch=new File([blob],fich,{type:'application/pdf'});
 if(navigator.canShare&&navigator.canShare({files:[arch]}))return navigator.share({files:[arch],title:fich}).catch(function(){window.open(URL.createObjectURL(blob),'_blank')});
 if(esIOS){window.open(URL.createObjectURL(blob),'_blank');return Promise.resolve()}
 var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fich;a.click();return Promise.resolve()}
-return html2canvas(hojas[i],{scale:2,backgroundColor:'#FAF6EC',useCORS:true,windowWidth:794,logging:false}).then(function(cv){
+return html2canvas(hojas[i],{scale:2,backgroundColor:'#FBF8F1',useCORS:true,windowWidth:794,logging:false}).then(function(cv){
 var altoPag=Math.round(cv.width*297/210);var c0=cv.getContext('2d');
 var vacia=function(y){try{var d=c0.getImageData(0,y,cv.width,1).data;for(var x=0;x<d.length;x+=16){if(Math.abs(d[x]-250)>6||Math.abs(d[x+1]-246)>6||Math.abs(d[x+2]-236)>6)return false}return true}catch(e){return true}};
 var tol=Math.round(altoPag*0.16);var cortes=[0],y=0;while(y+altoPag+tol<cv.height){var c=y+altoPag,k=0;while(k<160&&!vacia(c-k))k++;if(k>=160)k=0;c=c-k;if(c<=y)c=y+altoPag;cortes.push(c);y=c}
 for(var q=0;q<cortes.length;q++){if(i||q)doc.addPage();
 var y0=cortes[q],y1=(q+1<cortes.length)?cortes[q+1]:cv.height,alto=Math.min(altoPag,y1-y0);
 var tr=document.createElement('canvas');tr.width=cv.width;tr.height=altoPag;var c2=tr.getContext('2d');
-c2.fillStyle='#FAF6EC';c2.fillRect(0,0,tr.width,tr.height);
+c2.fillStyle='#FBF8F1';c2.fillRect(0,0,tr.width,tr.height);
 c2.drawImage(cv,0,y0,cv.width,alto,0,0,cv.width,alto);
 doc.addImage(tr.toDataURL('image/jpeg',0.92),'JPEG',0,0,210,297,undefined,'FAST')}
 i++;return paso()})}

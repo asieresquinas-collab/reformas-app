@@ -5,7 +5,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes"><link rel="apple-touch-icon" href="icons/icon-192.png"><link rel="icon" href="icons/icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@700;800&display=swap" rel="stylesheet">
 <style>
-:root{--crema:#FAF6EC;--ink:#1c1f22;--slate:#253340;--slate2:#34475a;--brick:#D7481D;--brick2:#FBE9E2;--paper:#f2f1ee;--line:#d9d6d0;--ok:#1a7a3f;--muted:#6b7178}
+:root{--crema:#FBF8F1;--ink:#15161a;--slate:#111214;--slate2:#2c2e33;--brick:#C9962B;--brick2:#FBF1DC;--paper:#f3f1ec;--line:#ddd8ce;--ok:#A8801E;--muted:#6b7178}
 *{box-sizing:border-box}html,body{margin:0;background:var(--paper);color:var(--ink);font-family:Barlow,system-ui,sans-serif;font-size:14px}
 h1,h2,h3,.cond{font-family:'Barlow Condensed',Barlow,sans-serif;font-weight:800;letter-spacing:.2px;margin:0}
 button,input,select,textarea{font:inherit;color:inherit}
@@ -177,7 +177,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 </section>
 
 <script>
-var APP_VERSION='v73';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v74';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -451,7 +451,9 @@ function autoGuardar(){clearTimeout(__autoT);__autoT=setTimeout(function(){
 try{leer();if(!cur||!cur.num)return;
 if(!cur.nom&&!(cur.lineas||[]).length)return;
 if(num(cur.num)>num(DB.contador||0))DB.contador=num(cur.num);
-DB.presus[cur.num]=JSON.parse(JSON.stringify(cur));lsSet('vr_db',JSON.stringify(DB));marcarPend(cur.num);vaciarCola();
+DB.presus[cur.num]=JSON.parse(JSON.stringify(cur));
+if(cur.nom)try{guardarCliente(cur)}catch(_){}
+lsSet('vr_db',JSON.stringify(DB));marcarPend(cur.num);vaciarCola();
 var m=document.getElementById('msg');if(m&&!m.innerHTML)m.textContent='Guardado solo';}catch(e){}},1200)}
 function pend(){if(!DB.pend)DB.pend={presus:{},config:false};if(!DB.pend.presus)DB.pend.presus={};return DB.pend}
 function marcarPend(n){pend().presus[n]=Date.now();lsSet('vr_db',JSON.stringify(DB));pintaEstado()}
@@ -1270,6 +1272,8 @@ function fmLimpiar(){fmInit();FM.ctx.clearRect(0,0,FM.cv.width,FM.cv.height);FM.
 function fmGuardar(){fmInit();if(!FM.hay){alert('Firma primero con el dedo en el recuadro');return}
 AJ.firma=FM.cv.toDataURL('image/png');lsSet('vr_aj',JSON.stringify(AJ));subirConfig();document.getElementById('fmMsg').textContent='Firma guardada: saldr\u00e1 en todos los contratos'}
 function modoSimple(){return AJ.simple!==false}
+/* la marca vieja se sustituye sola por la nueva */
+if(AJ&&(AJ.marca==='Vornicu Reformas'||!AJ.marca)){AJ.marca='VORMA CONSTRUCT SL';try{lsSet('vr_aj',JSON.stringify(AJ))}catch(_){}}
 function aplicarModo(){document.body.classList.toggle('simple',modoSimple());try{plegarCliente()}catch(_){}try{plegarMeter()}catch(_){}
 var c=document.getElementById('aj_simple');if(c)c.checked=modoSimple();
 var m=document.getElementById('masTabs');if(m)m.style.display=modoSimple()?'':'none'}
