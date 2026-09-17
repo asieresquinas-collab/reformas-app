@@ -195,7 +195,7 @@ body.capturando #sh_dosier .segimg img{height:20mm!important}body.capturando #sh
 </section>
 
 <script>
-var APP_VERSION='v116';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v117';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -270,7 +270,20 @@ function num(v){return parseFloat(String(v).replace(',','.'))||0}
 function norm(s){return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
 /* ---------- navegación ---------- */
 document.querySelectorAll('.ntab').forEach(function(b){if(b.id==='masTabs')return;b.onclick=function(){ST(b.dataset.t)}});
-function ST(t){if(t==='ajustes')setTimeout(fmInit,60);if(t==='mapa')setTimeout(function(){pintarMapa()},80);document.querySelectorAll('.ntab').forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});document.querySelectorAll('.page').forEach(function(p){p.classList.toggle('on',p.id==='page-'+t)});if(t==='clientes')renderClientes();if(t==='tarifa'){renderTarifa();setTimeout(plegarTarifa,60)}if(t==='ajustes')renderAj();if(t==='legal')pintarLegal()}
+
+/* ---- botón atrás del móvil ---- */
+var NAV={pila:['tab:presupuesto'],interno:false};
+function navEstadoActual(){return NAV.pila[NAV.pila.length-1]}
+function navIr(e){if(NAV.interno)return;if(navEstadoActual()===e)return;NAV.pila.push(e);try{history.pushState({n:NAV.pila.length},'')}catch(_){}}
+function navSalir(e){if(NAV.interno)return;if(navEstadoActual()===e){try{history.back()}catch(_){}}}
+function navAplicar(){var cajas={'caja:agenda':'agendaBox','caja:fotos':'fotosBox','caja:iva':'cajaIva','caja:ayuda':'cajaAyuda','caja:enviar':'cajaEnviar'};
+ var act=navEstadoActual();
+ Object.keys(cajas).forEach(function(k){if(k===act)return;var c=document.getElementById(cajas[k]);if(!c||c.style.display==='none'||c.style.display==='')return;
+  NAV.interno=true;try{if(k==='caja:agenda')cerrarAgenda();else if(k==='caja:fotos')cerrarFotos();else if(k==='caja:iva')cerrarIva();else if(k==='caja:ayuda')cerrarAyudante();else if(k==='caja:enviar')cerrarEnviar()}catch(_){}NAV.interno=false});
+ if(act.indexOf('tab:')===0){NAV.interno=true;try{ST(act.slice(4))}catch(_){}NAV.interno=false}}
+window.addEventListener('popstate',function(){if(NAV.pila.length>1){NAV.pila.pop();navAplicar()}});
+try{history.replaceState({n:1},'')}catch(_){}
+function ST(t){navIr('tab:'+t);if(t==='ajustes')setTimeout(fmInit,60);if(t==='mapa')setTimeout(function(){pintarMapa()},80);document.querySelectorAll('.ntab').forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});document.querySelectorAll('.page').forEach(function(p){p.classList.toggle('on',p.id==='page-'+t)});if(t==='clientes')renderClientes();if(t==='tarifa'){renderTarifa();setTimeout(plegarTarifa,60)}if(t==='ajustes')renderAj();if(t==='legal')pintarLegal()}
 /* ---------- presupuesto ---------- */
 function siguienteNum(){var m=num(DB.contador)||0;Object.keys(DB.presus||{}).forEach(function(k){var v=num(k);if(v>m)m=v});return String(m+1)}
 function nuevo(){window.__avisado={};ARQ={med:[],plano:null,cab:null,dudosas:[]};var _ap=document.getElementById('arqPanel');if(_ap){_ap.innerHTML='';_ap.style.display='none'}var _ai=document.getElementById('arqInfo');if(_ai)_ai.textContent='';cur={num:siguienteNum(),fecha:new Date().toISOString().slice(0,10),nom:'',tel:'',email:'',dir:'',asc:'0',iva:'21',obs:'',suelo:false,lineas:[],estado:'borrador',c:{p1:30,p2:60,p3:10,plazo:'',inicio:'',gar:24}};pintar();document.getElementById('msg').textContent=''}
@@ -658,8 +671,8 @@ function borrarNube(n){if(!FB.uid)return;ref().collection('presupuestos').doc(n)
 function clientes(){if(!DB.clientes)DB.clientes={};return DB.clientes}
 function claveCli(n){return (n||'').toLowerCase().replace(/\s+/g,' ').trim()}
 function guardarCliente(c){if(!c||!c.nom)return;var k=claveCli(c.nom);var a=clientes()[k]||{};clientes()[k]={nom:c.nom,tel:c.tel||a.tel||'',email:c.email||a.email||'',dir:c.dir||a.dir||'',ts:Date.now()};save()}
-function abrirAgenda(){document.getElementById('agendaBox').style.display='flex';document.getElementById('agBusca').value='';renderAgenda()}
-function cerrarAgenda(){document.getElementById('agendaBox').style.display='none'}
+function abrirAgenda(){navIr('caja:agenda');document.getElementById('agendaBox').style.display='flex';document.getElementById('agBusca').value='';renderAgenda()}
+function cerrarAgenda(){navSalir('caja:agenda');document.getElementById('agendaBox').style.display='none'}
 function pintarDatalist(){var C=clientes(),h='';Object.keys(C).forEach(function(k){h+='<option value="'+(C[k].nom||'').replace(/"/g,'')+'">'});var d=document.getElementById('agDatalist');if(d)d.innerHTML=h}
 function renderAgenda(){pintarDatalist();var q=(document.getElementById('agBusca').value||'').toLowerCase();var C=clientes();var ks=Object.keys(C).filter(function(k){var c=C[k];return !q||((c.nom+' '+(c.tel||'')+' '+(c.email||'')+' '+(c.dir||'')).toLowerCase().indexOf(q)>=0)}).sort(function(a,b){return (C[b].ts||0)-(C[a].ts||0)});var h='';if(!ks.length)h='<p style="color:var(--muted)">Todavía no hay clientes guardados.</p>';ks.forEach(function(k){var c=C[k];h+='<div style="border:1px solid var(--line);border-radius:8px;padding:8px;margin-bottom:6px;display:flex;gap:8px;align-items:center">'+'<div style="flex:1"><b>'+c.nom+'</b><br><span style="color:var(--muted);font-size:12px">'+[c.tel,c.email,c.dir].filter(Boolean).join(' · ')+'</span></div>'+'<button class="ok" type="button" onclick="usarCliente(\''+k.replace(/'/g,"\\'")+'\')">Usar</button>'+'<button class="sec" type="button" onclick="borrarCliente(\''+k.replace(/'/g,"\\'")+'\')">Borrar</button></div>'});document.getElementById('agLista').innerHTML=h}
 function usarCliente(k){var c=clientes()[k];if(!c)return;document.getElementById('f_nom').value=c.nom||'';if(c.tel)document.getElementById('f_tel').value=c.tel;if(c.email)document.getElementById('f_email').value=c.email;if(c.dir&&!document.getElementById('f_dir').value.trim())document.getElementById('f_dir').value=c.dir;leer();cerrarAgenda()}
@@ -812,7 +825,7 @@ function tokenSeguimiento(p){if(p.segTok)return p.segTok;
 p.segTok=(p.num||'0')+'-s'+Math.random().toString(36).slice(2,10);DB.presus[p.num]=p;save();return p.segTok}
 function segURL(t){return location.href.replace(/[^/]*$/,'')+'obra.html?t='+encodeURIComponent(t)}
 function fotosDeEste(){leer();if(!DB.presus[cur.num]){alert('Guarda primero el presupuesto y luego le puedes poner fotos');return}verFotos(cur.num)}
-function abrirFotos(n){var p=DB.presus[n];if(!p)return;window.__fotoObra=n;
+function abrirFotos(n){navIr('caja:fotos');var p=DB.presus[n];if(!p)return;window.__fotoObra=n;
 var inp=document.getElementById('fotoInput');if(inp){inp.value='';inp.click()}}
 function subirFotos(files){var n=window.__fotoObra,p=DB.presus[n];if(!p||!files||!files.length)return;
 if(!FB.uid||!FB.db){alert('Entra en tu cuenta para guardar las fotos en la nube');return}
@@ -883,7 +896,7 @@ function cambiarNota(t,id){var v=prompt('\u00bfQu\u00e9 pongo en esta foto?','')
 FB.db.collection('seguimiento').doc(t).collection('fotos').doc(id).set({nota:v},{merge:true}).then(function(){verFotos(window.__fotoObra)})}
 function borrarFoto(t,id){if(!confirm('¿Borrar esta foto?'))return;
 FB.db.collection('seguimiento').doc(t).collection('fotos').doc(id).delete().then(function(){verFotos(window.__fotoObra)})}
-function cerrarFotos(){document.getElementById('fotosBox').style.display='none';document.body.style.overflow='';try{if(MAPAOBRAS)setTimeout(function(){MAPAOBRAS.invalidateSize()},100)}catch(_){}}
+function cerrarFotos(){navSalir('caja:fotos');document.getElementById('fotosBox').style.display='none';document.body.style.overflow='';try{if(MAPAOBRAS)setTimeout(function(){MAPAOBRAS.invalidateSize()},100)}catch(_){}}
 function mandarSeguimiento(n){var p=DB.presus[n];if(!p)return;
 if(!FB.uid){alert('Entra en tu cuenta primero');return}
 var t=tokenSeguimiento(p),url=segURL(t);
@@ -1029,7 +1042,7 @@ function waLegal(cual){var t=cual==='registro'?textoRegistro():textoPrivacidad()
 window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')}
 
 /* ---------- ayuda del IVA ---------- */
-function asistenteIva(){
+function asistenteIva(){navIr('caja:iva');
 try{verMasCliente()}catch(_){}
 var c=document.getElementById('cajaIva');
 if(!c){c=document.createElement('div');c.id='cajaIva';
@@ -1069,7 +1082,7 @@ else{p.innerHTML='<div style="background:#FBE9E2;border-left:4px solid var(--bri
 '<button class="ok" style="width:100%;padding:14px;margin-top:10px" onclick="ponIva(\'21\')">Dejarlo al 21%</button>'}}
 function ponIva(v){var e=document.getElementById('f_iva');if(e){e.value=v;leer();pintarContinuar()}
 cur.ivaJustificado=(v==='10');cerrarIva()}
-function cerrarIva(){var c=document.getElementById('cajaIva');if(c)c.style.display='none'}
+function cerrarIva(){navSalir('caja:iva');var c=document.getElementById('cajaIva');if(c)c.style.display='none'}
 
 /* ---------- ayudante de la app (por codigo, sin IA) ---------- */
 var AYUDA=[
@@ -1157,7 +1170,7 @@ var q=document.getElementById('bTarifa');if(q){q.value='';filtrarTarifa('')}
 if(f){f.scrollIntoView({behavior:'smooth',block:'center'});resaltar(f)}},300)}
 function irALinea(i){ST('presupuesto');setTimeout(function(){
 var f=document.querySelectorAll('#tb tr')[i];if(f){f.scrollIntoView({behavior:'smooth',block:'center'});resaltar(f)}},250)}
-function abrirAyudante(){var c=document.getElementById('cajaAyuda');
+function abrirAyudante(){navIr('caja:ayuda');var c=document.getElementById('cajaAyuda');
 if(!c){c=document.createElement('div');c.id='cajaAyuda';
 c.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9500;display:flex;align-items:flex-end;justify-content:center;padding:10px';
 c.innerHTML='<div class="card" style="width:100%;max-width:520px;max-height:85vh;overflow:auto">'+
@@ -1167,7 +1180,7 @@ c.innerHTML='<div class="card" style="width:100%;max-width:520px;max-height:85vh
 '<div id="resAyuda"></div></div>';
 document.body.appendChild(c)}
 c.style.display='flex';document.getElementById('qAyuda').value='';pintarAyuda('');pintarBotonVoz()}
-function cerrarAyudante(){callar();var c=document.getElementById('cajaAyuda');if(c)c.style.display='none'}
+function cerrarAyudante(){navSalir('caja:ayuda');callar();var c=document.getElementById('cajaAyuda');if(c)c.style.display='none'}
 
 /* ---------- cuando no sabe algo: respuestas variadas, nunca la misma ---------- */
 function elNombre(){var n=(AJ.trato||'').trim();return n?n:''}
@@ -1478,7 +1491,7 @@ function aplicarModo(){document.body.classList.toggle('simple',modoSimple());try
 var c=document.getElementById('aj_simple');if(c)c.checked=modoSimple();
 var m=document.getElementById('masTabs');if(m)m.style.display=modoSimple()?'':'none'}
 function cambiarModo(v){AJ.simple=!!v;lsSet('vr_aj',JSON.stringify(AJ));subirConfig();aplicarModo()}
-function menuEnviar(){var c=document.getElementById('cajaEnviar');
+function menuEnviar(){navIr('caja:enviar');var c=document.getElementById('cajaEnviar');
 if(!c){c=document.createElement('div');c.id='cajaEnviar';
 c.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9000;display:flex;align-items:flex-end;justify-content:center;padding:14px';
 c.innerHTML='<div class="card" style="width:100%;max-width:480px"><h2 style="font-size:19px;margin:0 0 10px">\u00bfQu\u00e9 hago?</h2>'+
@@ -1488,7 +1501,7 @@ c.innerHTML='<div class="card" style="width:100%;max-width:480px"><h2 style="fon
 '<button class="sec" style="width:100%;padding:12px" onclick="cerrarEnviar()">Cerrar</button></div>';
 document.body.appendChild(c)}
 c.style.display='flex'}
-function cerrarEnviar(){var c=document.getElementById('cajaEnviar');if(c)c.style.display='none'}
+function cerrarEnviar(){navSalir('caja:enviar');var c=document.getElementById('cajaEnviar');if(c)c.style.display='none'}
 function verMas(){var v=document.body.classList.toggle('vermas');
 var b=document.getElementById('masTabs');if(b)b.textContent=v?'Menos\u2026':'M\u00e1s\u2026';
 if(v)setTimeout(function(){var n=document.getElementById('topnav');if(n)n.scrollLeft=n.scrollWidth},60)}
