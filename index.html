@@ -195,7 +195,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 </section>
 
 <script>
-var APP_VERSION='v110';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v111';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -1592,7 +1592,7 @@ if(el&&el.offsetHeight>0&&window.__FIRMA_URL){var rh=hoja.getBoundingClientRect(
 doc.link((re.left-rh.left)*kx,(re.top-rh.top)*k,re.width*kx,re.height*k,{url:window.__FIRMA_URL})}}catch(e){}
 i++;return paso()})}
 return paso().catch(function(e){restaurar();throw e})}).catch(function(e){restaurar();throw e})}
-function imprimir(m){var pr=m==='precios';if(!pr){var r=revisar(true);if(r.E.length){document.getElementById('revBox').scrollIntoView({behavior:'smooth',block:'center'});if(!confirm('Hay '+r.E.length+' cosas que arreglar (mira el aviso en rojo). Si mandas el PDF así, faltará dinero en el presupuesto.\n¿Sacar el PDF igualmente?'))return}}if(pr)pintarPrecios();else pintarDocs();document.getElementById('sh_precios').style.display=pr?'':'none';document.getElementById('sh_presu').style.display=pr?'none':'';document.getElementById('sh_dosier').style.display=m==='todo'?'':'none';document.getElementById('sh_contrato').style.display=m==='todo'?'':'none';setTimeout(function(){var nom='Presupuesto '+((cur&&cur.num)||'')+(cur&&cur.nom?' - '+cur.nom:'')+'.pdf';pdfSinMargenes(nom).catch(function(){window.print()})},200)}
+function imprimir(m){var pr=m==='precios';if(!pr){var r=revisar(true);if(r.E.length){document.getElementById('revBox').scrollIntoView({behavior:'smooth',block:'center'});if(!confirm('Hay '+r.E.length+' cosas que arreglar (mira el aviso en rojo). Si mandas el PDF así, faltará dinero en el presupuesto.\n¿Sacar el PDF igualmente?'))return}}if(pr)pintarPrecios();else pintarDocs();document.getElementById('sh_precios').style.display=pr?'':'none';document.getElementById('sh_presu').style.display=pr?'none':'';document.getElementById('sh_dosier').style.display=m==='todo'?'':'none';document.getElementById('sh_contrato').style.display=m==='todo'?'':'none';setTimeout(function(){var _d=new Date(),_p=function(n){return (n<10?'0':'')+n};var nom='Presupuesto '+((cur&&cur.num)||'')+(cur&&cur.nom?' - '+cur.nom:'')+' ('+_p(_d.getDate())+'-'+_p(_d.getMonth()+1)+' '+_p(_d.getHours())+_p(_d.getMinutes())+').pdf';pdfSinMargenes(nom).catch(function(){window.print()})},200)}
 function verContrato(){imprimir('todo')}
 /* ---------- init ---------- */
 document.getElementById('brandTxt').textContent=AJ.marca.toUpperCase();var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;engancharAuto();aplicarModo();nuevo();iniciarNube();setTimeout(pintarContinuar,300);

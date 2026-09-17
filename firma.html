@@ -82,7 +82,7 @@ if(TOK)db.collection("firmas").doc(TOK).get().then(function(s){
   if(location.hash==='#firmar')setTimeout(function(){var e=document.getElementById('firmar');if(e)e.scrollIntoView({behavior:'smooth'})},300);
 }).catch(function(e){document.getElementById('cargando').textContent='No he podido abrir el presupuesto ('+e.message+')';});
 
-var FIRMA_VER='v110';
+var FIRMA_VER='v111';
 try{var _u=new URL(location.href);if(!_u.searchParams.get('v')){fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==FIRMA_VER){_u.searchParams.set('v',j.v);location.replace(_u.toString())}}).catch(function(){})}}catch(_){}
 document.addEventListener('DOMContentLoaded',function(){var e=document.createElement('div');e.textContent=FIRMA_VER;e.style.cssText='position:fixed;right:6px;bottom:6px;font-size:10px;color:#9aa0a6;z-index:99';document.body.appendChild(e)});
 function limpiarDoc(){var d=document.getElementById('doc');if(!d)return;
@@ -97,7 +97,7 @@ var vistas={};var hojas=[].slice.call(document.querySelectorAll('#doc .sheet')).
 if(!hojas.length)hojas=[document.getElementById('doc')];
 (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(function(){return carga(H2C,function(){return !!window.html2canvas})}).then(function(){return carga(JSP,function(){return !!(window.jspdf&&window.jspdf.jsPDF)})}).then(function(){
 var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4',orientation:'p'});var i=0;
-function paso(){if(i>=hojas.length){var fich='Presupuesto '+(DATOS.num||'')+(DATOS.marca?' - '+DATOS.marca:'')+'.pdf';
+function paso(){if(i>=hojas.length){var _d=new Date(),_p=function(n){return (n<10?'0':'')+n};var fich='Presupuesto '+(DATOS.num||'')+(DATOS.marca?' - '+DATOS.marca:'')+' ('+_p(_d.getDate())+'-'+_p(_d.getMonth()+1)+' '+_p(_d.getHours())+_p(_d.getMinutes())+').pdf';
 var blob=doc.output('blob');var esIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
 var arch=new File([blob],fich,{type:'application/pdf'});
 if(navigator.canShare&&navigator.canShare({files:[arch]}))return navigator.share({files:[arch],title:fich}).catch(function(){window.open(URL.createObjectURL(blob),'_blank')});
