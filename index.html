@@ -184,7 +184,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 </section>
 
 <script>
-var APP_VERSION='v86';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v87';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -290,17 +290,29 @@ var SINON=[
 [/pintar (todo|la casa|el piso)/g,'pintura paredes']];
 function convertir(){leer();var txt=norm(document.getElementById('dictado').value);if(!txt)return;
 SINON.forEach(function(r){txt=txt.replace(r[0],r[1])});var añad=0,T=tarifa();var ya={};cur.lineas.forEach(function(l){ya[norm(l.d).slice(0,40)]=1});
-var NUMW={'un':1,'una':1,'dos':2,'tres':3,'cuatro':4,'cinco':5,'seis':6,'siete':7,'ocho':8,'nueve':9,'diez':10,'once':11,'doce':12};txt=txt.replace(/\b(un|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|once|doce)\b(?=\s+[a-z])/g,function(w){return NUMW[w]});
+var NUMW={'un':1,'una':1,'dos':2,'tres':3,'cuatro':4,'cinco':5,'seis':6,'siete':7,'ocho':8,'nueve':9,'diez':10,'once':11,'doce':12,'trece':13,'catorce':14,'quince':15,'dieciseis':16,'diecisiete':17,'dieciocho':18,'diecinueve':19,'veinte':20,'veintiuno':21,'veintiun':21,'veintidos':22,'veintitres':23,'veinticuatro':24,'veinticinco':25,'veintiseis':26,'veintisiete':27,'veintiocho':28,'veintinueve':29,'treinta':30,'cuarenta':40,'cincuenta':50,'sesenta':60,'setenta':70,'ochenta':80,'noventa':90,'cien':100,'ciento':100};
+var DEC={'treinta':30,'cuarenta':40,'cincuenta':50,'sesenta':60,'setenta':70,'ochenta':80,'noventa':90};
+var UNI={'uno':1,'un':1,'una':1,'dos':2,'tres':3,'cuatro':4,'cinco':5,'seis':6,'siete':7,'ocho':8,'nueve':9};
+/* treinta y cinco -> 35 */
+txt=txt.replace(/\b(treinta|cuarenta|cincuenta|sesenta|setenta|ochenta|noventa)\s+y\s+(uno|un|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve)\b/g,function(_,d,u){return DEC[d]+UNI[u]});
+txt=txt.replace(/\b(un|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|once|doce|trece|catorce|quince|dieciseis|diecisiete|dieciocho|diecinueve|veinte|veintiuno|veintiun|veintidos|veintitres|veinticuatro|veinticinco|veintiseis|veintisiete|veintiocho|veintinueve|treinta|cuarenta|cincuenta|sesenta|setenta|ochenta|noventa|cien|ciento)\b(?=\s+[a-z])/g,function(w){return NUMW[w]});
 T.forEach(function(t){var pos=-1,kl=0;for(var i=0;i<t.k.length;i++){var kk=norm(t.k[i]);
 /* tolerar articulos por medio: "quitar el suelo" encuentra la clave "quitar suelo" */
 var rx=new RegExp(kk.split(' ').map(function(w){return w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}).join('(?:\\s+(?:el|la|los|las|un|una|de|del))?\\s+'),'g');
 var hits=[],mm;while((mm=rx.exec(txt))!==null){hits.push({i:mm.index,l:mm[0].length});if(rx.lastIndex===mm.index)rx.lastIndex++}
-var hi=0;var from=0,p;while(hi<hits.length){p=hits[hi].i;kl=hits[hi].l;hi++;{from=p+1;if(t.c!=='Demoliciones'&&/(quitar|picar|demol|tirar|sacar|levantar|retirar)\s*(el|la|los|las)?\s*$/.test(txt.slice(Math.max(0,p-14),p)))continue;if(pos<0||p<pos){pos=p}break}}}if(pos<0)return;if(ya[norm(t.d).slice(0,40)])return;var q=1;if(t.id!=='mon'){var U=t.u!=='ud'?'(m2|m\u00b2|metros cuadrados|metros lineales|metros|ml|m)':'(ud|uds|unidades|puertas|armarios|radiadores|banos|baños)';var after=txt.slice(pos+kl,pos+kl+40);var m=after.match(new RegExp('^[\\s,:]*(?:de\\s+|unos\\s+)?(\\d+(?:[.,]\\d+)?)\\s*'+U+'\\b'));
+var hi=0;var from=0,p;while(hi<hits.length){p=hits[hi].i;kl=hits[hi].l;hi++;{from=p+1;if(t.c!=='Demoliciones'&&/(quitar|picar|demol|tirar|sacar|levantar|retirar)\s*(el|la|los|las)?\s*$/.test(txt.slice(Math.max(0,p-14),p)))continue;if(pos<0||p<pos){pos=p}break}}}if(pos<0)return;if(ya[norm(t.d).slice(0,40)])return;var q=1;if(t.id!=='mon'){var U=t.u!=='ud'?'(m2|m\u00b2|metros cuadrados|metros lineales|metros|ml|m)':'(ud|uds|unidades|puertas|armarios|radiadores|banos|baños)';var after=txt.slice(pos+kl,pos+kl+60);var m=null;
+/* en partidas por metro cuadrado manda el "N metros cuadrados" mas cercano, aunque haya un "2 metros de alto" por medio */
+if(t.u==='m2'){var rxm2=/(\d+(?:[.,]\d+)?)\s*(?:m2|m\u00b2|metros cuadrados)\b/g,mm,mej=null,dist=1e9;
+while((mm=rxm2.exec(txt))!==null){var d=Math.abs(mm.index-pos);if(d<dist){dist=d;mej=mm}}
+if(mej)m=mej}
+if(!m)m=after.match(new RegExp('^[\\s,:]*(?:de\\s+|unos\\s+)?(\\d+(?:[.,]\\d+)?)\\s*'+U+'\\b'));
 if(!m){var before=txt.slice(Math.max(0,pos-30),pos);m=before.match(new RegExp('(\\d+(?:[.,]\\d+)?)\\s*'+U+'\\b[^\\d]*$'));if(!m&&t.u==='ud')m=before.match(/(\d+)\s*$/)}
 /* si no viene pegado, buscar la cantidad dentro de la misma frase (hasta la coma o el punto) */
 if(!m){var ini=txt.lastIndexOf(',',pos);var ini2=txt.lastIndexOf(';',pos);var ini3=txt.lastIndexOf('.',pos);ini=Math.max(ini,ini2,ini3)+1;
 var fin=txt.length;[',',';','.'].forEach(function(c){var f=txt.indexOf(c,pos+kl);if(f>-1&&f<fin)fin=f});
-var frase=txt.slice(ini,fin);m=frase.match(new RegExp('(\\d+(?:[.,]\\d+)?)\\s*'+U+'\\b'));
+var frase=txt.slice(ini,fin);
+if(t.u==='m2')m=frase.match(/(\d+(?:[.,]\d+)?)\s*(?:m2|m\u00b2|metros cuadrados)\b/);
+if(!m)m=frase.match(new RegExp('(\\d+(?:[.,]\\d+)?)\\s*'+U+'\\b'));
 if(!m&&t.u!=='ud')m=frase.match(/(\d+(?:[.,]\d+)?)\s*(?:metros|m)\b/)}
 if(m)q=num(m[1])}cur.lineas.push({d:t.d,q:q,u:t.u,p:t.p});añad++});
 if(/(quinto|cuarto|tercero|segundo|sexto|septimo)\s+sin\s+ascensor|sin ascensor/.test(txt)){document.getElementById('f_asc').value='1'}
