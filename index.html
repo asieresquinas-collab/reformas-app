@@ -195,7 +195,7 @@ body.capturando #sh_dosier .segimg img{height:20mm!important}body.capturando #sh
 </section>
 
 <script>
-var APP_VERSION='v121';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v122';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -1418,22 +1418,23 @@ p.lat=g.lat;p.lon=g.lon;p.dirMapa=d;DB.presus[n]=p;save();try{subirPresu(n)}catc
 function obrasDelMapa(){return Object.values(DB.presus).filter(function(p){return p.dir&&p.estado!=='cobrado'})}
 function colorEstado(e){return e==='obra'?'#1a7a3f':(e==='finalizado'?'#253340':(e==='aceptado'?'#0b6bcb':(e==='borrador'?'#8a8f98':'#D7481D')))}
 function pintarMapa(forzar){var cont=document.getElementById('mapObras');if(!cont)return;
+var RUN=(window.__mapaRun=(window.__mapaRun||0)+1);
 var info=document.getElementById('mapInfo');info.textContent='Preparando el mapa\u2026';
 cargarLeaflet().then(function(){
 if(!MAPAOBRAS){MAPAOBRAS=L.map('mapObras').setView([43.263,-2.935],12);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'\u00a9 OpenStreetMap'}).addTo(MAPAOBRAS)}
 setTimeout(function(){MAPAOBRAS.invalidateSize()},150);
-MARCAS.forEach(function(m){MAPAOBRAS.removeLayer(m)});MARCAS=[];
+if(RUN!==window.__mapaRun)return;MARCAS.forEach(function(m){try{MAPAOBRAS.removeLayer(m)}catch(_){}});MARCAS=[];
 var obras=obrasDelMapa();
 if(!obras.length){info.textContent='No hay obras abiertas con direcci\u00f3n puesta.';return}
 info.textContent='Colocando '+obras.length+' obra(s)\u2026';
 var pts=[];
-var paso=function(i){if(i>=obras.length){if(pts.length)MAPAOBRAS.fitBounds(pts,{padding:[30,30],maxZoom:15});
+var paso=function(i){if(RUN!==window.__mapaRun)return;if(i>=obras.length){if(pts.length)MAPAOBRAS.fitBounds(pts,{padding:[30,30],maxZoom:15});
 var fall=obras.filter(function(o){return !(o.lat&&o.lon)});
 info.innerHTML=pts.length+' de '+obras.length+' obra(s) colocadas'+(fall.length?' \u00b7 <b>sin colocar:</b> '+fall.map(function(o){return '<b>'+o.nom+'</b> <button class="mini sec" onclick="chinchetaAMano(\''+o.num+'\')">Colocar a mano</button>'}).join(' '):'')+
 (obras.length?'<div style="margin-top:6px">'+obras.map(function(o){return '<button class="mini sec" onclick="chinchetaAMano(\''+o.num+'\')">Mover '+o.nom+'</button>'}).join(' ')+'</div>':'');return}
 var p=obras[i];
-var seguir=function(g){var aprox=false;if(!g){g={lat:43.263+(Math.random()-.5)*0.01,lon:-2.935+(Math.random()-.5)*0.01};aprox=true}
+var seguir=function(g){if(RUN!==window.__mapaRun)return;var aprox=false;if(!g){var sem=0,ns=String(p.num||'');for(var z=0;z<ns.length;z++)sem+=ns.charCodeAt(z);g={lat:43.2630+((sem%7)-3)*0.0016,lon:-2.9350+((Math.floor(sem/7)%7)-3)*0.0022};aprox=true}
 var col=aprox?'#8a8f94':colorEstado(p.estado);
 var ic=L.divIcon({className:'',html:'<div style="position:relative;width:38px;height:46px">'+'<div style="position:absolute;left:0;top:0;width:38px;height:38px;background:#1c1f22;border-radius:50% 50% 50% 50%;border:3px '+(aprox?'dashed':'solid')+' '+col+';box-shadow:0 2px 6px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center">'+'<img src="'+LOGO_PIN+'" style="width:24px;height:24px;object-fit:contain" alt="">'+'</div><div style="position:absolute;left:14px;top:33px;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:11px solid '+col+'"></div></div>',iconSize:[38,46],iconAnchor:[19,46],popupAnchor:[0,-42]});
 var m=L.marker([g.lat,g.lon],{icon:ic}).addTo(MAPAOBRAS);
