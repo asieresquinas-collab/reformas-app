@@ -178,7 +178,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 </section>
 
 <script>
-var APP_VERSION='v76';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v77';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -414,7 +414,20 @@ if(ARQ.plano){var pl=ARQ.plano;h+='<h3 style="font-size:18px;margin:12px 0 4px">
 leer();var yaHay=function(id){var d=T.find(function(x){return x.id===id}).d;return cur.lineas.some(function(l){return l.d===d})||ARQ.med.some(function(m){return m.sel===id})};h+='<p style="margin:8px 0 4px">Con estos metros, ¿qué trabajos metemos? Los que ya están en el presupuesto (por las mediciones del arquitecto) vienen desmarcados para no duplicarlos.</p><div class="grid">'+[['flo','Suelo flotante',pl.suelo],['niv','Nivelación de solado',pl.suelo],['yes','Enlucido de paredes',pl.paredes],['pip','Pintura de paredes',pl.pintura||pl.paredes],['pit','Pintura de techos',pl.suelo],['tec','Falso techo de pladur',pl.suelo]].map(function(o){return '<label style="display:flex;gap:8px;align-items:center"><input type="checkbox" style="width:auto" data-id="'+o[0]+'" data-q="'+o[2].toFixed(2)+'"'+(yaHay(o[0])?'':' checked')+'> '+o[1]+' · '+o[2].toFixed(2)+' m²</label>'}).join('')+'</div><div class="row" style="margin-top:8px"><button onclick="addPlano()">Añadir al presupuesto</button><button class="sec" onclick="ARQ.plano=null;renderArq()">Descartar</button></div>'}
 box.style.display=h?'block':'none';box.innerHTML=h;if(h)box.scrollIntoView({behavior:'smooth',block:'start'})}
 function selMed(i,id){var t=tarifa().find(function(x){return x.id===id});ARQ.med[i].sel=id;ARQ.med[i].pr=t&&(t.u===ARQ.med[i].u||(/^ml?$/.test(t.u)&&/^ml?$/.test(ARQ.med[i].u)))?t.p:0;renderArq()}
-function addMediciones(){leer();var T=tarifa();cur.arq=cur.arq||[];ARQ.med.forEach(function(p){var t=p.sel&&T.find(function(x){return x.id===p.sel});var d=t?t.d:p.t.charAt(0)+p.t.slice(1).toLowerCase();cur.lineas.push({d:d,q:p.q,u:p.u,p:p.pr||0,code:p.code});cur.arq.push({code:p.code,t:p.t,q:p.q,u:p.u,pa:p.pa,d:d});if(p.pr>0&&!p.estimado)aprendePrecio(p.t,p.pr,p.u)});var meti=ARQ.med.length;cur.arqLeidas=(cur.arqLeidas||0)+meti;ARQ.med=[];renderArq();renderLineas();document.getElementById('msg').textContent=meti+' partidas del arquitecto metidas en el presupuesto ('+cur.lineas.length+' l\u00edneas en total)';document.getElementById('tb').scrollIntoView({behavior:'smooth',block:'start'})}
+function addMediciones(){leer();var T=tarifa();cur.arq=cur.arq||[];var usados={};ARQ.med.forEach(function(p){
+/* lineas basura: numeros sueltos, importes o cantidades imposibles */
+if(!p.t||p.t.replace(/[^a-zA-Z\u00e0-\u00ff]/g,'').length<4)return;
+if(!(p.q>0)||p.q>5000)p.q=1;
+var t=p.sel&&T.find(function(x){return x.id===p.sel});
+/* si esa partida de tu tarifa ya se ha usado, se respeta el nombre del arquitecto para no repetir */
+if(t&&usados[t.id])t=null;
+if(t)usados[t.id]=1;
+var d=t?t.d:p.t.charAt(0).toUpperCase()+p.t.slice(1).toLowerCase();
+/* si el PDF no trae precio, se coge el tuyo */
+var precio=(p.pr>0)?p.pr:(t&&t.p>0?t.p:0);
+cur.lineas.push({d:d,q:p.q,u:(t&&t.u)||p.u,p:precio,code:p.code});
+cur.arq.push({code:p.code,t:p.t,q:p.q,u:p.u,pa:p.pa,d:d});
+if(p.pr>0&&!p.estimado)aprendePrecio(p.t,p.pr,p.u)});var meti=ARQ.med.length;cur.arqLeidas=(cur.arqLeidas||0)+meti;ARQ.med=[];renderArq();renderLineas();document.getElementById('msg').textContent=meti+' partidas del arquitecto metidas en el presupuesto ('+cur.lineas.length+' l\u00edneas en total)';document.getElementById('tb').scrollIntoView({behavior:'smooth',block:'start'})}
 function addPlano(){leer();var T=tarifa();document.querySelectorAll('#arqPanel input[type=checkbox]:checked').forEach(function(c){var t=T.find(function(x){return x.id===c.dataset.id});if(t)cur.lineas.push({d:t.d,q:num(c.dataset.q),u:t.u,p:t.p})});ARQ.plano=null;renderArq();renderLineas();document.getElementById('tb').scrollIntoView({behavior:'smooth',block:'start'})}
 
 /* ---------- lista de precios para arquitecto ---------- */
