@@ -34,7 +34,8 @@ button{padding:12px 16px;border-radius:8px;border:0;font-size:15px;font-weight:7
 .chk input{flex:0 0 26px;margin-top:2px}
 .fin{background:#e8f5ec;border:1px solid #8A6A12;color:#14532d;padding:16px;border-radius:8px;font-size:15px;line-height:1.5}
 .cargando{padding:30px;text-align:center;color:var(--muted)}
-</style></head><body>
+</style><link rel="preload" href="fonts/titulos-bold.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="fonts/texto-regular.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="fonts/texto-bold.woff2" as="font" type="font/woff2" crossorigin>
+</head><body>
 <header><b id="hMarca">Presupuesto</b><div id="hSub" style="font-size:13px;opacity:.85"></div></header>
 <div class="wrap">
   <div id="cargando" class="cargando">Cargando el presupuesto…</div>
@@ -90,7 +91,7 @@ function carga(u,t){return new Promise(function(ok,ko){if(t())return ok();var e=
 function descargarPdf(){var b=document.getElementById('btnPdf');var ant=b?b.textContent:'';if(b){b.textContent='Preparando el PDF\u2026';b.disabled=true}
 var vistas={};var hojas=[].slice.call(document.querySelectorAll('#doc .sheet')).filter(function(h){h.style.display='';if(h.querySelector('.sheet'))return false;if(!(h.offsetWidth>0&&h.offsetHeight>0))return false;var t=(h.id||'')+'|'+(h.textContent||'').replace(/\s+/g,' ').trim().slice(0,300);if(vistas[t])return false;vistas[t]=1;return true});
 if(!hojas.length)hojas=[document.getElementById('doc')];
-carga(H2C,function(){return !!window.html2canvas}).then(function(){return carga(JSP,function(){return !!(window.jspdf&&window.jspdf.jsPDF)})}).then(function(){
+(document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(function(){return carga(H2C,function(){return !!window.html2canvas})}).then(function(){return carga(JSP,function(){return !!(window.jspdf&&window.jspdf.jsPDF)})}).then(function(){
 var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4',orientation:'p'});var i=0;
 function paso(){if(i>=hojas.length){var fich='Presupuesto '+(DATOS.num||'')+(DATOS.marca?' - '+DATOS.marca:'')+'.pdf';
 var blob=doc.output('blob');var esIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
