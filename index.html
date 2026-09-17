@@ -45,9 +45,9 @@ table.lines .n{width:88px;text-align:right}table.lines .imp{text-align:right;fon
 .portada{position:relative;height:132mm;overflow:hidden;margin:-16mm -16mm 0;background:#000}.portada img{width:100%;height:100%;object-fit:cover;object-position:center 38%;display:block}
 .portada img.marca{width:auto!important;height:34mm!important;max-width:100%!important;object-fit:contain!important;object-position:left top!important;position:static!important;display:block!important;filter:drop-shadow(0 2mm 5mm rgba(0,0,0,.75))}
 .pcabe{position:absolute;left:16mm;right:16mm;top:11mm;z-index:3}
-.pover{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(37,51,64,.10) 0%,rgba(37,51,64,.30) 40%,rgba(37,51,64,.88) 72%,rgba(37,51,64,.96) 100%)}
-.pcont{position:absolute;left:16mm;right:16mm;bottom:12mm;color:#fff}.ptag{font-family:'Barlow Condensed';font-size:54px;font-weight:800;line-height:.95;text-shadow:0 2px 18px rgba(0,0,0,.45)}.pclaim{font-family:'Barlow Condensed';font-size:22px;font-weight:600;font-style:italic;margin-top:10px;max-width:150mm;line-height:1.15;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.45)}
-.psub{font-size:14px;margin-top:8px;max-width:120mm;opacity:.95}
+.pover{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(37,51,64,.50) 0%,rgba(37,51,64,.42) 26%,rgba(251,248,241,.55) 40%,rgba(251,248,241,.94) 55%,#FBF8F1 68%,#FBF8F1 100%)}
+.pcont{position:absolute;left:16mm;right:16mm;bottom:12mm;color:var(--ink)}.ptag{font-family:'Barlow Condensed';font-size:54px;font-weight:800;line-height:.95;color:var(--ink)}.pclaim{font-family:'Barlow Condensed';font-size:22px;font-weight:600;font-style:italic;margin-top:10px;max-width:150mm;line-height:1.15;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.45)}
+.psub{font-size:14px;margin-top:8px;max-width:120mm;color:var(--muted)}
 .pline{height:5px;background:var(--brick);margin:0 -16mm}
 .dos2{display:grid;grid-template-columns:1fr 1fr;gap:9mm;margin-top:8mm}.dos2 h3{font-size:26px;line-height:1;margin-bottom:6px}.dos2 p{margin:0 0 8px;line-height:1.45}
 .vals{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;margin:8px 0 12px}.vals div b{display:block;font-family:'Barlow Condensed';font-size:16px}.vals div span{font-size:11px;color:var(--muted)}
@@ -186,7 +186,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 </section>
 
 <script>
-var APP_VERSION='v102';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v103';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
