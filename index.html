@@ -135,8 +135,8 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 
 <!-- ================= LISTA DE PRECIOS PARA ARQUITECTO ================= -->
 <section class="page" id="page-precios"><div class="card"><h2 style="font-size:22px;margin-bottom:6px">Lista de precios que te pide un arquitecto</h2>
-<p style="color:var(--muted);margin:0 0 8px">Cuando un estudio te manda su listado de partidas para que pongas tus precios, súbelo aquí. La app lo lee, rellena lo que ya tienes en tu tarifa y tú completas el resto. Luego guardas esos precios en tu tarifa (para la próxima vez ya estarán) y sacas el PDF con tus precios para devolvérselo.</p>
-<div class="row"><input type="file" id="pdfPrecios" accept="application/pdf" style="max-width:340px" onchange="leerPrecios(this.files[0])"><input id="pr_estudio" placeholder="Nombre del estudio (sale en el PDF)" style="max-width:300px"><span id="prInfo" style="color:var(--muted)"></span></div>
+<p style="color:var(--muted);margin:0 0 8px">Cuando un estudio te manda su listado de partidas para que pongas tus precios, súbelo aquí. Vale en PDF y también en Excel. La app lo lee, rellena lo que ya tienes en tu tarifa y tú completas el resto. Luego guardas esos precios en tu tarifa (para la próxima vez ya estarán) y sacas el PDF con tus precios para devolvérselo.</p>
+<div class="row"><input type="file" id="pdfPrecios" accept=".pdf,.xlsx,.xls,.csv" style="max-width:340px" onchange="leerPrecios(this.files[0])"><input id="pr_estudio" placeholder="Nombre del estudio (sale en el PDF)" style="max-width:300px"><span id="prInfo" style="color:var(--muted)"></span></div>
 <div id="prPanel" style="display:none;margin-top:10px"></div></div></section>
 
 <!-- ================= TARIFA ================= -->
@@ -184,7 +184,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 </section>
 
 <script>
-var APP_VERSION='v85';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v86';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -439,7 +439,46 @@ function addPlano(){leer();var T=tarifa();document.querySelectorAll('#arqPanel i
 /* ---------- lista de precios para arquitecto ---------- */
 var PR={items:[]};
 function parsePrecios(lineas){var out=[],cap='',act=null;lineas.forEach(function(l){var c=l.match(/^SUBCAP[IÍ]TULO\s+\d+\s+(.+)$/i);if(c){cap=c[1].trim();act=null;return}var m=l.match(/^(\d+\.\d+)\s+(m2|m²|m3|ml|m|ud|u|U|M2|ML|pa|kg)?\s*([A-ZÁÉÍÓÚa-záéíóúñÑ].{2,})$/);if(m&&!/^\d/.test(m[3])){act={code:m[1],u:(m[2]||'ud').toLowerCase().replace('²','2').replace(/^u$/,'ud'),t:m[3].replace(/\.$/,'').trim(),cap:cap,desc:''};out.push(act);return}if(act&&!/^\d+,\d{2}$/.test(l)&&!/^\s*(P.gina|www\.|info@|IZARTE|PRESUPUESTO|CANTIDAD|\d+ de \w+ de \d{4})/i.test(l)&&act.desc.length<300)act.desc+=(act.desc?' ':'')+l});return out}
-function leerPrecios(file){if(!file)return;var info=document.getElementById('prInfo');info.textContent='Leyendo…';cargarPdfjs().then(function(){return pdfItems(file)}).then(function(pages){var __ls=[].concat.apply([],pages.map(aLineas));
+var XLSX_URL='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+function cargarXlsx(){return new Promise(function(ok,ko){if(window.XLSX)return ok();
+var s=document.createElement('script');s.src=XLSX_URL;s.onload=ok;s.onerror=ko;document.head.appendChild(s)})}
+function nEsp(v){if(v===null||v===undefined||v==='')return 0;
+if(typeof v==='number')return v;
+var t=String(v).replace(/[^\d.,-]/g,'').trim();
+if(t.indexOf(',')>-1&&t.indexOf('.')>-1)t=t.replace(/\./g,'').replace(',','.');
+else if(t.indexOf(',')>-1)t=t.replace(',','.');
+var n=parseFloat(t);return isNaN(n)?0:n}
+function leerPreciosExcel(file){var info=document.getElementById('prInfo');info.textContent='Leyendo la hoja\u2026';
+cargarXlsx().then(function(){return file.arrayBuffer()}).then(function(buf){
+var wb=XLSX.read(buf,{type:'array'});
+var filas=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,defval:''});
+/* buscar la fila de cabecera */
+var ic=-1,cCod=-1,cUd=-1,cTxt=-1,cPre=-1;
+for(var i=0;i<Math.min(filas.length,25);i++){
+ var f=filas[i].map(function(x){return norm(String(x))});
+ var a=f.indexOf('codigo'),b=f.indexOf('ud'),c=-1,d=-1;
+ f.forEach(function(v,j){if(/descripcion|partida|concepto/.test(v)&&c<0)c=j;
+ if(/precio|importe|euros|mi precio/.test(v)&&d<0)d=j});
+ if(c>-1){ic=i;cCod=a;cUd=(b>-1?b:f.indexOf('unidad'));cTxt=c;cPre=d;break}}
+if(ic<0){info.textContent='Esa hoja no tiene una columna que ponga Descripci\u00f3n. Ponle ese t\u00edtulo arriba y vuelve a subirla.';return}
+var T=tarifa();PR.items=[];var cap='Partidas de la hoja';
+for(var r=ic+1;r<filas.length;r++){
+ var f=filas[r];if(!f)continue;
+ var txt=String(f[cTxt]||'').replace(/\s+/g,' ').trim();
+ if(txt.replace(/[^a-zA-Z\u00e0-\u00ff]/g,'').length<4)continue;
+ var soloCap=(cCod<0||!String(f[cCod]||'').trim())&&(cPre<0||!String(f[cPre]||'').trim())&&(cUd<0||!String(f[cUd]||'').trim());
+ if(soloCap&&txt.length<40&&txt===txt.toUpperCase()){cap=txt;continue}
+ var u=String(cUd>-1?f[cUd]:'ud').toLowerCase().replace('\u00b2','2').trim()||'ud';
+ var it={code:String(cCod>-1?f[cCod]:'').trim(),u:u,t:txt.split(' \u2014 ')[0],cap:cap,desc:'',p:''};
+ var pr=cPre>-1?nEsp(f[cPre]):0;
+ var id=casar(it.t);var tt=id&&T.find(function(x){return x.id===id});
+ it.sel=tt?tt.id:'';
+ if(pr>0)it.p=pr; else if(tt&&(tt.u===it.u||(/^ml?$/.test(tt.u)&&/^ml?$/.test(it.u))))it.p=tt.p;
+ PR.items.push(it)}
+info.textContent=PR.items.length?'':'No he encontrado partidas en esa hoja.';
+renderPrecios()}).catch(function(e){info.textContent='No he podido leer esa hoja ('+(e.message||e)+')'})}
+function leerPrecios(file){if(!file)return;
+if(/\.(xlsx|xls|csv)$/i.test(file.name))return leerPreciosExcel(file);var info=document.getElementById('prInfo');info.textContent='Leyendo…';cargarPdfjs().then(function(){return pdfItems(file)}).then(function(pages){var __ls=[].concat.apply([],pages.map(aLineas));
 PR.items=parsePrecios(__ls);
 /* si el PDF no lleva codigos (estilo Tobao), se lee como medicion y se convierte en lista */
 if(!PR.items.length){var med=parseMediciones(__ls);
