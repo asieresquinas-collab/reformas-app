@@ -186,7 +186,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 </section>
 
 <script>
-var APP_VERSION='v103';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v104';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -674,7 +674,9 @@ function waURL(txt,tel){var n=telWa(tel);return 'https://wa.me/'+(n?n:'')+'?text
 
 function copiarEnlace(){if(!ULT_FIRMA)return;var t=ULT_FIRMA.url;if(navigator.clipboard)navigator.clipboard.writeText(t).then(function(){alert('Enlace copiado')},function(){prompt('Copia el enlace:',t)});else prompt('Copia el enlace:',t)}
 function compartirEnlace(){if(!ULT_FIRMA)return;if(navigator.share)navigator.share({title:'Firmar presupuesto',text:ULT_FIRMA.txt}).catch(function(){});else if(navigator.clipboard)navigator.clipboard.writeText(ULT_FIRMA.txt).then(function(){alert('Enlace copiado, p\u00e9galo en WhatsApp')});else prompt('Copia el enlace:',ULT_FIRMA.url)}
-function mandarFirma(){leer();if(!cur.nom){alert('Pon el nombre del cliente');return}if(!FB.uid){alert('Entra en tu cuenta para poder mandar el enlace');return}
+function esperarSesion(ms){return new Promise(function(ok){if(FB.uid)return ok(true);var t0=Date.now();var it=setInterval(function(){if(FB.uid){clearInterval(it);ok(true)}else if(Date.now()-t0>(ms||9000)){clearInterval(it);ok(false)}},250)})}
+function mandarFirma(){leer();if(!cur.nom){alert('Pon el nombre del cliente');return}
+if(!FB.uid){var b=document.getElementById('msg');if(b)b.textContent='Conectando con tu cuenta\u2026';return esperarSesion(9000).then(function(hay){if(b)b.textContent='';if(!hay){var lg=document.getElementById('login');if(lg)lg.style.display='flex';alert('Entra en tu cuenta para poder mandar el enlace');return}mandarFirma()})}
 var vent=window.open('about:blank','_blank');
 pintarDocs();var _hj=['sh_dosier','sh_presu','sh_contrato'],_prev={};_hj.forEach(function(id){var e=document.getElementById(id);_prev[id]=e.style.display;e.style.display=''});var dos=document.getElementById('sh_dosier').outerHTML,presu=document.getElementById('sh_presu').outerHTML,contra=document.getElementById('sh_contrato').outerHTML;_hj.forEach(function(id){document.getElementById(id).style.display=_prev[id]});
 var t=(cur.num||'0')+'-'+Math.random().toString(36).slice(2,10);
