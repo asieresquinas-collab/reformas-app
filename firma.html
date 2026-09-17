@@ -55,7 +55,8 @@ function pintaFin(f){document.getElementById('cont').style.display='none';docume
 var d=document.getElementById('fin');d.style.display='block';
 d.innerHTML='<b>Firmado, gracias.</b><br>'+(f.nombreFirma||'')+(f.dni?' · '+f.dni:'')+'<br>'+(f.fechaFirma||'')+'<br><br>Recuerda: esta aceptación es bajo reserva; la obra queda contratada cuando el contratista te confirme la fecha por escrito.';}
 if(!TOK){document.getElementById('cargando').textContent='Enlace incompleto. Pide que te lo manden otra vez.';}
-else db.collection('firmas').doc(TOK).get().then(function(s){
+else db.collection('firmas').doc(TOK).update({visto:Date.now()}).catch(function(){});
+if(TOK)db.collection("firmas").doc(TOK).get().then(function(s){
   if(!s.exists){document.getElementById('cargando').textContent='Este enlace ya no está disponible.';return}
   DATOS=s.data();
   document.getElementById('hMarca').textContent=DATOS.marca||'Presupuesto';
