@@ -82,7 +82,7 @@ if(TOK)db.collection("firmas").doc(TOK).get().then(function(s){
   if(location.hash==='#firmar')setTimeout(function(){var e=document.getElementById('firmar');if(e)e.scrollIntoView({behavior:'smooth'})},300);
 }).catch(function(e){document.getElementById('cargando').textContent='No he podido abrir el presupuesto ('+e.message+')';});
 
-var FIRMA_VER='v119';
+var FIRMA_VER='v120';
 try{var _u=new URL(location.href);if(!_u.searchParams.get('v')){fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==FIRMA_VER){_u.searchParams.set('v',j.v);location.replace(_u.toString())}}).catch(function(){})}}catch(_){}
 document.addEventListener('DOMContentLoaded',function(){var e=document.createElement('div');e.textContent=FIRMA_VER;e.style.cssText='position:fixed;right:6px;bottom:6px;font-size:10px;color:#9aa0a6;z-index:99';document.body.appendChild(e)});
 function limpiarDoc(){var d=document.getElementById('doc');if(!d)return;
@@ -133,7 +133,7 @@ if(!document.getElementById('nom').value.trim()){msg.textContent='Pon tu nombre.
 if(!hayFirma){msg.textContent='Firma con el dedo en el recuadro.';return}
 if(!document.getElementById('acepto').checked){msg.textContent='Marca la casilla de aceptación bajo reserva.';msg.style.color='#b3261e';var ch=document.querySelector('.chk');ch.style.borderColor='#b3261e';ch.scrollIntoView({behavior:'smooth',block:'center'});return}
 document.getElementById('btn').disabled=true;msg.textContent='Enviando…';
-var f={firma:cv.toDataURL('image/png'),nombreFirma:document.getElementById('nom').value.trim(),dni:document.getElementById('dni').value.trim(),fechaFirma:new Date().toLocaleString('es-ES')+' ('+new Date().toISOString()+')',aceptado:true};
+var f={firma:cv.toDataURL('image/png'),nombreFirma:document.getElementById('nom').value.trim(),dni:document.getElementById('dni').value.trim(),fechaFirma:new Date().toLocaleString('es-ES'),aceptado:true};
 db.collection('firmas').doc(TOK).update(f).then(function(){f.aviso=DATOS.aviso;pintaFin(f)})
 .catch(function(e){document.getElementById('btn').disabled=false;msg.textContent='No se ha podido enviar ('+e.message+')'});}
 </script></body></html>
