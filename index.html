@@ -195,7 +195,7 @@ body.capturando #sh_dosier .segimg img{height:20mm!important}body.capturando #sh
 </section>
 
 <script>
-var APP_VERSION='v115';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v116';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -782,7 +782,14 @@ function escucharFirmas(){if(!FB.db)return;Object.values(DB.presus).forEach(func
 if(!window.__esc)window.__esc={};if(window.__esc[p.firmaTok])return;
 window.__esc[p.firmaTok]=FB.db.collection('firmas').doc(p.firmaTok).onSnapshot(function(d){var f=d.data();
 if(f&&f.firma){var q=DB.presus[p.num];if(q&&!estaFirmado(q)){q.firmado={nombre:f.nombreFirma||'',dni:f.dni||'',fecha:f.fechaFirma||''};q.estado='aceptado';save();try{subirPresu(q.num)}catch(_){}
-if(document.getElementById('page-clientes').classList.contains('on'))renderClientes()}}},function(){})})}
+if(document.getElementById('page-clientes').classList.contains('on'))renderClientes();avisarFirma(q)}}},function(){})})}
+function pedirAvisos(){try{if(window.Notification&&Notification.permission==='default')Notification.requestPermission()}catch(_){}}
+function avisarFirma(p){try{var t=(p.nom||'Un cliente')+' ha firmado';var c='Presupuesto n\u00ba '+p.num+(p.firmado&&p.firmado.nombre?' \u00b7 firma de '+p.firmado.nombre:'');
+if(window.Notification&&Notification.permission==='granted'){var n=new Notification(t,{body:c,icon:'icons/icon-192.png',tag:'firma-'+p.num,requireInteraction:true});n.onclick=function(){window.focus();ST('clientes');n.close()}}
+try{var a=new (window.AudioContext||window.webkitAudioContext)();var o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=880;g.gain.value=.08;o.start();setTimeout(function(){o.frequency.value=1320},160);setTimeout(function(){o.stop();a.close()},420)}catch(_){}
+try{if(navigator.vibrate)navigator.vibrate([120,60,120])}catch(_){}
+info('\u2713 '+t+' (presupuesto '+p.num+')')}catch(_){}}
+
 
 
 /* ---------- fotos de obra y seguimiento ---------- */
@@ -1597,7 +1604,7 @@ return paso().catch(function(e){restaurar();throw e})}).catch(function(e){restau
 function imprimir(m){var pr=m==='precios';if(!pr){var r=revisar(true);if(r.E.length){document.getElementById('revBox').scrollIntoView({behavior:'smooth',block:'center'});if(!confirm('Hay '+r.E.length+' cosas que arreglar (mira el aviso en rojo). Si mandas el PDF así, faltará dinero en el presupuesto.\n¿Sacar el PDF igualmente?'))return}}if(pr)pintarPrecios();else pintarDocs();document.getElementById('sh_precios').style.display=pr?'':'none';document.getElementById('sh_presu').style.display=pr?'none':'';document.getElementById('sh_dosier').style.display=m==='todo'?'':'none';document.getElementById('sh_contrato').style.display=m==='todo'?'':'none';setTimeout(function(){var _d=new Date(),_p=function(n){return (n<10?'0':'')+n};var nom='Presupuesto '+((cur&&cur.num)||'')+(cur&&cur.nom?' - '+cur.nom:'')+' ('+_p(_d.getDate())+'-'+_p(_d.getMonth()+1)+' '+_p(_d.getHours())+_p(_d.getMinutes())+').pdf';pdfSinMargenes(nom).catch(function(){window.print()})},200)}
 function verContrato(){imprimir('todo')}
 /* ---------- init ---------- */
-document.getElementById('brandTxt').textContent=AJ.marca.toUpperCase();var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;engancharAuto();aplicarModo();nuevo();iniciarNube();setTimeout(pintarContinuar,300);
+document.getElementById('brandTxt').textContent=AJ.marca.toUpperCase();var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;engancharAuto();aplicarModo();nuevo();iniciarNube();setTimeout(pedirAvisos,1500);setTimeout(pintarContinuar,300);
 if(Object.keys(DB.presus||{}).length){ST('clientes');setTimeout(renderClientes,80)}
 if(hayContactos()){var bc=document.getElementById('btnContacto');if(bc)bc.style.display=''}
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
