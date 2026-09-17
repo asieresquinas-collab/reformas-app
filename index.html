@@ -69,6 +69,8 @@ img,canvas,video{max-width:100%}
 @media (min-width:1200px){.card{max-width:1100px;margin-left:auto;margin-right:auto}}
 
 body.capturando #sh_dosier{height:297mm!important;max-height:297mm!important;overflow:hidden!important;padding:14mm 15mm 20mm!important}body.capturando #sh_dosier .portada{height:120mm!important;margin:-14mm -15mm 0!important}body.capturando #sh_dosier .dos2{margin-top:6mm!important}body.capturando #sh_dosier .dos2 .fotos img{height:46mm!important}body.capturando .sheet{box-shadow:none!important;margin:0!important;width:210mm!important;max-width:210mm!important;padding:14mm 15mm!important;background:var(--crema)!important}body.capturando #sh_presu,body.capturando #sh_contrato{height:auto!important;min-height:0!important}body.capturando .foot{left:15mm!important;right:15mm!important}body.capturando #sh_presu .foot,body.capturando #sh_contrato .foot{position:static!important;margin-top:10mm!important}body.simple .ntab[data-t="contrato"],body.simple .ntab[data-t="tarifa"],body.simple .ntab[data-t="precios"],body.simple .ntab[data-t="ayuda"],body.simple .ntab[data-t="legal"]{display:none}
+body.simple.vermas .ntab[data-t="contrato"],body.simple.vermas .ntab[data-t="tarifa"],body.simple.vermas .ntab[data-t="precios"],body.simple.vermas .ntab[data-t="ayuda"],body.simple.vermas .ntab[data-t="legal"]{display:inline-block}
+body.vermas #masTabs{background:var(--brick);color:#fff;border-color:var(--brick)}
 body.simple.vermas .ntab[data-t="contrato"],body.simple.vermas .ntab[data-t="tarifa"],body.simple.vermas .ntab[data-t="precios"],body.simple.vermas .ntab[data-t="ayuda"],body.simple.vermas .ntab[data-t="legal"]{display:block}
 body:not(.simple) #masTabs{display:none}
 body.simple .acts .warn,body.simple .acts .sec,body.simple .acts .ok:not(#btnEnviar){display:none}
@@ -182,7 +184,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 </section>
 
 <script>
-var APP_VERSION='v83';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v84';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -256,7 +258,7 @@ function eur(n){return (Math.round(n*100)/100).toLocaleString('es-ES',{minimumFr
 function num(v){return parseFloat(String(v).replace(',','.'))||0}
 function norm(s){return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
 /* ---------- navegación ---------- */
-document.querySelectorAll('.ntab').forEach(function(b){b.onclick=function(){ST(b.dataset.t)}});
+document.querySelectorAll('.ntab').forEach(function(b){if(b.id==='masTabs')return;b.onclick=function(){ST(b.dataset.t)}});
 function ST(t){if(t==='ajustes')setTimeout(fmInit,60);if(t==='mapa')setTimeout(function(){pintarMapa()},80);document.querySelectorAll('.ntab').forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});document.querySelectorAll('.page').forEach(function(p){p.classList.toggle('on',p.id==='page-'+t)});if(t==='clientes')renderClientes();if(t==='tarifa'){renderTarifa();setTimeout(plegarTarifa,60)}if(t==='ajustes')renderAj();if(t==='legal')pintarLegal()}
 /* ---------- presupuesto ---------- */
 function siguienteNum(){var m=num(DB.contador)||0;Object.keys(DB.presus||{}).forEach(function(k){var v=num(k);if(v>m)m=v});return String(m+1)}
@@ -1336,7 +1338,9 @@ c.innerHTML='<div class="card" style="width:100%;max-width:480px"><h2 style="fon
 document.body.appendChild(c)}
 c.style.display='flex'}
 function cerrarEnviar(){var c=document.getElementById('cajaEnviar');if(c)c.style.display='none'}
-function verMas(){document.body.classList.toggle('vermas')}
+function verMas(){var v=document.body.classList.toggle('vermas');
+var b=document.getElementById('masTabs');if(b)b.textContent=v?'Menos\u2026':'M\u00e1s\u2026';
+if(v)setTimeout(function(){var n=document.getElementById('topnav');if(n)n.scrollLeft=n.scrollWidth},60)}
 function guardarAj(){document.querySelectorAll('#ajBox [data-k]').forEach(function(e){AJ[e.dataset.k]=e.value});lsSet('vr_aj',JSON.stringify(AJ));document.getElementById('brandTxt').textContent=AJ.marca.toUpperCase();subirConfig();alert('Datos guardados')}
 function exportar(){var a=document.createElement('a');a.href='data:application/json,'+encodeURIComponent(JSON.stringify({db:DB,aj:AJ}));a.download='copia-presupuestos-'+new Date().toISOString().slice(0,10)+'.json';a.click()}
 function importar(inp){var f=inp.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var o=JSON.parse(r.result);if(o.db){DB=o.db;save()}if(o.aj){AJ=o.aj;lsSet('vr_aj',JSON.stringify(AJ))}alert('Copia restaurada');location.reload()}catch(e){alert('Ese archivo no vale')}};r.readAsText(f)}
