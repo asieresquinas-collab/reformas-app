@@ -2,6 +2,9 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Firmar presupuesto</title>
 <style>
+@font-face{font-family:'TxtAzk';src:url('fonts/texto-regular.woff2') format('woff2');font-weight:100 500;font-style:normal;font-display:swap}
+@font-face{font-family:'TxtAzk';src:url('fonts/texto-bold.woff2') format('woff2');font-weight:600 900;font-style:normal;font-display:swap}
+
 @font-face{font-family:'TitAzk';src:url('fonts/titulos-bold.woff2') format('woff2');font-weight:700 900;font-style:normal;font-display:swap}
 @font-face{font-family:'TitAzk';src:url('fonts/titulos-regular.woff2') format('woff2');font-weight:100 600;font-style:normal;font-display:swap}
 
@@ -65,7 +68,7 @@ if(TOK)db.collection("firmas").doc(TOK).get().then(function(s){
   document.getElementById('hMarca').textContent=DATOS.marca||'Presupuesto';
   document.getElementById('hSub').textContent='Presupuesto nº '+(DATOS.num||'')+(DATOS.cliente?' · '+DATOS.cliente:'');
   if(DATOS.firma){pintaFin(DATOS);return}
-  if(DATOS.css){var st=document.createElement('style');st.textContent=DATOS.css.replace(/@media print\{[\s\S]*?\}\s*$/,'');document.head.appendChild(st)}var st2=document.createElement('style');st2.textContent="h1,h2,h3,.cond,.ptag,.pclaim,.tot .big,.dochead .who,.ptab tr.cap td,.vals div b,.clausula b,.tarifa-cat,#doc b{font-family:'TitAzk','DejaVu Serif Condensed',Georgia,serif!important}";document.head.appendChild(st2);
+  if(DATOS.css){var st=document.createElement('style');st.textContent=DATOS.css.replace(/@media print\{[\s\S]*?\}\s*$/,'');document.head.appendChild(st)}var st2=document.createElement('style');st2.textContent="#doc,#doc *{font-family:'TxtAzk',system-ui,sans-serif}h1,h2,h3,.cond,.ptag,.pclaim,.tot .big,.dochead .who,.ptab tr.cap td,.vals div b,.clausula b,.tarifa-cat,#doc b{font-family:'TitAzk','DejaVu Serif Condensed',Georgia,serif!important}";document.head.appendChild(st2);
   document.getElementById('doc').innerHTML=DATOS.html||'';limpiarDoc();
   document.getElementById('aviso').textContent=DATOS.aviso||'';
   document.getElementById('nom').value=DATOS.cliente||'';

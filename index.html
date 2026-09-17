@@ -3,13 +3,16 @@
 <title>Vornicu Reformas · Presupuestos</title>
 <link rel="manifest" href="manifest.json?v=80"><meta name="theme-color" content="#111214">
 <meta name="apple-mobile-web-app-capable" content="yes"><link rel="apple-touch-icon" href="icons/icon-192.png?v=80"><link rel="icon" href="icons/icon-192.png?v=80">
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
+
 <style>
+@font-face{font-family:'TxtAzk';src:url('fonts/texto-regular.woff2') format('woff2');font-weight:100 500;font-style:normal;font-display:swap}
+@font-face{font-family:'TxtAzk';src:url('fonts/texto-bold.woff2') format('woff2');font-weight:600 900;font-style:normal;font-display:swap}
+
 @font-face{font-family:'TitAzk';src:url('fonts/titulos-bold.woff2') format('woff2');font-weight:700 900;font-style:normal;font-display:swap}
 @font-face{font-family:'TitAzk';src:url('fonts/titulos-regular.woff2') format('woff2');font-weight:100 600;font-style:normal;font-display:swap}
 
 :root{--crema:#FBF8F1;--ink:#15161a;--slate:#111214;--slate2:#2c2e33;--brick:#A87B18;--brick2:#F7EED9;--paper:#f3f1ec;--line:#ddd8ce;--ok:#8A6A12;--muted:#6b7178}
-*{box-sizing:border-box}html,body{margin:0;background:var(--paper);color:var(--ink);font-family:Barlow,system-ui,sans-serif;font-size:14px}
+*{box-sizing:border-box}html,body{margin:0;background:var(--paper);color:var(--ink);font-family:'TxtAzk',system-ui,sans-serif;font-size:14px}
 h1,h2,h3,.cond{font-family:'TitAzk','DejaVu Serif Condensed',Georgia,serif;font-stretch:75%;font-weight:800;letter-spacing:.2px;margin:0}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer;border:0;border-radius:0;padding:9px 14px;background:var(--slate);color:#fff;font-weight:600}
@@ -38,7 +41,7 @@ table.lines .n{width:88px;text-align:right}table.lines .imp{text-align:right;fon
 /* ---- documentos (dosier / hoja presupuesto / contrato) ---- */
 .sheet{background:var(--crema);width:210mm;max-width:100%;margin:0 auto 14px;padding:16mm 16mm 14mm;box-shadow:0 2px 10px rgba(0,0,0,.08);position:relative}
 .dochead{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid var(--slate);padding-bottom:8px;margin-bottom:12px}
-.dochead .who{font-family:'TitAzk','DejaVu Serif Condensed',Georgia,serif;font-stretch:75%;font-size:22px;font-weight:800;line-height:1.05}.dochead .who small{display:block;font-family:Barlow;font-size:11px;font-weight:400;color:var(--muted);line-height:1.4;margin-top:4px}
+.dochead .who{font-family:'TitAzk','DejaVu Serif Condensed',Georgia,serif;font-stretch:75%;font-size:22px;font-weight:800;line-height:1.05}.dochead .who small{display:block;font-family:'TxtAzk';font-size:11px;font-weight:400;color:var(--muted);line-height:1.4;margin-top:4px}
 .dochead .doc{text-align:right}.dochead .doc h2{font-size:34px;color:var(--brick);line-height:1}.dochead .doc div{font-size:12px;color:var(--muted)}
 .ptab{width:100%;border-collapse:collapse;font-size:12px}.ptab th{background:var(--slate);color:#fff;text-align:left;padding:6px 7px;font-weight:600}.ptab td{padding:6px 7px;border-bottom:1px solid var(--line);vertical-align:top}.ptab td.r,.ptab th.r{text-align:right;white-space:nowrap}
 .ptab tr.cap td{background:var(--paper);font-family:'TitAzk','DejaVu Serif Condensed',Georgia,serif;font-stretch:75%;font-size:15px;font-weight:800;padding:8px 7px 4px}
@@ -190,7 +193,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 </section>
 
 <script>
-var APP_VERSION='v107';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v108';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
