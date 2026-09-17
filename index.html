@@ -195,7 +195,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 </section>
 
 <script>
-var APP_VERSION='v111';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v112';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -1561,6 +1561,8 @@ else av.innerHTML='';}catch(e){}}
 function fechaES(s){if(!s)return '';var d=new Date(s+'T00:00:00');return d.toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'})}
 var H2C_URL='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',JSPDF_URL='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
 function cargarJS(u,test){return new Promise(function(ok,ko){if(test())return ok();var e=document.createElement('script');e.src=u;e.onload=ok;e.onerror=ko;document.head.appendChild(e)})}
+var _FF='';try{_FF=([].slice.call(document.querySelectorAll('style')).map(function(s){return s.textContent}).join('\n').match(/@font-face\{[^}]*\}/g)||[]).join('\n')}catch(_){}
+function _onclone(doc){try{var st=doc.createElement('style');st.textContent=_FF;doc.head.appendChild(st)}catch(_){}try{return doc.fonts&&doc.fonts.ready?doc.fonts.ready:undefined}catch(_){}}
 function pdfSinMargenes(nombre){var pp=document.getElementById('page-print'),prevPP=pp.style.display,prevBody=document.body.style.overflow;
 if(getComputedStyle(pp).display==='none')pp.style.display='block';document.body.classList.add('capturando');
 var restaurar=function(){document.body.classList.remove('capturando');pp.style.display=prevPP;document.body.style.overflow=prevBody};
@@ -1575,7 +1577,7 @@ if(esIOS){var arch=new File([blob],fich,{type:'application/pdf'});
 if(navigator.canShare&&navigator.canShare({files:[arch]}))return navigator.share({files:[arch],title:fich}).catch(function(){window.open(URL.createObjectURL(blob),'_blank')});
 window.open(URL.createObjectURL(blob),'_blank');return Promise.resolve()}
 doc.save(fich);return Promise.resolve()}
-var capt=function(sc){return html2canvas(hojas[i],{scale:sc,backgroundColor:'#FAF6EC',useCORS:true,windowWidth:794,logging:false}).catch(function(){return {width:0,height:0}})};var espera=function(ms){return new Promise(function(r){setTimeout(r,ms)})};var altoCSS=hojas[i].offsetHeight||1123,anchoCSS=794;var MAXAREA=1.1e7,MAXLADO=8000;var tope=Math.min(2,Math.sqrt(MAXAREA/(anchoCSS*altoCSS)),MAXLADO/altoCSS,MAXLADO/anchoCSS);var sc1=Math.max(0.6,Math.min(2,Math.round(tope*100)/100));var ok=function(cv){return cv&&cv.width>0&&cv.height>0};return capt(sc1).then(function(cv){if(ok(cv))return cv;return espera(400).then(function(){return capt(Math.max(0.6,sc1/2))})}).then(function(cv){if(ok(cv))return cv;return espera(400).then(function(){return capt(0.6)})}).then(function(cv){if(!ok(cv))throw new Error('no cabe la hoja '+(hojas[i].id||i)+' ('+anchoCSS+'x'+altoCSS+', escala '+sc1+', '+APP_VERSION+')');return cv}).then(function(cv){
+var capt=function(sc){return html2canvas(hojas[i],{scale:sc,backgroundColor:'#FAF6EC',useCORS:true,windowWidth:794,logging:false,onclone:_onclone}).catch(function(){return {width:0,height:0}})};var espera=function(ms){return new Promise(function(r){setTimeout(r,ms)})};var altoCSS=hojas[i].offsetHeight||1123,anchoCSS=794;var MAXAREA=1.1e7,MAXLADO=8000;var tope=Math.min(2,Math.sqrt(MAXAREA/(anchoCSS*altoCSS)),MAXLADO/altoCSS,MAXLADO/anchoCSS);var sc1=Math.max(0.6,Math.min(2,Math.round(tope*100)/100));var ok=function(cv){return cv&&cv.width>0&&cv.height>0};return capt(sc1).then(function(cv){if(ok(cv))return cv;return espera(400).then(function(){return capt(Math.max(0.6,sc1/2))})}).then(function(cv){if(ok(cv))return cv;return espera(400).then(function(){return capt(0.6)})}).then(function(cv){if(!ok(cv))throw new Error('no cabe la hoja '+(hojas[i].id||i)+' ('+anchoCSS+'x'+altoCSS+', escala '+sc1+', '+APP_VERSION+')');return cv}).then(function(cv){
 var altoPag=Math.round(cv.width*297/210);
 var ctxOrig=cv.getContext('2d');
 var filaVacia=function(y){try{var d=ctxOrig.getImageData(0,y,cv.width,1).data;for(var x=0;x<d.length;x+=16){if(Math.abs(d[x]-250)>6||Math.abs(d[x+1]-246)>6||Math.abs(d[x+2]-236)>6)return false}return true}catch(e){return true}};
