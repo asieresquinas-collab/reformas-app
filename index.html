@@ -177,7 +177,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 </section>
 
 <script>
-var APP_VERSION='v74';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v75';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -269,7 +269,19 @@ function delLinea(i){leer();cur.lineas.splice(i,1);renderLineas()}
 function buscarTarifa(q){var ul=document.getElementById('pickList');var n=norm(q||'');var res=tarifa().filter(function(t){return !n||norm(t.d).indexOf(n)>-1||t.k.some(function(k){return norm(k).indexOf(n)>-1})}).slice(0,25);ul.innerHTML=res.map(function(t){return '<li data-id="'+t.id+'">'+t.d.slice(0,90)+(t.d.length>90?'…':'')+'<small>'+eur(t.p)+'/'+t.u+'</small></li>'}).join('');ul.style.display=res.length?'block':'none';ul.querySelectorAll('li').forEach(function(li){li.onclick=function(){addLinea(tarifa().find(function(t){return t.id===li.dataset.id}));ul.style.display='none';document.getElementById('buscar').value=''}})}
 document.addEventListener('click',function(e){if(!e.target.closest('.pick'))document.getElementById('pickList').style.display='none'});
 /* ---------- dictado → partidas ---------- */
-function convertir(){leer();var txt=norm(document.getElementById('dictado').value);if(!txt)return;var añad=0,T=tarifa();var ya={};cur.lineas.forEach(function(l){ya[norm(l.d).slice(0,40)]=1});
+var SINON=[
+[/alig?atar|alikatar|alicatar|azulejar|poner azulejo/g,'alicatado'],
+[/picar todo|picarlo todo|picar las paredes|picar pared/g,'quitar alicatado'],
+[/quitar la ba(n|\u00f1)era|quitar ba(n|\u00f1)era|sacar la ba(n|\u00f1)era|quitar el lavabo|quitar lavabo|quitar el inodoro|quitar el water|quitar los sanitarios|quitar sanitario/g,'quitar sanitarios'],
+[/quitar (todos )?los muebles( de (la )?cocina)?|sacar los muebles de la cocina|quitar la cocina vieja/g,'quitar cocina'],
+[/poner (una )?ducha|hacer la ducha|cambiar la ba(n|\u00f1)era por (un )?plato|plato nuevo/g,'plato de ducha'],
+[/instalacion de fontaneria|hacer la fontaneria|fontaneria nueva/g,'fontaneria'],
+[/tirar (el )?tabique|quitar (el )?tabique|abrir (el )?tabique/g,'tirar tabique'],
+[/suelo nuevo|poner suelo|cambiar el suelo/g,'suelo flotante'],
+[/quitar (el )?gotele|rascar (el )?gotele/g,'gotele'],
+[/pintar (todo|la casa|el piso)/g,'pintura paredes']];
+function convertir(){leer();var txt=norm(document.getElementById('dictado').value);if(!txt)return;
+SINON.forEach(function(r){txt=txt.replace(r[0],r[1])});var añad=0,T=tarifa();var ya={};cur.lineas.forEach(function(l){ya[norm(l.d).slice(0,40)]=1});
 var NUMW={'un':1,'una':1,'dos':2,'tres':3,'cuatro':4,'cinco':5,'seis':6,'siete':7,'ocho':8,'nueve':9,'diez':10,'once':11,'doce':12};txt=txt.replace(/\b(un|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|once|doce)\b(?=\s+[a-z])/g,function(w){return NUMW[w]});
 T.forEach(function(t){var pos=-1,kl=0;for(var i=0;i<t.k.length;i++){var kk=norm(t.k[i]);
 /* tolerar articulos por medio: "quitar el suelo" encuentra la clave "quitar suelo" */
@@ -442,7 +454,8 @@ function iniciarNube(){cargarFirebase().then(function(){FB.app=firebase.initiali
 function entrar(){var e=document.getElementById('lg_email').value.trim(),p=document.getElementById('lg_pass').value;document.getElementById('lg_msg').textContent='';firebase.auth().signInWithEmailAndPassword(e,p).catch(function(err){document.getElementById('lg_msg').textContent=/password|credential|user/i.test(err.code)?'Correo o clave incorrectos':'No he podido entrar: '+err.message})}
 function salir(){if(window.firebase&&FB.uid){if(FB.unsub)FB.unsub();firebase.auth().signOut()}}
 function ref(){return FB.db.collection('clientes').doc(FB.uid)}
-function escuchar(){dot('#e0a800');var r=ref();r.get().then(function(s){var d=s.data();if(d){if(d.aj){AJ=Object.assign({},AJ_DEF,d.aj);lsSet('vr_aj',JSON.stringify(AJ));document.getElementById('brandTxt').textContent=AJ.marca.toUpperCase()}if(d.tarifa)DB.tarifa=d.tarifa;if(d.extra)DB.extra=d.extra;if(d.contador)DB.contador=Math.max(DB.contador,d.contador)}
+function escuchar(){dot('#e0a800');var r=ref();r.get().then(function(s){var d=s.data();if(d){if(d.aj){AJ=Object.assign({},AJ_DEF,d.aj);
+if(AJ.marca==='Vornicu Reformas'){AJ.marca='VORMA CONSTRUCT SL';try{subirConfig()}catch(_){}}lsSet('vr_aj',JSON.stringify(AJ));document.getElementById('brandTxt').textContent=AJ.marca.toUpperCase()}if(d.tarifa)DB.tarifa=d.tarifa;if(d.extra)DB.extra=d.extra;if(d.contador)DB.contador=Math.max(DB.contador,d.contador)}
 return r.collection('presupuestos').get()}).then(function(q){var nube={};q.forEach(function(doc){nube[doc.id]=doc.data()});var locales=Object.keys(DB.presus);Object.keys(nube).forEach(function(k){if(!DB.presus[k]||(nube[k].ts||0)>=(DB.presus[k].ts||0))DB.presus[k]=nube[k]});locales.forEach(function(k){if(!nube[k]||(DB.presus[k].ts||0)>(nube[k].ts||0))r.collection('presupuestos').doc(k).set(DB.presus[k])});lsSet('vr_db',JSON.stringify(DB));subirConfig();dot('var(--ok)');if(document.getElementById('page-clientes').classList.contains('on'))renderClientes();
 FB.unsub=r.collection('presupuestos').onSnapshot(function(snap){snap.docChanges().forEach(function(ch){var d=ch.doc.data();if(ch.type==='removed'){if(DB.presus[ch.doc.id]&&!(DB.presus[ch.doc.id].ts>(d.ts||0)))delete DB.presus[ch.doc.id]}else if(!DB.presus[ch.doc.id]||(d.ts||0)>=(DB.presus[ch.doc.id].ts||0))DB.presus[ch.doc.id]=d});lsSet('vr_db',JSON.stringify(DB));if(document.getElementById('page-clientes').classList.contains('on'))renderClientes()},function(){dot('#b3261e')})}).catch(function(){dot('#b3261e')})}
 function subirConfig(){pend().config=true;lsSet('vr_db',JSON.stringify(DB));pintaEstado();vaciarCola()}
