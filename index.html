@@ -184,7 +184,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 </section>
 
 <script>
-var APP_VERSION='v89';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v90';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -200,8 +200,8 @@ var TARIFA_BASE=[
 {id:'mon',c:'Demoliciones',d:'Suplemento por subida y bajada de materiales con montacargas, piso sin ascensor',u:'ud',p:1350,k:['sin ascensor','montacargas']},
 {id:'ele',c:'Instalaciones',d:'Instalación eléctrica nueva de todo el piso: rosetas, tubo de 25 mm, cable de 1,5 para puntos de luz, 2,5 para enchufes y 4 y 6 para la zona de potencia de cocina. Cuatro enchufes por habitación y un cruzamiento, una conmutada y dos enchufes en pasillo, enchufe e interruptor en cada baño, enchufe para cada aparato de cocina y dos de uso vario, cinco enchufes en salón y una conmutada. Cambio de acometida y cuadro eléctrico nuevo',u:'ud',p:3800,k:['instalacion electrica','instalación eléctrica','electricidad','luz nueva','cableado']},
 {id:'bol',c:'Instalaciones',d:'Boletín eléctrico (si hace falta)',u:'ud',p:300,k:['boletin','boletín']},
-{id:'fba',c:'Instalaciones',d:'Instalación de fontanería para un cuarto de baño con inodoro, plato de ducha y lavabo, con llaves de corte por cuarto húmedo',u:'ud',p:1350,k:['fontaneria baño','fontanería baño','fontaneria del baño','baño nuevo','baño completo','reforma de baño','reforma baño']},
-{id:'fco',c:'Instalaciones',d:'Instalación de fontanería para cocina con fregadero y lavadora, con llaves de corte por cuarto húmedo',u:'ud',p:1300,k:['fontaneria cocina','fontanería cocina','fontaneria de cocina','cocina nueva','reforma de cocina','reforma cocina']},
+{id:'fba',c:'Instalaciones',d:'Instalación de fontanería para un cuarto de baño con inodoro, plato de ducha y lavabo, con llaves de corte por cuarto húmedo',u:'ud',p:1350,k:['fontaneria baño','fontanería baño','fontaneria del baño','fontaneria para el baño']},
+{id:'fco',c:'Instalaciones',d:'Instalación de fontanería para cocina con fregadero y lavadora, con llaves de corte por cuarto húmedo',u:'ud',p:1300,k:['fontaneria cocina','fontanería cocina','fontaneria de cocina','fontaneria para la cocina']},
 {id:'cal',c:'Instalaciones',d:'Calefacción con colector individual por radiador y tubería multicapa, seis radiadores de aluminio y dos toalleros para baños, caldera de gas Ferroli o similar',u:'ud',p:5450,k:['calefaccion','calefacción','radiadores','caldera']},
 {id:'niv',c:'Albañilería',d:'Nivelación y recrecido de solado de toda la vivienda con cemento, arena y arlita, dejando listo para colocar el suelo elegido',u:'m2',p:33.5,k:['nivelar','recrecido','nivelacion','nivelación','autonivelante']},
 {id:'pla',c:'Albañilería',d:'Tabique de pladur con placa de yeso laminado de 15 mm por cada cara sobre estructura de acero galvanizado de 70 mm cada 40 cm, lana de roca en el interior, replanteo, nivelación y repaso de juntas',u:'m2',p:66,k:['tabique nuevo','tabique de pladur','pladur','hacer tabique','levantar tabique']},
@@ -279,6 +279,9 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pick'))docu
 /* ---------- dictado → partidas ---------- */
 var SINON=[
 [/alig?atar|alikatar|alicatar|azulejar|poner azulejo/g,'alicatado'],
+[/(poner|colocar)\s+(baldosa|baldosas|gres|porcelanico|ceramica)[^,.;]*?(suelo|suelos)/g,'alicatado'],
+[/(baldosa|baldosas|gres|porcelanico|ceramica)\s+(en\s+)?(el\s+)?suelo/g,'alicatado'],
+[/(baldosa|baldosas|azulejo|azulejos|gres|porcelanico)\s+(en\s+)?(las?\s+)?pared(es)?/g,'alicatado'],
 [/picar todo|picarlo todo|picar las paredes|picar pared/g,'quitar alicatado'],
 [/quitar la ba(n|\u00f1)era|quitar ba(n|\u00f1)era|sacar la ba(n|\u00f1)era|quitar el lavabo|quitar lavabo|quitar el inodoro|quitar el water|quitar los sanitarios|quitar sanitario/g,'quitar sanitarios'],
 [/quitar (todos )?los muebles( de (la )?cocina)?|sacar los muebles de la cocina|quitar la cocina vieja/g,'quitar cocina'],
@@ -291,7 +294,7 @@ var SINON=[
 var PARED=['alc','ali','pip','yes','luc','tra','pip3','pit3'];
 /* saca del texto la superficie de suelo, la altura y, si la dice, el largo por ancho */
 function medidasDe(txt){var r={suelo:0,alto:0,perim:0};
-var lxa=txt.match(/(\d+(?:[.,]\d+)?)\s*(?:x|por)\s*(\d+(?:[.,]\d+)?)\s*(?:m|metros)\b/);
+var lxa=txt.match(/(\d+(?:[.,]\d+)?)\s*(?:m|metros)?\s*(?:de\s*)?(?:largo|ancho)?\s*(?:x|por)\s*(\d+(?:[.,]\d+)?)\s*(?:m|metros)?\s*(?:de\s*)?(?:ancho|largo)?\b/);
 if(lxa){var L=num(lxa[1]),A=num(lxa[2]);if(L>0&&A>0&&L<60&&A<60){r.suelo=L*A;r.perim=2*(L+A)}}
 if(!r.suelo){var su=txt.match(/(\d+(?:[.,]\d+)?)\s*(?:m2|m\u00b2|metros cuadrados)\b/);if(su)r.suelo=num(su[1])}
 var al=txt.match(/(\d+(?:[.,]\d+)?)\s*(?:m|metros)?\s*de\s*(?:alto|altura)\b/)||txt.match(/(\d+(?:[.,]\d+)?)\s*(?:m|metros)\s*(?:de\s*)?(?:alto|altura)\b/)||txt.match(/altura\s*(?:de\s*)?(\d+(?:[.,]\d+)?)/);
@@ -318,6 +321,7 @@ ci.innerHTML='<div style="background:#FFF4E5;border-left:4px solid #C24A00;paddi
 '<div style="margin-top:6px">Puertas: '+[0,1,2,3].map(function(x){return '<button class="mini '+(x===MD.puertas?'ok':'sec')+'" onclick="ponHueco(\'puertas\','+x+')">'+x+'</button>'}).join(' ')+
 '</div><div style="margin-top:6px">Ventanas: '+[0,1,2,3].map(function(x){return '<button class="mini '+(x===MD.ventanas?'ok':'sec')+'" onclick="ponHueco(\'ventanas\','+x+')">'+x+'</button>'}).join(' ')+'</div></div>'}
 function convertir(){leer();var txt=norm(document.getElementById('dictado').value);if(!txt)return;
+window.__ENSUELO=/suelo|solado|pavimento/.test(txt);window.__ENPARED=/pared|alicat|azulej/.test(txt);
 SINON.forEach(function(r){txt=txt.replace(r[0],r[1])});var añad=0,T=tarifa();var ya={};cur.lineas.forEach(function(l){ya[norm(l.d).slice(0,40)]=1});
 var NUMW={'un':1,'una':1,'dos':2,'tres':3,'cuatro':4,'cinco':5,'seis':6,'siete':7,'ocho':8,'nueve':9,'diez':10,'once':11,'doce':12,'trece':13,'catorce':14,'quince':15,'dieciseis':16,'diecisiete':17,'dieciocho':18,'diecinueve':19,'veinte':20,'veintiuno':21,'veintiun':21,'veintidos':22,'veintitres':23,'veinticuatro':24,'veinticinco':25,'veintiseis':26,'veintisiete':27,'veintiocho':28,'veintinueve':29,'treinta':30,'cuarenta':40,'cincuenta':50,'sesenta':60,'setenta':70,'ochenta':80,'noventa':90,'cien':100,'ciento':100};
 var DEC={'treinta':30,'cuarenta':40,'cincuenta':50,'sesenta':60,'setenta':70,'ochenta':80,'noventa':90};
@@ -349,6 +353,13 @@ if(t.u==='m2')m=frase.match(/(\d+(?:[.,]\d+)?)\s*(?:m2|m\u00b2|metros cuadrados)
 if(!m)m=frase.match(new RegExp('(\\d+(?:[.,]\\d+)?)\\s*'+U+'\\b'));
 if(!m&&t.u!=='ud')m=frase.match(/(\d+(?:[.,]\d+)?)\s*(?:metros|m)\b/)}
 if(m)q=num(m[1])}if(calc)__nCalc++;cur.lineas.push({d:t.d,q:q,u:t.u,p:t.p});añad++});
+/* si pide baldosa en el suelo Y en las paredes, van dos lineas: una por cada cosa */
+var MDp=window.__MED||{};
+if(__nCalc&&MDp.suelo>0&&window.__ENSUELO&&window.__ENPARED){
+(window.__PARED||[]).forEach(function(d){var l=cur.lineas.find(function(x){return x.d===d});if(!l)return;
+if(cur.lineas.some(function(x){return x.d===d+' \u2014 en el suelo'}))return;
+l.d=d+' \u2014 en las paredes';
+cur.lineas.push({d:d+' \u2014 en el suelo',q:MDp.suelo,u:l.u,p:l.p});añad++})}
 if(/(quinto|cuarto|tercero|segundo|sexto|septimo)\s+sin\s+ascensor|sin ascensor/.test(txt)){document.getElementById('f_asc').value='1'}
 renderLineas();var ci=document.getElementById('convInfo');
 if(añad){var MDx=window.__MED||{};
