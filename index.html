@@ -184,7 +184,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 </section>
 
 <script>
-var APP_VERSION='v84';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v85';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -439,7 +439,13 @@ function addPlano(){leer();var T=tarifa();document.querySelectorAll('#arqPanel i
 /* ---------- lista de precios para arquitecto ---------- */
 var PR={items:[]};
 function parsePrecios(lineas){var out=[],cap='',act=null;lineas.forEach(function(l){var c=l.match(/^SUBCAP[IÍ]TULO\s+\d+\s+(.+)$/i);if(c){cap=c[1].trim();act=null;return}var m=l.match(/^(\d+\.\d+)\s+(m2|m²|m3|ml|m|ud|u|U|M2|ML|pa|kg)?\s*([A-ZÁÉÍÓÚa-záéíóúñÑ].{2,})$/);if(m&&!/^\d/.test(m[3])){act={code:m[1],u:(m[2]||'ud').toLowerCase().replace('²','2').replace(/^u$/,'ud'),t:m[3].replace(/\.$/,'').trim(),cap:cap,desc:''};out.push(act);return}if(act&&!/^\d+,\d{2}$/.test(l)&&!/^\s*(P.gina|www\.|info@|IZARTE|PRESUPUESTO|CANTIDAD|\d+ de \w+ de \d{4})/i.test(l)&&act.desc.length<300)act.desc+=(act.desc?' ':'')+l});return out}
-function leerPrecios(file){if(!file)return;var info=document.getElementById('prInfo');info.textContent='Leyendo…';cargarPdfjs().then(function(){return pdfItems(file)}).then(function(pages){PR.items=parsePrecios([].concat.apply([],pages.map(aLineas)));var T=tarifa();PR.items.forEach(function(it){var id=casar(it.t);var tt=id&&T.find(function(x){return x.id===id});it.sel=tt?tt.id:'';it.p=tt&&(tt.u===it.u||(/^ml?$/.test(tt.u)&&/^ml?$/.test(it.u)))?tt.p:'';if(tt&&it.p==='')it.nota='Tu tarifa va por '+tt.u+' y aquí piden por '+it.u});info.textContent='';renderPrecios()}).catch(function(e){info.textContent='No he podido leer ese PDF ('+e.message+')'})}
+function leerPrecios(file){if(!file)return;var info=document.getElementById('prInfo');info.textContent='Leyendo…';cargarPdfjs().then(function(){return pdfItems(file)}).then(function(pages){var __ls=[].concat.apply([],pages.map(aLineas));
+PR.items=parsePrecios(__ls);
+/* si el PDF no lleva codigos (estilo Tobao), se lee como medicion y se convierte en lista */
+if(!PR.items.length){var med=parseMediciones(__ls);
+PR.items=med.filter(function(m){return m.t&&m.t.replace(/[^a-zA-Z\u00e0-\u00ff]/g,'').length>5}).map(function(m){
+return {code:m.code||'',u:m.u||'ud',t:m.t.replace(/\s+/g,' ').trim(),cap:'Partidas del estudio',desc:''}})}
+var T=tarifa();PR.items.forEach(function(it){var id=casar(it.t);var tt=id&&T.find(function(x){return x.id===id});it.sel=tt?tt.id:'';it.p=tt&&(tt.u===it.u||(/^ml?$/.test(tt.u)&&/^ml?$/.test(it.u)))?tt.p:'';if(tt&&it.p==='')it.nota='Tu tarifa va por '+tt.u+' y aquí piden por '+it.u});info.textContent=PR.items.length?'':'Ese PDF no trae partidas que yo sepa leer. M\u00e1ndamelo y lo miro.';renderPrecios()}).catch(function(e){info.textContent='No he podido leer ese PDF ('+e.message+')'})}
 function borrarListaPrecios(){if(!PR.items.length)return;if(!confirm('\u00bfBorrar la lista entera del estudio? Se quita de la pantalla; los precios que hayas guardado en tu tarifa se quedan.'))return;
 PR.items=[];var e=document.getElementById('pdfPrecios');if(e)e.value='';var n=document.getElementById('prInfo');if(n)n.textContent='';renderPrecios()}
 function vaciarPreciosPuestos(){if(!PR.items.length)return;if(!confirm('\u00bfDejar todos los precios a cero para ponerlos otra vez?'))return;
