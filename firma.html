@@ -63,7 +63,7 @@ if(TOK)db.collection("firmas").doc(TOK).get().then(function(s){
   document.getElementById('hSub').textContent='Presupuesto nº '+(DATOS.num||'')+(DATOS.cliente?' · '+DATOS.cliente:'');
   if(DATOS.firma){pintaFin(DATOS);return}
   if(DATOS.css){var st=document.createElement('style');st.textContent=DATOS.css.replace(/@media print\{[\s\S]*?\}\s*$/,'');document.head.appendChild(st)}
-  document.getElementById('doc').innerHTML=DATOS.html||'';try{document.querySelectorAll('#doc .sheet').forEach(function(h){h.style.display=''})}catch(_){}
+  document.getElementById('doc').innerHTML=DATOS.html||'';limpiarDoc();
   document.getElementById('aviso').textContent=DATOS.aviso||'';
   document.getElementById('nom').value=DATOS.cliente||'';
   document.getElementById('lopd').innerHTML='<b>Protecci\u00f3n de datos.</b> Quien trata sus datos es '+(DATOS.responsable||DATOS.marca||'el contratista')+
@@ -74,6 +74,11 @@ if(TOK)db.collection("firmas").doc(TOK).get().then(function(s){
   if(location.hash==='#firmar')setTimeout(function(){var e=document.getElementById('firmar');if(e)e.scrollIntoView({behavior:'smooth'})},300);
 }).catch(function(e){document.getElementById('cargando').textContent='No he podido abrir el presupuesto ('+e.message+')';});
 
+function limpiarDoc(){var d=document.getElementById('doc');if(!d)return;
+try{d.querySelectorAll('.sheet').forEach(function(h){h.style.display=''});
+var env=d.querySelectorAll('.sheet');for(var k=0;k<env.length;k++){var h=env[k];if(h.querySelector('.sheet')){var hijas=[].slice.call(h.querySelectorAll('.sheet'));hijas.forEach(function(x){h.parentNode.insertBefore(x,h)});h.parentNode.removeChild(h)}}
+var vistas={};[].slice.call(d.querySelectorAll('.sheet')).forEach(function(h){var t=(h.id||'')+'|'+(h.textContent||'').replace(/\s+/g,' ').trim().slice(0,300);if(vistas[t]){h.parentNode.removeChild(h);return}vistas[t]=1});
+}catch(_){}}
 var H2C='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',JSP='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
 function carga(u,t){return new Promise(function(ok,ko){if(t())return ok();var e=document.createElement('script');e.src=u;e.onload=ok;e.onerror=ko;document.head.appendChild(e)})}
 function descargarPdf(){var b=document.getElementById('btnPdf');var ant=b?b.textContent:'';if(b){b.textContent='Preparando el PDF\u2026';b.disabled=true}
