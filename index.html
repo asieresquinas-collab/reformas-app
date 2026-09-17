@@ -195,7 +195,7 @@ body.capturando #sh_dosier .segimg img{height:20mm!important}body.capturando #sh
 </section>
 
 <script>
-var APP_VERSION='v118';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v119';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -1432,11 +1432,12 @@ var fall=obras.filter(function(o){return !(o.lat&&o.lon)});
 info.innerHTML=pts.length+' de '+obras.length+' obra(s) colocadas'+(fall.length?' \u00b7 <b>sin colocar:</b> '+fall.map(function(o){return '<b>'+o.nom+'</b> <button class="mini sec" onclick="chinchetaAMano(\''+o.num+'\')">Colocar a mano</button>'}).join(' '):'')+
 (obras.length?'<div style="margin-top:6px">'+obras.map(function(o){return '<button class="mini sec" onclick="chinchetaAMano(\''+o.num+'\')">Mover '+o.nom+'</button>'}).join(' ')+'</div>':'');return}
 var p=obras[i];
-var seguir=function(g){if(g){var col=colorEstado(p.estado);
-var ic=L.divIcon({className:'',html:'<div style="background:'+col+';width:22px;height:22px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)"></div>',iconSize:[22,22],iconAnchor:[11,22]});
+var seguir=function(g){var aprox=false;if(!g){g={lat:43.263+(Math.random()-.5)*0.01,lon:-2.935+(Math.random()-.5)*0.01};aprox=true}
+var col=aprox?'#8a8f94':colorEstado(p.estado);
+var ic=L.divIcon({className:'',html:'<div style="background:'+col+';width:22px;height:22px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px '+(aprox?'dashed':'solid')+' #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)"></div>',iconSize:[22,22],iconAnchor:[11,22]});
 var m=L.marker([g.lat,g.lon],{icon:ic}).addTo(MAPAOBRAS);
-m.bindPopup(popupObra(p));MARCAS.push(m);pts.push([g.lat,g.lon])}
-setTimeout(function(){paso(i+1)},g?350:0)};
+m.bindPopup((aprox?'<div style="color:#b3261e;font-weight:700;margin-bottom:4px">Sin localizar la direcci\u00f3n \u2014 est\u00e1 puesta a ojo<\/div><button class="mini sec" onclick="chinchetaAMano(\''+p.num+'\')">Colocarla bien<\/button>':'')+popupObra(p));MARCAS.push(m);pts.push([g.lat,g.lon]);
+setTimeout(function(){paso(i+1)},aprox?0:350)};
 if(p.lat&&p.lon)seguir({lat:p.lat,lon:p.lon});
 else geocodificar(p.dir).then(function(g){if(g){p.lat=g.lat;p.lon=g.lon;DB.presus[p.num]=p;save()}seguir(g)})};
 paso(0)}).catch(function(){info.textContent='No he podido cargar el mapa. Vuelve a darle a Actualizar.'})}
