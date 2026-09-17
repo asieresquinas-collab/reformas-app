@@ -120,7 +120,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 <div id="ceroInfo" class="aviso" style="display:none"></div><table class="lines"><thead><tr><th>Descripción</th><th class="n">Cantidad</th><th class="n">Ud</th><th class="n">Precio</th><th class="n">Importe</th><th></th></tr></thead><tbody id="tb"></tbody></table>
 <div class="row" style="margin-top:12px;align-items:flex-start"><div style="flex:1;min-width:240px"><label class="f">Notas que verá el cliente en el presupuesto</label><textarea id="f_obs" rows="4"></textarea>
 <label style="display:flex;gap:8px;align-items:center;margin-top:8px"><input type="checkbox" id="f_suelo" style="width:auto"> Se mantiene el suelo actual bajo el flotante (poner el aviso de responsabilidad)</label></div>
-<div class="tot"><div><span>Base imponible</span><b id="t_base">0,00 €</b></div><div><span>IVA <span id="t_ivap">21</span> %</span><b id="t_iva">0,00 €</b></div><div class="big"><span>Total</span><b id="t_tot">0,00 €</b></div></div></div>
+<div class="tot"><div><span>Base imponible</span><b id="t_base">0,00 €</b></div><div><span>IVA <span id="t_ivap">21</span> % <button class="mini sec" type="button" onclick="cambiarIva()" style="margin-left:6px">Cambiar</button></span><b id="t_iva">0,00 €</b></div><div class="big"><span>Total</span><b id="t_tot">0,00 €</b></div></div></div>
 <div id="revBox" style="margin-top:12px"></div><div class="row" style="margin-top:12px"><button class="extraBtn" onclick="revisar(true)">Revisar el presupuesto</button><button class="ok extraBtn" onclick="guardar()">Guardar</button><button class="sec" onclick="nuevo()">Nuevo presupuesto</button><button class="sec extraBtn" onclick="duplicar()">Duplicar como variante</button><button class="sec" onclick="fotosDeEste()">Fotos de la obra</button><button class="sec extraBtn" onclick="vaciarLineas()">Borrar todos los trabajos</button><button class="sec extraBtn" style="border-color:#b3261e;color:#b3261e" onclick="borrarEste()">Borrar este presupuesto</button><button class="sec" id="btnMasOpc" type="button" onclick="document.body.classList.toggle('vermasbtn');this.textContent=document.body.classList.contains('vermasbtn')?'Menos opciones':'Más opciones…'">Más opciones…</button><span id="msg" style="color:var(--ok);font-weight:600"></span></div></div>
 </section>
 
@@ -184,7 +184,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 </section>
 
 <script>
-var APP_VERSION='v91';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v92';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -362,6 +362,7 @@ if(__nCalc&&MDp.suelo>0&&window.__ENSUELO&&window.__ENPARED){
 (window.__PARED||[]).forEach(function(d){var l=cur.lineas.find(function(x){return x.d===d});if(!l)return;
 if(cur.lineas.some(function(x){return x.d===d+' \u2014 en el suelo'}))return;
 l.d=d+' \u2014 en las paredes';
+window.__PARED[window.__PARED.indexOf(d)]=l.d;
 cur.lineas.push({d:d+' \u2014 en el suelo',q:MDp.suelo,u:l.u,p:l.p});añad++})}
 if(/(quinto|cuarto|tercero|segundo|sexto|septimo)\s+sin\s+ascensor|sin ascensor/.test(txt)){document.getElementById('f_asc').value='1'}
 renderLineas();var ci=document.getElementById('convInfo');
@@ -905,6 +906,12 @@ if(!e||!v||!p)return;
 if(!modoSimple()){e.style.display='none';v.style.display='';p.style.display='';return}
 var k='';try{k=sessionStorage.getItem('vr_meter')||''}catch(_){}
 if(k)meterPor(k);else{e.style.display='';v.style.display='none';p.style.display='none'}}
+function cambiarIva(){verMasCliente();
+var sel=document.getElementById('f_iva');if(!sel)return;
+sel.scrollIntoView({behavior:'smooth',block:'center'});
+sel.style.outline='3px solid var(--brick)';
+setTimeout(function(){try{sel.focus();if(sel.showPicker)sel.showPicker()}catch(_){}},350);
+setTimeout(function(){sel.style.outline=''},2500)}
 function verMasCliente(){var e=document.getElementById('cliExtra'),b=document.getElementById('cliMasBtn');
 if(e){e.style.display='';}if(b){b.style.display='none'}}
 function plegarCliente(){var e=document.getElementById('cliExtra'),b=document.getElementById('cliMasBtn');if(!e||!b)return;
