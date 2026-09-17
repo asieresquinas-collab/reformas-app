@@ -1424,8 +1424,8 @@ cargarLeaflet().then(function(){
 if(!MAPAOBRAS){MAPAOBRAS=L.map('mapObras').setView([43.263,-2.935],12);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'\u00a9 OpenStreetMap'}).addTo(MAPAOBRAS)}
 setTimeout(function(){MAPAOBRAS.invalidateSize()},150);
-if(RUN!==window.__mapaRun)return;MARCAS.forEach(function(m){try{MAPAOBRAS.removeLayer(m)}catch(_){}});MARCAS=[];
-var obras=obrasDelMapa();
+if(RUN!==window.__mapaRun)return;MARCAS.forEach(function(m){try{MAPAOBRAS.removeLayer(m)}catch(_){}});MARCAS=[];try{MAPAOBRAS.eachLayer(function(l){if(l instanceof L.Marker)MAPAOBRAS.removeLayer(l)})}catch(_){}
+var obras=obrasDelMapa().filter(function(o,i,a){return a.findIndex(function(x){return String(x.num)===String(o.num)})===i});
 if(!obras.length){info.textContent='No hay obras abiertas con direcci\u00f3n puesta.';return}
 info.textContent='Colocando '+obras.length+' obra(s)\u2026';
 var pts=[];
