@@ -184,7 +184,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 </section>
 
 <script>
-var APP_VERSION='v90';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v91';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -297,7 +297,10 @@ function medidasDe(txt){var r={suelo:0,alto:0,perim:0};
 var lxa=txt.match(/(\d+(?:[.,]\d+)?)\s*(?:m|metros)?\s*(?:de\s*)?(?:largo|ancho)?\s*(?:x|por)\s*(\d+(?:[.,]\d+)?)\s*(?:m|metros)?\s*(?:de\s*)?(?:ancho|largo)?\b/);
 if(lxa){var L=num(lxa[1]),A=num(lxa[2]);if(L>0&&A>0&&L<60&&A<60){r.suelo=L*A;r.perim=2*(L+A)}}
 if(!r.suelo){var su=txt.match(/(\d+(?:[.,]\d+)?)\s*(?:m2|m\u00b2|metros cuadrados)\b/);if(su)r.suelo=num(su[1])}
-var al=txt.match(/(\d+(?:[.,]\d+)?)\s*(?:m|metros)?\s*de\s*(?:alto|altura)\b/)||txt.match(/(\d+(?:[.,]\d+)?)\s*(?:m|metros)\s*(?:de\s*)?(?:alto|altura)\b/)||txt.match(/altura\s*(?:de\s*)?(\d+(?:[.,]\d+)?)/);
+var al=txt.match(/(\d+(?:[.,]\d+)?)\s*(?:m|metros)?\s*de\s*(?:alto|altura)\b/)
+||txt.match(/(\d+(?:[.,]\d+)?)\s*(?:m|metros)\s*(?:de\s*)?(?:alto|altura)\b/)
+/* "alto de pared dos metros" / "altura de techo 2,5" */
+||txt.match(/(?:alto|altura)\s*(?:de\s*)?(?:la\s*|las\s*|el\s*)?(?:pared(?:es)?|techo|bano|ba\u00f1o|cocina|habitacion)?\s*(?:de\s*)?(\d+(?:[.,]\d+)?)/);
 if(al)r.alto=num(al[1]);
 if(!r.perim&&r.suelo>0)r.perim=4*Math.sqrt(r.suelo);
 var pu=txt.match(/(\d+)\s*puertas?\b/);r.puertas=pu?num(pu[1]):(/\bpuerta\b/.test(txt)?1:null);
