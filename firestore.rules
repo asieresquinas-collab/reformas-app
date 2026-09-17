@@ -13,7 +13,7 @@ service cloud.firestore {
       allow update: if request.auth != null
         || (resource.data.firma == null
             && request.resource.data.diff(resource.data).affectedKeys()
-                 .hasOnly(['firma','nombreFirma','dni','fechaFirma','aceptado']));
+                 .hasOnly(['firma','nombreFirma','dni','fechaFirma','aceptado','visto']));
     }
     match /seguimiento/{token} {
       allow read: if true;
