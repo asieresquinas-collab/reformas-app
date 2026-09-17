@@ -195,7 +195,7 @@ body.capturando #sh_dosier .segimg img{height:20mm!important}body.capturando #sh
 </section>
 
 <script>
-var APP_VERSION='v124';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v125';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -1437,7 +1437,7 @@ var p=obras[i];
 var seguir=function(g){if(RUN!==window.__mapaRun)return;var aprox=false;if(!g){var sem=0,ns=String(p.num||'');for(var z=0;z<ns.length;z++)sem+=ns.charCodeAt(z);g={lat:43.2630+((sem%7)-3)*0.0016,lon:-2.9350+((Math.floor(sem/7)%7)-3)*0.0022};aprox=true}
 var col=aprox?'#8a8f94':colorEstado(p.estado);
 var ic=L.divIcon({className:'',html:'<div style="position:relative;width:38px;height:46px">'+'<div style="position:absolute;left:0;top:0;width:38px;height:38px;background:#1c1f22;border-radius:50% 50% 50% 50%;border:3px '+(aprox?'dashed':'solid')+' '+col+';box-shadow:0 2px 6px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center">'+'<img src="'+LOGO_PIN+'" style="width:24px;height:24px;object-fit:contain" alt="">'+'</div><div style="position:absolute;left:14px;top:33px;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:11px solid '+col+'"></div></div>',iconSize:[38,46],iconAnchor:[19,46],popupAnchor:[0,-42]});
-var m=L.marker([g.lat,g.lon],{icon:ic,draggable:true,autoPan:true}).addTo(MAPAOBRAS);
+var yaAhi=pts.filter(function(q){return Math.abs(q[0]-g.lat)<0.00012&&Math.abs(q[1]-g.lon)<0.00012}).length;if(yaAhi){g={lat:g.lat+0.00022*yaAhi,lon:g.lon+0.00028*yaAhi}}var m=L.marker([g.lat,g.lon],{icon:ic,draggable:true,autoPan:true}).addTo(MAPAOBRAS);
 m.on('dragend',function(){var ll=m.getLatLng();var q=DB.presus[p.num];if(!q)return;q.lat=ll.lat;q.lon=ll.lng;q.dirGeo=(q.dirMapa||q.dir||'').trim().toLowerCase();q.fijadaAMano=true;DB.presus[p.num]=q;save();try{subirPresu(p.num)}catch(_){}var inf=document.getElementById('mapInfo');if(inf)inf.textContent='Chincheta de '+(q.nom||q.num)+' guardada donde la has dejado.';try{m.setIcon(L.divIcon({className:'',html:'<div style="position:relative;width:38px;height:46px"><div style="position:absolute;left:0;top:0;width:38px;height:38px;background:#1c1f22;border-radius:50%;border:3px solid '+colorEstado(q.estado)+';box-shadow:0 2px 6px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center"><img src="'+LOGO_PIN+'" style="width:24px;height:24px;object-fit:contain" alt=""></div><div style="position:absolute;left:14px;top:33px;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:11px solid '+colorEstado(q.estado)+'"></div></div>',iconSize:[38,46],iconAnchor:[19,46],popupAnchor:[0,-42]}))}catch(_){}});
 m.bindPopup((aprox?'<div style="color:#b3261e;font-weight:700;margin-bottom:4px">Sin localizar la direcci\u00f3n \u2014 est\u00e1 puesta a ojo<\/div><button class="mini sec" onclick="chinchetaAMano(\''+p.num+'\')">Colocarla bien<\/button>':'')+popupObra(p));MARCAS.push(m);pts.push([g.lat,g.lon]);
 setTimeout(function(){paso(i+1)},aprox?0:350)};
