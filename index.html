@@ -195,7 +195,7 @@ body.capturando #sh_dosier .segimg img{height:20mm!important}body.capturando #sh
 </section>
 
 <script>
-var APP_VERSION='v122';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v123';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -1414,7 +1414,7 @@ var d=prompt('No encuentro esa direcci\u00f3n. Esc\u00edbela como la buscar\u00e
 if(!d)return;var info=document.getElementById('mapInfo');if(info)info.textContent='Buscando\u2026';
 buscarNominatim(/bilbao|bizkaia|vizcaya/i.test(d)?d:d+', Bizkaia').then(function(g){
 if(!g){if(info)info.textContent='Sigo sin encontrarla. Prueba con la calle y el pueblo, sin piso ni letra.';return}
-p.lat=g.lat;p.lon=g.lon;p.dirMapa=d;DB.presus[n]=p;save();try{subirPresu(n)}catch(_){}pintarMapa()})}
+p.lat=g.lat;p.lon=g.lon;p.dirMapa=d;p.dirGeo=d.trim().toLowerCase();DB.presus[n]=p;save();try{subirPresu(n)}catch(_){}pintarMapa()})}
 function obrasDelMapa(){return Object.values(DB.presus).filter(function(p){return p.dir&&p.estado!=='cobrado'})}
 function colorEstado(e){return e==='obra'?'#1a7a3f':(e==='finalizado'?'#253340':(e==='aceptado'?'#0b6bcb':(e==='borrador'?'#8a8f98':'#D7481D')))}
 function pintarMapa(forzar){var cont=document.getElementById('mapObras');if(!cont)return;
@@ -1440,8 +1440,10 @@ var ic=L.divIcon({className:'',html:'<div style="position:relative;width:38px;he
 var m=L.marker([g.lat,g.lon],{icon:ic}).addTo(MAPAOBRAS);
 m.bindPopup((aprox?'<div style="color:#b3261e;font-weight:700;margin-bottom:4px">Sin localizar la direcci\u00f3n \u2014 est\u00e1 puesta a ojo<\/div><button class="mini sec" onclick="chinchetaAMano(\''+p.num+'\')">Colocarla bien<\/button>':'')+popupObra(p));MARCAS.push(m);pts.push([g.lat,g.lon]);
 setTimeout(function(){paso(i+1)},aprox?0:350)};
-if(p.lat&&p.lon)seguir({lat:p.lat,lon:p.lon});
-else geocodificar(p.dir).then(function(g){if(g){p.lat=g.lat;p.lon=g.lon;DB.presus[p.num]=p;save()}seguir(g)})};
+var dirAhora=(p.dirMapa||p.dir||'').trim().toLowerCase();
+var valeLoGuardado=p.lat&&p.lon&&(p.dirGeo||'')===dirAhora&&!forzar;
+if(valeLoGuardado)seguir({lat:p.lat,lon:p.lon});
+else geocodificar(p.dirMapa||p.dir).then(function(g){if(g){p.lat=g.lat;p.lon=g.lon;p.dirGeo=dirAhora;DB.presus[p.num]=p;save();try{subirPresu(p.num)}catch(_){}}else if(p.lat&&p.lon&&(p.dirGeo||'')===dirAhora){g={lat:p.lat,lon:p.lon}}seguir(g)})};
 paso(0)}).catch(function(){info.textContent='No he podido cargar el mapa. Vuelve a darle a Actualizar.'})}
 function popupObra(p){var tot=p.lineas.reduce(function(s,l){return s+l.q*l.p},0)*(1+num(p.iva)/100);
 var est=(EST[p.estado]||['',''])[0];
