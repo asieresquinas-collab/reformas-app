@@ -3,17 +3,20 @@
 <title>Vornicu Reformas · Presupuestos</title>
 <link rel="manifest" href="manifest.json?v=80"><meta name="theme-color" content="#111214">
 <meta name="apple-mobile-web-app-capable" content="yes"><link rel="apple-touch-icon" href="icons/icon-192.png?v=80"><link rel="icon" href="icons/icon-192.png?v=80">
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=Roboto+Serif:wdth,wght@75,700;75,800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
+@font-face{font-family:'TitAzk';src:url('fonts/titulos-bold.woff2') format('woff2');font-weight:700 900;font-style:normal;font-display:swap}
+@font-face{font-family:'TitAzk';src:url('fonts/titulos-regular.woff2') format('woff2');font-weight:100 600;font-style:normal;font-display:swap}
+
 :root{--crema:#FBF8F1;--ink:#15161a;--slate:#111214;--slate2:#2c2e33;--brick:#A87B18;--brick2:#F7EED9;--paper:#f3f1ec;--line:#ddd8ce;--ok:#8A6A12;--muted:#6b7178}
 *{box-sizing:border-box}html,body{margin:0;background:var(--paper);color:var(--ink);font-family:Barlow,system-ui,sans-serif;font-size:14px}
-h1,h2,h3,.cond{font-family:'Roboto Serif','DejaVu Serif Condensed',Georgia,serif;font-stretch:75%;font-weight:800;letter-spacing:.2px;margin:0}
+h1,h2,h3,.cond{font-family:'TitAzk','DejaVu Serif Condensed',Georgia,serif;font-stretch:75%;font-weight:800;letter-spacing:.2px;margin:0}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer;border:0;border-radius:0;padding:9px 14px;background:var(--slate);color:#fff;font-weight:600}
 button.sec{background:#fff;color:var(--slate);border:1.5px solid var(--slate)}button.warn{background:var(--brick)}button.ok{background:var(--ok)}button.mini{padding:4px 8px;font-size:12px}
 input,select,textarea{border:1.5px solid var(--line);background:#fff;padding:8px 9px;width:100%;border-radius:0}input:focus,textarea:focus,select:focus{outline:2px solid var(--brick);outline-offset:0;border-color:var(--brick)}
 #topnav{background:var(--slate);color:#fff;display:flex;align-items:stretch;flex-wrap:wrap;border-bottom:4px solid var(--brick);position:sticky;top:0;z-index:20}
-#topnav .brand{padding:10px 14px;font-family:'Roboto Serif','DejaVu Serif Condensed',Georgia,serif;font-stretch:75%;font-weight:800;font-size:19px;letter-spacing:.5px}
+#topnav .brand{padding:10px 14px;font-family:'TitAzk','DejaVu Serif Condensed',Georgia,serif;font-stretch:75%;font-weight:800;font-size:19px;letter-spacing:.5px}
 .ntab{background:transparent;color:rgba(255,255,255,.75);padding:12px 12px;font-weight:600;border-bottom:3px solid transparent}.ntab.on{color:#fff;border-bottom-color:var(--brick)}
 #topnav .acts{margin-left:auto;display:flex;gap:6px;align-items:center;padding:6px 10px}
 .page{display:none;max-width:980px;margin:0 auto;padding:14px}.page.on{display:block}
@@ -24,21 +27,21 @@ label.f{display:block;font-size:12px;color:var(--muted);font-weight:600;margin-b
 table.lines{width:100%;border-collapse:collapse}table.lines th{background:var(--slate);color:#fff;font-weight:600;font-size:12px;text-align:left;padding:7px 8px}
 table.lines tr.cero td{background:var(--brick2)}table.lines td{padding:5px 6px;border-bottom:1px solid var(--line);vertical-align:top}table.lines td textarea{min-height:44px;resize:vertical}
 table.lines .n{width:88px;text-align:right}table.lines .imp{text-align:right;font-weight:700;white-space:nowrap;padding-top:12px}
-.tot{margin-left:auto;width:320px;max-width:100%}.tot div{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--line)}.tot .big{font-family:'Roboto Serif','DejaVu Serif Condensed',Georgia,serif;font-stretch:75%;font-size:26px;font-weight:800;border-bottom:0;border-top:2px solid var(--ink)}
+.tot{margin-left:auto;width:320px;max-width:100%}.tot div{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--line)}.tot .big{font-family:'TitAzk','DejaVu Serif Condensed',Georgia,serif;font-stretch:75%;font-size:26px;font-weight:800;border-bottom:0;border-top:2px solid var(--ink)}
 .pick{position:relative}.pick ul{position:absolute;left:0;right:0;top:100%;background:#fff;border:1.5px solid var(--slate);max-height:280px;overflow:auto;z-index:9;margin:0;padding:0;list-style:none;display:none}.pick ul li{padding:8px 10px;border-bottom:1px solid var(--line);cursor:pointer}.pick ul li:hover{background:var(--brick2)}.pick ul li small{color:var(--muted);float:right}
 .chip{display:inline-block;padding:2px 8px;font-size:12px;font-weight:700;color:#fff;background:var(--muted)}.chip.env{background:#2376C5}.chip.ace{background:var(--ok)}.chip.obra{background:var(--brick)}.chip.cob{background:#5b3a99}
-.cli{display:grid;grid-template-columns:70px 1fr auto auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}.cli b{font-family:'Roboto Serif','DejaVu Serif Condensed',Georgia,serif;font-stretch:75%;font-size:20px}
+.cli{display:grid;grid-template-columns:70px 1fr auto auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}.cli b{font-family:'TitAzk','DejaVu Serif Condensed',Georgia,serif;font-stretch:75%;font-size:20px}
 .aviso{background:var(--brick2);border-left:4px solid var(--brick);padding:9px 12px;margin:8px 0}
-.tarifa-cat{font-family:'Roboto Serif','DejaVu Serif Condensed',Georgia,serif;font-stretch:75%;font-size:20px;font-weight:800;margin:14px 0 4px;color:var(--slate)}
+.tarifa-cat{font-family:'TitAzk','DejaVu Serif Condensed',Georgia,serif;font-stretch:75%;font-size:20px;font-weight:800;margin:14px 0 4px;color:var(--slate)}
 .tarifa-cat[style*="background"]{color:#fff;padding:6px 12px;border-radius:6px;letter-spacing:.4px}
 .tar{display:grid;grid-template-columns:1fr 60px 110px;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}
 /* ---- documentos (dosier / hoja presupuesto / contrato) ---- */
 .sheet{background:var(--crema);width:210mm;max-width:100%;margin:0 auto 14px;padding:16mm 16mm 14mm;box-shadow:0 2px 10px rgba(0,0,0,.08);position:relative}
 .dochead{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid var(--slate);padding-bottom:8px;margin-bottom:12px}
-.dochead .who{font-family:'Roboto Serif','DejaVu Serif Condensed',Georgia,serif;font-stretch:75%;font-size:22px;font-weight:800;line-height:1.05}.dochead .who small{display:block;font-family:Barlow;font-size:11px;font-weight:400;color:var(--muted);line-height:1.4;margin-top:4px}
+.dochead .who{font-family:'TitAzk','DejaVu Serif Condensed',Georgia,serif;font-stretch:75%;font-size:22px;font-weight:800;line-height:1.05}.dochead .who small{display:block;font-family:Barlow;font-size:11px;font-weight:400;color:var(--muted);line-height:1.4;margin-top:4px}
 .dochead .doc{text-align:right}.dochead .doc h2{font-size:34px;color:var(--brick);line-height:1}.dochead .doc div{font-size:12px;color:var(--muted)}
 .ptab{width:100%;border-collapse:collapse;font-size:12px}.ptab th{background:var(--slate);color:#fff;text-align:left;padding:6px 7px;font-weight:600}.ptab td{padding:6px 7px;border-bottom:1px solid var(--line);vertical-align:top}.ptab td.r,.ptab th.r{text-align:right;white-space:nowrap}
-.ptab tr.cap td{background:var(--paper);font-family:'Roboto Serif','DejaVu Serif Condensed',Georgia,serif;font-stretch:75%;font-size:15px;font-weight:800;padding:8px 7px 4px}
+.ptab tr.cap td{background:var(--paper);font-family:'TitAzk','DejaVu Serif Condensed',Georgia,serif;font-stretch:75%;font-size:15px;font-weight:800;padding:8px 7px 4px}
 .foot{position:absolute;left:16mm;right:16mm;bottom:8mm;font-size:10px;color:var(--muted);border-top:1px solid var(--line);padding-top:5px;display:flex;justify-content:space-between}
 /* portada */
 .portada:before{content:"";position:absolute;top:0;left:0;right:0;height:62mm;z-index:2;background:linear-gradient(180deg,rgba(0,0,0,.62),rgba(0,0,0,0))}
@@ -46,14 +49,14 @@ table.lines .n{width:88px;text-align:right}table.lines .imp{text-align:right;fon
 .portada img.marca{width:auto!important;height:34mm!important;max-width:100%!important;object-fit:contain!important;object-position:left top!important;position:static!important;display:block!important;filter:drop-shadow(0 2mm 5mm rgba(0,0,0,.75))}
 .pcabe{position:absolute;left:16mm;right:16mm;top:11mm;z-index:3}
 .pover{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(37,51,64,.50) 0%,rgba(37,51,64,.42) 26%,rgba(251,248,241,.55) 40%,rgba(251,248,241,.94) 55%,#FBF8F1 68%,#FBF8F1 100%)}
-.pcont{position:absolute;left:16mm;right:16mm;bottom:12mm;color:var(--ink)}.ptag{font-family:'Roboto Serif','DejaVu Serif Condensed',Georgia,serif;font-stretch:75%;font-size:54px;font-weight:800;line-height:.95;color:var(--ink)}.pclaim{font-family:'Roboto Serif','DejaVu Serif Condensed',Georgia,serif;font-stretch:75%;font-size:22px;font-weight:600;font-style:italic;margin-top:10px;max-width:150mm;line-height:1.15;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.45)}
+.pcont{position:absolute;left:16mm;right:16mm;bottom:12mm;color:var(--ink)}.ptag{font-family:'TitAzk','DejaVu Serif Condensed',Georgia,serif;font-stretch:75%;font-size:54px;font-weight:800;line-height:.95;color:var(--ink)}.pclaim{font-family:'TitAzk','DejaVu Serif Condensed',Georgia,serif;font-stretch:75%;font-size:22px;font-weight:600;font-style:italic;margin-top:10px;max-width:150mm;line-height:1.15;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.45)}
 .psub{font-size:14px;margin-top:8px;max-width:120mm;color:var(--muted)}
 .pline{height:5px;background:var(--brick);margin:0 -16mm}
 .dos2{display:grid;grid-template-columns:1fr 1fr;gap:9mm;margin-top:8mm}.dos2 h3{font-size:26px;line-height:1;margin-bottom:6px}.dos2 p{margin:0 0 8px;line-height:1.45}
-.vals{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;margin:8px 0 12px}.vals div b{display:block;font-family:'Roboto Serif','DejaVu Serif Condensed',Georgia,serif;font-stretch:75%;font-size:16px}.vals div span{font-size:11px;color:var(--muted)}
+.vals{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;margin:8px 0 12px}.vals div b{display:block;font-family:'TitAzk','DejaVu Serif Condensed',Georgia,serif;font-stretch:75%;font-size:16px}.vals div span{font-size:11px;color:var(--muted)}
 .serv{list-style:none;padding-left:0;margin:0}.serv li{margin:0 0 4px;padding-left:12px;position:relative;font-size:12.5px}.serv li:before{content:"";position:absolute;left:0;top:7px;width:6px;height:6px;background:var(--brick)}
 .dos2 .fotos img{width:100%;height:53mm;object-fit:cover;display:block;margin-bottom:6px;border-radius:3px}.segui{grid-column:1/-1;display:grid;grid-template-columns:1.35fr 1.4fr;gap:6mm;align-items:center;margin-top:0;padding-top:2mm;border-top:1px solid var(--line)}.segui h3{font-size:20px!important;margin-bottom:4px!important}.segui p{font-size:11px;color:var(--muted);line-height:1.35;margin:0}.segimg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px}.segimg img{width:100%;height:22mm;object-fit:cover;display:block;border-radius:3px}
-.clausula{font-size:11.5px;line-height:1.45;margin:0 0 7px}.clausula b{font-family:'Roboto Serif','DejaVu Serif Condensed',Georgia,serif;font-stretch:75%;font-size:14px}
+.clausula{font-size:11.5px;line-height:1.45;margin:0 0 7px}.clausula b{font-family:'TitAzk','DejaVu Serif Condensed',Georgia,serif;font-stretch:75%;font-size:14px}
 .firmas{display:grid;grid-template-columns:1fr 1fr;gap:20mm;margin-top:16mm}.firmas div{border-top:1px solid var(--ink);padding-top:5px;font-size:11px}
 .condp{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.4}
 @media (max-width:700px){.sheet{padding:10mm 8mm}.dos2,.firmas,.segui{grid-template-columns:1fr}.ptag{font-size:34px}.cli{grid-template-columns:60px 1fr;} .tar{grid-template-columns:1fr 50px 90px}}
@@ -187,7 +190,7 @@ body.simple.vermasbtn .extraBtn{display:inline-block}
 </section>
 
 <script>
-var APP_VERSION='v106';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v107';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
