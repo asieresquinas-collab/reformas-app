@@ -77,7 +77,7 @@ if(TOK)db.collection("firmas").doc(TOK).get().then(function(s){
 var H2C='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',JSP='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
 function carga(u,t){return new Promise(function(ok,ko){if(t())return ok();var e=document.createElement('script');e.src=u;e.onload=ok;e.onerror=ko;document.head.appendChild(e)})}
 function descargarPdf(){var b=document.getElementById('btnPdf');var ant=b?b.textContent:'';if(b){b.textContent='Preparando el PDF\u2026';b.disabled=true}
-var hojas=[].slice.call(document.querySelectorAll('#doc .sheet')).filter(function(h){h.style.display='';return h.offsetWidth>0&&h.offsetHeight>0});
+var vistas={};var hojas=[].slice.call(document.querySelectorAll('#doc .sheet')).filter(function(h){h.style.display='';if(h.querySelector('.sheet'))return false;if(!(h.offsetWidth>0&&h.offsetHeight>0))return false;var t=(h.id||'')+'|'+(h.textContent||'').replace(/\s+/g,' ').trim().slice(0,300);if(vistas[t])return false;vistas[t]=1;return true});
 if(!hojas.length)hojas=[document.getElementById('doc')];
 carga(H2C,function(){return !!window.html2canvas}).then(function(){return carga(JSP,function(){return !!(window.jspdf&&window.jspdf.jsPDF)})}).then(function(){
 var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4',orientation:'p'});var i=0;
