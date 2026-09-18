@@ -94,7 +94,7 @@ body.capturando #sh_dosier .segimg img{height:20mm!important}body.capturando #sh
 <div id="login" style="display:none;position:fixed;inset:0;background:var(--slate);z-index:50;align-items:center;justify-content:center;padding:20px"><div class="card" style="max-width:360px;width:100%"><img src="icons/icon-192.png?v=80" alt="" style="height:64px;width:64px;border-radius:12px;display:block;margin:0 auto 10px"><h2 style="font-size:26px;margin-bottom:4px;text-align:center" id="loginTitle">VORMA CONSTRUCT SL</h2><p style="color:var(--muted);margin:0 0 10px">Entra con tu correo y tu clave.</p><label class="f">Correo</label><input id="lg_email" type="email" autocomplete="username"><label class="f" style="margin-top:8px">Clave</label><input id="lg_pass" type="password" autocomplete="current-password"><div class="row" style="margin-top:12px"><button onclick="entrar()">Entrar</button><span id="lg_msg" style="color:var(--brick)"></span></div>
 <button class="sec" style="width:100%;margin-top:10px" onclick="olvideClave()">No me acuerdo de la clave</button>
 <button class="sec" style="width:100%;margin-top:6px" onclick="crearCuenta()">Crear una cuenta nueva</button></div></div>
-<nav id="topnav"><div class="brand" id="brandTxt">VORNICU REFORMAS</div>
+<nav id="topnav"><button id="btnAtras" onclick="history.back()" title="Atras" style="display:none;background:transparent;border:0;color:#fff;font-size:22px;font-weight:700;padding:0 12px;cursor:pointer">←</button><div class="brand" id="brandTxt">VORNICU REFORMAS</div>
 <button class="ntab on" data-t="presupuesto">Presupuesto</button><button class="ntab" data-t="clientes">Clientes</button><button class="ntab" data-t="mapa">Mapa de obras</button><button class="ntab" data-t="contrato">Contrato</button><button class="ntab" data-t="tarifa">Mis precios</button><button class="ntab" data-t="precios">Lista de precios</button><button class="ntab" id="masTabs" type="button" onclick="verMas()">Más…</button><button class="ntab" data-t="ajustes">Ajustes</button><button class="ntab" data-t="legal">Mis papeles</button><button class="ntab" data-t="ayuda">Ayuda</button>
 <div class="acts"><span id="syncDot" title="Guardado en la nube" style="width:10px;height:10px;background:#888;display:inline-block"></span><button class="warn" onclick="imprimir('todo')">PDF completo</button><button class="sec" style="border-color:#fff;color:#fff;background:transparent" onclick="imprimir('presu')">Solo presupuesto</button><button class="ok" onclick="mandarFirma()">Mandar a firmar</button><button class="ok" id="btnEnviar" onclick="menuEnviar()">Enviar al cliente</button></div></nav>
 
@@ -195,7 +195,7 @@ body.capturando #sh_dosier .segimg img{height:20mm!important}body.capturando #sh
 </section>
 
 <script>
-var APP_VERSION='v132';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
+var APP_VERSION='v133';document.getElementById('ver').textContent=APP_VERSION;var vf=document.getElementById('verFijo');if(vf)vf.textContent=APP_VERSION;
 /* ---------- TARIFA (sacada de los presupuestos 544 y 545 de Ioan) ---------- */
 var TARIFA_BASE=[
 {id:'tab',c:'Demoliciones',d:'Derribo de tabique, retirada de escombro y tirada al centro autorizado',u:'ud',p:650,k:['tabique','tirar tabique','derribo','derribar']},
@@ -275,14 +275,15 @@ document.querySelectorAll('.ntab').forEach(function(b){if(b.id==='masTabs')retur
 /* ---- botón atrás del móvil ---- */
 var NAV={pila:['tab:presupuesto'],interno:false};
 function navEstadoActual(){return NAV.pila[NAV.pila.length-1]}
-function navIr(e){if(NAV.interno)return;if(navEstadoActual()===e)return;NAV.pila.push(e);try{history.pushState({n:NAV.pila.length},'')}catch(_){}}
+function navIr(e){if(NAV.interno)return;if(navEstadoActual()===e)return;NAV.pila.push(e);try{history.pushState({n:NAV.pila.length},'')}catch(_){}pintarAtras()}
 function navSalir(e){if(NAV.interno)return;if(navEstadoActual()===e){try{history.back()}catch(_){}}}
+function pintarAtras(){var b=document.getElementById('btnAtras');if(b)b.style.display=(NAV.pila.length>1?'block':'none')}
 function navAplicar(){var cajas={'caja:agenda':'agendaBox','caja:fotos':'fotosBox','caja:iva':'cajaIva','caja:ayuda':'cajaAyuda','caja:enviar':'cajaEnviar'};
  var act=navEstadoActual();
  Object.keys(cajas).forEach(function(k){if(k===act)return;var c=document.getElementById(cajas[k]);if(!c||c.style.display==='none'||c.style.display==='')return;
   NAV.interno=true;try{if(k==='caja:agenda')cerrarAgenda();else if(k==='caja:fotos')cerrarFotos();else if(k==='caja:iva')cerrarIva();else if(k==='caja:ayuda')cerrarAyudante();else if(k==='caja:enviar')cerrarEnviar()}catch(_){}NAV.interno=false});
  if(act.indexOf('tab:')===0){NAV.interno=true;try{ST(act.slice(4))}catch(_){}NAV.interno=false}}
-window.addEventListener('popstate',function(){if(NAV.pila.length>1){NAV.pila.pop();navAplicar()}});
+window.addEventListener('popstate',function(){if(NAV.pila.length>1){NAV.pila.pop();navAplicar()}pintarAtras()});
 try{history.replaceState({n:1},'')}catch(_){}
 function ST(t){navIr('tab:'+t);if(t==='ajustes')setTimeout(fmInit,60);if(t==='mapa')setTimeout(function(){pintarMapa()},80);document.querySelectorAll('.ntab').forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});document.querySelectorAll('.page').forEach(function(p){p.classList.toggle('on',p.id==='page-'+t)});if(t==='clientes')renderClientes();if(t==='tarifa'){renderTarifa();setTimeout(plegarTarifa,60)}if(t==='ajustes')renderAj();if(t==='legal')pintarLegal()}
 /* ---------- presupuesto ---------- */
