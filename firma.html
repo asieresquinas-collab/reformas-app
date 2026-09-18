@@ -41,7 +41,7 @@ button{padding:12px 16px;border-radius:8px;border:0;font-size:15px;font-weight:7
 <div class="wrap">
   <div id="cargando" class="cargando">Cargando el presupuesto…</div>
   <div id="cont" style="display:none">
-    <div class="row" style="margin-bottom:10px"><button class="sec" id="btnPdf" type="button" onclick="descargarPdf()">Descargar el PDF</button></div><div class="doc" id="doc"></div>
+    <div class="row" style="margin-bottom:10px"><div style="display:flex;gap:8px;align-items:center"><button class="sec" type="button" onclick="volverAtras()" style="min-width:96px">← Volver</button><button class="sec" id="btnPdf" type="button" onclick="descargarPdf()" style="flex:1">Descargar el PDF</button></div></div><div class="doc" id="doc"></div>
     <div class="aviso"><b>Importante — aceptación bajo reserva</b><div id="aviso" style="margin-top:6px"></div></div>
     <div id="firmar"></div><label>Nombre y apellidos de quien firma</label><input id="nom">
     <label>DNI / NIE <span style="color:var(--muted);font-weight:400">(opcional)</span></label><input id="dni">
@@ -82,9 +82,10 @@ if(TOK)db.collection("firmas").doc(TOK).get().then(function(s){
   if(location.hash==='#firmar')setTimeout(function(){var e=document.getElementById('firmar');if(e)e.scrollIntoView({behavior:'smooth'})},300);
 }).catch(function(e){document.getElementById('cargando').textContent='No he podido abrir el presupuesto ('+e.message+')';});
 
-var FIRMA_VER='v128';
+var FIRMA_VER='v129';
 try{var _u=new URL(location.href);if(!_u.searchParams.get('v')){fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==FIRMA_VER){_u.searchParams.set('v',j.v);location.replace(_u.toString())}}).catch(function(){})}}catch(_){}
 document.addEventListener('DOMContentLoaded',function(){var e=document.createElement('div');e.textContent=FIRMA_VER;e.style.cssText='position:fixed;right:6px;bottom:6px;font-size:10px;color:#9aa0a6;z-index:99';document.body.appendChild(e)});
+function volverAtras(){try{if(history.length>1){history.back();setTimeout(function(){if(!document.hidden)window.close()},400);return}}catch(_){}try{window.close()}catch(_){}}
 function limpiarDoc(){var d=document.getElementById('doc');if(!d)return;
 try{d.querySelectorAll('.sheet').forEach(function(h){h.style.display=''});
 var env=d.querySelectorAll('.sheet');for(var k=0;k<env.length;k++){var h=env[k];if(h.querySelector('.sheet')){var hijas=[].slice.call(h.querySelectorAll('.sheet'));hijas.forEach(function(x){h.parentNode.insertBefore(x,h)});h.parentNode.removeChild(h)}}
