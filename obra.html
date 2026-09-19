@@ -32,6 +32,16 @@ header span{font-size:13px;opacity:.85}
 .foto{page-break-inside:avoid;break-inside:avoid}
 body{background:#fff}}
 .vacio{padding:30px;text-align:center;color:var(--muted)}
+.decide{padding:10px;background:#FFF7EE;border-top:1px solid #f1d9c4}
+.decide .precio{display:flex;justify-content:space-between;align-items:center;background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:14px;margin-bottom:8px}
+.decide .precio b{font-size:19px}
+.decide .btns{display:flex;gap:8px}
+.decide .btns button{flex:1;border:0;border-radius:8px;padding:12px;font-size:15px;font-weight:700;cursor:pointer}
+.decide .no{background:#fff;border:1px solid #d5cfc2!important;color:#5c6168}
+.decide .si{background:#1a7a3f;color:#fff}
+.decide .resp{font-size:14px;font-weight:700;padding:8px 0}
+.decide .resp.ok{color:#1a7a3f}.decide .resp.ko{color:#B3261E}
+.decide .aviso{font-size:12px;color:var(--muted);margin-top:6px}
 .pie-pag{margin:24px 0 10px;font-size:13px;color:var(--muted);text-align:center}
 a.tel{display:inline-block;margin-top:8px;background:var(--brick);color:#fff;text-decoration:none;padding:10px 14px;border-radius:8px;font-weight:700}
 </style></head><body>
@@ -47,6 +57,14 @@ a.tel{display:inline-block;margin-top:8px;background:var(--brick);color:#fff;tex
 var CFG={apiKey:"AIzaSyDsUvYWlJUPa__voQ7oBznCDWb8o6D1m5Q",authDomain:"reformas-ioan.firebaseapp.com",projectId:"reformas-ioan",storageBucket:"reformas-ioan.firebasestorage.app",messagingSenderId:"65105142083",appId:"1:65105142083:web:cfcb082d4406f938c60ff6"};
 firebase.initializeApp(CFG);var db=firebase.firestore();
 var TOK=new URLSearchParams(location.search).get('t');
+function responder(id,resp,btn){
+  var txt=resp==='aceptado'?'\u00bfConfirma que quiere que lo arreglemos? El importe se suma a su presupuesto.':'\u00bfLo dejamos sin hacer por ahora?';
+  if(!confirm(txt))return;
+  var caja=btn.closest('.decide');caja.innerHTML='<div class="aviso">Guardando su respuesta\u2026</div>';
+  db.collection('seguimiento').doc(TOK).collection('fotos').doc(id).update({respuesta:resp,fechaRespuesta:new Date().toISOString()})
+  .then(function(){caja.innerHTML=resp==='aceptado'?'<div class="resp ok">\u2713 Aprobado. Se lo hemos comunicado al equipo.</div>':'<div class="resp ko">\u2717 Anotado: no se hace por ahora.</div>'})
+  .catch(function(e){caja.innerHTML='<div class="resp ko">No se ha podido guardar ('+e.message+'). Ll\u00e1menos y lo apuntamos nosotros.</div>'});
+}
 function fechaLarga(s){try{return new Date(s).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}catch(e){return ''}}
 if(!TOK){document.getElementById('cont').textContent='Enlace incompleto. Pida que se lo manden otra vez.';}
 else{
@@ -69,7 +87,14 @@ db.collection('seguimiento').doc(TOK).get().then(function(s){
     if(!pri)pri=d;ult=d;
     if(d!==dia){dia=d;nDias++;html+='<div class="dia"><div class="paso">Paso '+nDias+'</div>'+d+'</div>'}
     var imp=(f.tipo==='imprevisto');if(imp)nImp++;
-    html+='<div class="foto'+(imp?' imp':'')+'">'+(imp?'<div class="cab">\u26a0\ufe0f Imprevisto encontrado en la obra</div>':'')+'<img src="'+f.img+'" loading="lazy">'+(f.nota?'<div class="pie">'+String(f.nota).replace(/</g,'&lt;')+'</div>':'')+'</div>';
+    var dec='';
+    if(imp&&f.precio!=null){
+      var pr=Number(f.precio).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' \u20ac';
+      if(f.respuesta==='aceptado')dec='<div class="decide"><div class="precio"><span>Arreglarlo</span><b>'+pr+' + IVA</b></div><div class="resp ok">\u2713 Aprobado por usted'+(f.fechaRespuesta?' el '+fechaLarga(f.fechaRespuesta):'')+'</div></div>';
+      else if(f.respuesta==='rechazado')dec='<div class="decide"><div class="precio"><span>Arreglarlo</span><b>'+pr+' + IVA</b></div><div class="resp ko">\u2717 Ha decidido no hacerlo por ahora</div><div class="aviso">Si cambia de idea, ll\u00e1menos y lo retomamos.</div></div>';
+      else dec='<div class="decide"><div class="precio"><span>Arreglarlo cuesta</span><b>'+pr+' + IVA</b></div><div class="btns"><button class="no" onclick="responder(\''+doc.id+'\',\'rechazado\',this)">Ahora no</button><button class="si" onclick="responder(\''+doc.id+'\',\'aceptado\',this)">Adelante</button></div><div class="aviso">No se toca nada hasta que usted decida. Si acepta, este importe se suma a su presupuesto y queda por escrito.</div></div>';
+    }else if(imp){dec='<div class="decide"><div class="aviso">Estamos valorando lo que cuesta. Se lo pondremos aqu\u00ed con su precio para que decida usted.</div></div>'}
+    html+='<div class="foto'+(imp?' imp':'')+'">'+(imp?'<div class="cab">\u26a0\ufe0f Algo no previsto en la obra</div>':'')+'<img src="'+f.img+'" loading="lazy">'+(f.nota?'<div class="pie">'+String(f.nota).replace(/</g,'&lt;')+'</div>':'')+dec+'</div>';
   });
   var cab='<div class="hist"><h1>Diario de obra</h1><div class="dat">'+
     (d0.obra?d0.obra+'<br>':'')+'Empez\u00f3 el '+pri+'<br>'+

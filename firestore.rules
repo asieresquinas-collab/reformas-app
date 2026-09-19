@@ -21,6 +21,12 @@ service cloud.firestore {
       match /fotos/{foto} {
         allow read: if true;
         allow write: if request.auth != null;
+        // el cliente, sin cuenta, solo puede contestar a un imprevisto que aun no ha contestado
+        allow update: if request.auth == null
+          && resource.data.tipo == 'imprevisto'
+          && !('respuesta' in resource.data)
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['respuesta','fechaRespuesta'])
+          && request.resource.data.respuesta in ['aceptado','rechazado'];
       }
     }
   }
